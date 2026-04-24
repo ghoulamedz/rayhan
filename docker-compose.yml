@@ -1,0 +1,61 @@
+version: '3.8'
+
+# ==========================================
+# Docker Compose — Rayhan ERP
+# Backend Spring Boot + MySQL
+# ==========================================
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: rayhan-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rayhan_erp_2024
+      MYSQL_DATABASE: rayhan_erp_db
+      MYSQL_USER: rayhan_user
+      MYSQL_PASSWORD: rayhan_erp_2024
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - rayhan-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prayhan_erp_2024"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: rayhan-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rayhan_erp_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa/Tunis
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rayhan_erp_2024
+      RAYHAN_ERP_JWTSECRET: RayhanERP_SecretKey_PFE_AliGuennari_2024_TunisiePlasturgie_SUARL
+      RAYHAN_ERP_JWTEXPIRATIONMS: 86400000
+    ports:
+      - "8090:8080"
+    networks:
+      - rayhan-net
+
+  frontend:
+    build: ./frontend
+    container_name: rayhan-frontend
+    restart: unless-stopped
+    ports:
+      - "3013:80"
+    networks:
+      - rayhan-net
+
+volumes:
+  mysql_data:
+
+networks:
+  rayhan-net:
+    driver: bridge
