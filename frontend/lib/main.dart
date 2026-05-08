@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:rayhan_erp/theme/app_theme.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/dashboard_provider.dart';
@@ -10,7 +11,7 @@ import 'providers/ventes_provider.dart';
 import 'providers/achats_provider.dart';
 import 'providers/production_provider.dart';
 import 'providers/stock_provider.dart';
-import 'screens/login_screen.dart';
+import 'screens/landing_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/articles_screen.dart';
 import 'screens/ventes_screen.dart';
@@ -64,12 +65,16 @@ class _RayhanAppState extends State<RayhanApp> {
           return null;
         },
         routes: [
-          GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-          GoRoute(path: '/dashboard', builder: (_, __) => const DashboardScreen()),
-          GoRoute(path: '/articles', builder: (_, __) => const ArticlesScreen()),
+          GoRoute(path: '/login', builder: (_, __) => const LandingScreen()),
+          GoRoute(
+              path: '/dashboard', builder: (_, __) => const DashboardScreen()),
+          GoRoute(
+              path: '/articles', builder: (_, __) => const ArticlesScreen()),
           GoRoute(path: '/ventes', builder: (_, __) => const VentesScreen()),
           GoRoute(path: '/achats', builder: (_, __) => const AchatsScreen()),
-          GoRoute(path: '/production', builder: (_, __) => const ProductionScreen()),
+          GoRoute(
+              path: '/production',
+              builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
         ],
       );
@@ -88,16 +93,8 @@ class _RayhanAppState extends State<RayhanApp> {
     return MaterialApp.router(
       title: 'Rayhan ERP',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1565C0),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
+      theme: AppTheme.lightTheme,
       routerConfig: _router!,
     );
   }
 }
-
