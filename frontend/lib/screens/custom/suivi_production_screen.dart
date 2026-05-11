@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:rayhan_erp/models/mock/enums.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/status_badge.dart';
 
 /// "Suivi de Production" screen — mirrors the FOREMAN DIGITAL mockup (Image 3).
@@ -120,15 +120,16 @@ class _KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final valueColor = isAlert ? AppTheme.error : AppTheme.textPrimary;
-    final alertBorderColor =
-        isAlert ? AppTheme.error.withOpacity(0.4) : AppTheme.border;
+    final valueColor = isAlert ? AppTheme.red : Colors.black;
+    final alertBorderColor = isAlert
+        ? AppTheme.red.withOpacity(0.4)
+        : AppTheme.whiteTintedorGreyAddAlpha02;
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp20),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: alertBorderColor, width: isAlert ? 1.5 : 1),
         boxShadow: AppTheme.shadowSm,
       ),
@@ -141,7 +142,7 @@ class _KpiCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: AppTheme.textMuted,
+              color: AppTheme.greyLight,
               letterSpacing: 0.5,
             ),
           ),
@@ -160,14 +161,14 @@ class _KpiCard extends StatelessWidget {
             children: [
               if (isAlert)
                 const Icon(Icons.warning_amber_rounded,
-                    size: 14, color: AppTheme.error)
+                    size: 14, color: AppTheme.red)
               else
                 Icon(
                   trendPositive
                       ? Icons.trending_up_rounded
                       : Icons.trending_down_rounded,
                   size: 14,
-                  color: trendPositive ? AppTheme.success : AppTheme.error,
+                  color: trendPositive ? AppTheme.greenBright : AppTheme.red,
                 ),
               const SizedBox(width: 4),
               Expanded(
@@ -176,10 +177,10 @@ class _KpiCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     color: isAlert
-                        ? AppTheme.error
+                        ? AppTheme.red
                         : trendPositive
-                            ? AppTheme.success
-                            : AppTheme.textMuted,
+                            ? AppTheme.greenBright
+                            : AppTheme.greyLight,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -214,7 +215,7 @@ class _LotsSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Colors.black,
               ),
             ),
             const Spacer(),
@@ -248,9 +249,9 @@ class _LotCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp20),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
         boxShadow: AppTheme.shadowSm,
       ),
       child: Column(
@@ -264,11 +265,11 @@ class _LotCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceVariant,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  color: AppTheme.whiteSurface2,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.settings_rounded,
-                    size: 18, color: AppTheme.textSecondary),
+                    size: 18, color: AppTheme.grey),
               ),
               const SizedBox(width: AppTheme.sp12),
               Column(
@@ -280,7 +281,7 @@ class _LotCard extends StatelessWidget {
                         production.lotReference,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textMuted,
+                          color: AppTheme.greyLight,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -319,7 +320,7 @@ class _LotCard extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 10,
-                      backgroundColor: AppTheme.primary,
+                      backgroundColor: Colors.black,
                       child: Text(
                         'JD',
                         style: TextStyle(fontSize: 8, color: Colors.white),
@@ -376,8 +377,8 @@ class _LotCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: production.progression,
                 minHeight: 8,
-                backgroundColor: AppTheme.surfaceVariant,
-                valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
+                backgroundColor: AppTheme.whiteSurface2,
+                valueColor: const AlwaysStoppedAnimation(Colors.black),
               ),
             ),
           ],
@@ -403,7 +404,7 @@ class _LotDetail extends StatelessWidget {
           label,
           style: const TextStyle(
             fontSize: 10,
-            color: AppTheme.textMuted,
+            color: AppTheme.greyLight,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
@@ -429,8 +430,8 @@ class _EquipementPanel extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(AppTheme.sp20),
           decoration: BoxDecoration(
-            color: AppTheme.sidebarBg,
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            color: AppTheme.blueStrongHighlight,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,8 +448,7 @@ class _EquipementPanel extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Icon(Icons.sensors_rounded,
-                      color: AppTheme.primaryLight, size: 18),
+                  Icon(Icons.sensors_rounded, color: Colors.black, size: 18),
                 ],
               ),
               const SizedBox(height: AppTheme.sp20),
@@ -496,8 +496,8 @@ class _OeeGauge extends StatelessWidget {
           child: CircularProgressIndicator(
             value: value,
             strokeWidth: 10,
-            backgroundColor: AppTheme.sidebarHover,
-            valueColor: const AlwaysStoppedAnimation(AppTheme.primaryLight),
+            backgroundColor: AppTheme.greenStrong,
+            valueColor: const AlwaysStoppedAnimation(Colors.black),
             strokeCap: StrokeCap.round,
           ),
         ),
@@ -515,7 +515,7 @@ class _OeeGauge extends StatelessWidget {
             const Text(
               'OEE',
               style: TextStyle(
-                color: AppTheme.sidebarText,
+                color: AppTheme.blueStrongHighlight,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -546,17 +546,17 @@ class _EquipTile extends StatelessWidget {
         vertical: AppTheme.sp10,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.sidebarHover,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: AppTheme.greenStrong,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: AppTheme.primaryLight),
+          Icon(icon, size: 16, color: Colors.black),
           const SizedBox(width: 10),
           Text(
             label,
             style: const TextStyle(
-              color: AppTheme.sidebarText,
+              color: AppTheme.blueStrongHighlight,
               fontSize: 13,
             ),
           ),
@@ -620,7 +620,7 @@ class _EventsJournal extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textMuted,
+              color: AppTheme.greyLight,
               letterSpacing: 0.8,
             ),
           ),
@@ -658,7 +658,7 @@ class _EventItem extends StatelessWidget {
             height: 10,
             margin: const EdgeInsets.only(top: 3),
             decoration: BoxDecoration(
-              color: event.isAlert ? AppTheme.error : AppTheme.textMuted,
+              color: event.isAlert ? AppTheme.red : AppTheme.greyLight,
               shape: BoxShape.circle,
             ),
           ),
@@ -675,8 +675,7 @@ class _EventItem extends StatelessWidget {
                 Text(
                   event.title,
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color:
-                        event.isAlert ? AppTheme.error : AppTheme.textPrimary,
+                    color: event.isAlert ? AppTheme.red : Colors.black,
                   ),
                 ),
                 const SizedBox(height: 2),

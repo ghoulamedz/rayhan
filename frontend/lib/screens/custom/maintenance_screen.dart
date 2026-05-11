@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/dialogs.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
-import 'package:rayhan_erp/widgets/custom/responsive.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
+import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 
 /// "Maintenance Préventive" screen — equipment fleet status,
@@ -70,15 +70,17 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
               // Tabs
               Container(
                 decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: AppTheme.border)),
+                  border: Border(
+                      bottom: BorderSide(
+                          color: AppTheme.whiteTintedorGreyAddAlpha02)),
                 ),
                 child: TabBar(
                   controller: _tab,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  labelColor: AppTheme.primary,
-                  unselectedLabelColor: AppTheme.textSecondary,
-                  indicatorColor: AppTheme.primary,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: AppTheme.grey,
+                  indicatorColor: Colors.black,
                   indicatorWeight: 2,
                   labelStyle: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w600),
@@ -148,8 +150,8 @@ class _KpiRow extends StatelessWidget {
             value: '$ops / $total',
             subtitle: 'Disponibilité du parc',
             icon: Icons.precision_manufacturing_rounded,
-            iconColor: AppTheme.primary,
-            iconBackground: AppTheme.primarySurface,
+            iconColor: Colors.black,
+            iconBackground: Colors.black,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -159,8 +161,8 @@ class _KpiRow extends StatelessWidget {
             value: '$enCours',
             subtitle: 'Techniciens mobilisés',
             icon: Icons.engineering_outlined,
-            iconColor: AppTheme.info,
-            iconBackground: AppTheme.infoSurface,
+            iconColor: AppTheme.blueLight,
+            iconBackground: AppTheme.blueLightest,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -171,8 +173,8 @@ class _KpiRow extends StatelessWidget {
             subtitle: 'Action immédiate requise',
             alertLevel: critiques > 0 ? 'error' : null,
             icon: Icons.warning_amber_rounded,
-            iconColor: AppTheme.error,
-            iconBackground: AppTheme.errorSurface,
+            iconColor: AppTheme.red,
+            iconBackground: AppTheme.red,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -182,8 +184,8 @@ class _KpiRow extends StatelessWidget {
             value: '${(_avgOee * 100).toStringAsFixed(1)}%',
             subtitle: 'Performance globale',
             icon: Icons.speed_rounded,
-            iconColor: AppTheme.success,
-            iconBackground: AppTheme.successSurface,
+            iconColor: AppTheme.greenBright,
+            iconBackground: AppTheme.greenLight,
           ),
         ),
       ],
@@ -238,12 +240,12 @@ class _EquipementCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp20),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: equipement.alerte != null
-              ? AppTheme.error.withOpacity(0.4)
-              : AppTheme.border,
+              ? AppTheme.red.withOpacity(0.4)
+              : AppTheme.whiteTintedorGreyAddAlpha02,
           width: equipement.alerte != null ? 1.5 : 1,
         ),
         boxShadow: AppTheme.shadowSm,
@@ -260,7 +262,7 @@ class _EquipementCard extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: statusBg,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(Icons.precision_manufacturing_rounded,
                     size: 20, color: statusColor),
@@ -286,20 +288,20 @@ class _EquipementCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.sp10),
               decoration: BoxDecoration(
-                color: AppTheme.errorSurface,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                color: AppTheme.red,
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.warning_amber_rounded,
-                      size: 14, color: AppTheme.error),
+                      size: 14, color: AppTheme.red),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       equipement.alerte!,
                       style: const TextStyle(
                           fontSize: 11,
-                          color: AppTheme.error,
+                          color: AppTheme.red,
                           fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -344,14 +346,14 @@ class _EquipementCard extends StatelessWidget {
                       children: [
                         const Text('Révision',
                             style: TextStyle(
-                                fontSize: 11, color: AppTheme.textMuted)),
+                                fontSize: 11, color: AppTheme.greyLight)),
                         const Spacer(),
                         Text(
                           '${equipement.heuresDepuisRevision}h / ${equipement.heuresRevisionMax}h',
                           style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.textSecondary),
+                              color: AppTheme.grey),
                         ),
                       ],
                     ),
@@ -361,13 +363,13 @@ class _EquipementCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: equipement.pctRevision,
                         minHeight: 6,
-                        backgroundColor: AppTheme.surfaceVariant,
+                        backgroundColor: AppTheme.whiteSurface2,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           equipement.pctRevision > 0.9
-                              ? AppTheme.error
+                              ? AppTheme.red
                               : equipement.pctRevision > 0.7
-                                  ? AppTheme.warning
-                                  : AppTheme.primary,
+                                  ? AppTheme.yellow
+                                  : Colors.black,
                         ),
                       ),
                     ),
@@ -383,17 +385,13 @@ class _EquipementCard extends StatelessWidget {
 
   static (Color, Color, String) _statusStyle(String statut) => switch (statut) {
         'operationnel' => (
-            AppTheme.success,
-            AppTheme.successSurface,
+            AppTheme.greenBright,
+            AppTheme.greenLight,
             'Opérationnel'
           ),
-        'maintenance' => (
-            AppTheme.warning,
-            AppTheme.warningSurface,
-            'En maintenance'
-          ),
-        'arret' => (AppTheme.error, AppTheme.errorSurface, 'À l\'arrêt'),
-        _ => (AppTheme.textMuted, AppTheme.surfaceVariant, statut),
+        'maintenance' => (AppTheme.yellow, AppTheme.yellow, 'En maintenance'),
+        'arret' => (AppTheme.red, AppTheme.red, 'À l\'arrêt'),
+        _ => (AppTheme.greyLight, AppTheme.whiteSurface2, statut),
       };
 }
 
@@ -410,7 +408,7 @@ class _StatusPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         label,
@@ -436,15 +434,15 @@ class _MetricChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             vertical: AppTheme.sp8, horizontal: AppTheme.sp8),
         decoration: BoxDecoration(
-          color: AppTheme.surfaceVariant,
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          color: AppTheme.whiteSurface2,
+          borderRadius: BorderRadius.circular(6),
         ),
         child: Column(
           children: [
             Text(label,
                 style: const TextStyle(
                     fontSize: 9,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.4)),
             const SizedBox(height: 3),
@@ -452,7 +450,7 @@ class _MetricChip extends StatelessWidget {
                 style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary)),
+                    color: Colors.black)),
           ],
         ),
       ),
@@ -474,9 +472,8 @@ class _OrdresTab extends StatelessWidget {
     final ordres = MockData.ordresMaintenance;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.sp24),
-      child: AdaptiveLayout(
-        breakpoint: 900,
-        expanded: Row(
+      child: ResponsiveLayout(
+        desktop: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
@@ -489,7 +486,7 @@ class _OrdresTab extends StatelessWidget {
               Expanded(flex: 2, child: _OrdreDetail(ordre: selected!)),
           ],
         ),
-        stacked: Column(
+        mobile: Column(
           children: [
             _OrdresList(ordres: ordres, selected: selected, onSelect: onSelect),
             if (selected != null) ...[
@@ -518,7 +515,7 @@ class _OrdresList extends StatelessWidget {
         '${ordres.length} ordres',
         style: const TextStyle(
             fontSize: 12,
-            color: AppTheme.textMuted,
+            color: AppTheme.greyLight,
             fontWeight: FontWeight.w500),
       ),
       padding: EdgeInsets.zero,
@@ -553,8 +550,9 @@ class _OrdreTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 120),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primarySurface : Colors.transparent,
-          border: const Border(bottom: BorderSide(color: AppTheme.divider)),
+          color: isSelected ? Colors.black : Colors.transparent,
+          border:
+              const Border(bottom: BorderSide(color: AppTheme.blueLightest)),
         ),
         padding: const EdgeInsets.symmetric(
             horizontal: AppTheme.sp20, vertical: AppTheme.sp14),
@@ -581,7 +579,7 @@ class _OrdreTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primary,
+                          color: Colors.black,
                         ),
                       ),
                       const Spacer(),
@@ -592,7 +590,7 @@ class _OrdreTile extends StatelessWidget {
                   Text(
                     ordre.equipementNom,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      color: AppTheme.textPrimary,
+                      color: Colors.black,
                       fontSize: 12,
                       letterSpacing: 0,
                     ),
@@ -610,11 +608,11 @@ class _OrdreTile extends StatelessWidget {
                       _TypeBadge(type: ordre.type),
                       const Spacer(),
                       const Icon(Icons.person_outline_rounded,
-                          size: 12, color: AppTheme.textMuted),
+                          size: 12, color: AppTheme.greyLight),
                       const SizedBox(width: 3),
                       Text(ordre.technicien,
                           style: const TextStyle(
-                              fontSize: 11, color: AppTheme.textMuted)),
+                              fontSize: 11, color: AppTheme.greyLight)),
                     ],
                   ),
                 ],
@@ -627,15 +625,15 @@ class _OrdreTile extends StatelessWidget {
   }
 
   static (Color, Color) _prioStyle(PrioriteMaintenance p) => switch (p) {
-        PrioriteMaintenance.critique => (AppTheme.error, AppTheme.errorSurface),
-        PrioriteMaintenance.haute => (
-            AppTheme.warning,
-            AppTheme.warningSurface
+        PrioriteMaintenance.critique => (AppTheme.red, AppTheme.red),
+        PrioriteMaintenance.haute => (AppTheme.yellow, AppTheme.yellow),
+        PrioriteMaintenance.moyenne => (
+            AppTheme.blueLight,
+            AppTheme.blueLightest
           ),
-        PrioriteMaintenance.moyenne => (AppTheme.info, AppTheme.infoSurface),
         PrioriteMaintenance.basse => (
-            AppTheme.textMuted,
-            AppTheme.surfaceVariant
+            AppTheme.greyLight,
+            AppTheme.whiteSurface2
           ),
       };
 }
@@ -647,18 +645,18 @@ class _StatutBadgeMaint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, bg) = switch (statut) {
-      StatutMaintenance.enCours => (AppTheme.primary, AppTheme.primarySurface),
+      StatutMaintenance.enCours => (Colors.black, Colors.black),
       StatutMaintenance.planifiee => (
-          AppTheme.textMuted,
-          AppTheme.surfaceVariant
+          AppTheme.greyLight,
+          AppTheme.whiteSurface2
         ),
-      StatutMaintenance.terminee => (AppTheme.success, AppTheme.successSurface),
-      StatutMaintenance.annulee => (AppTheme.error, AppTheme.errorSurface),
+      StatutMaintenance.terminee => (AppTheme.greenBright, AppTheme.greenLight),
+      StatutMaintenance.annulee => (AppTheme.red, AppTheme.red),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-          color: bg, borderRadius: BorderRadius.circular(AppTheme.radiusSm)),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
       child: Text(statut.label,
           style: TextStyle(
               fontSize: 10, fontWeight: FontWeight.w600, color: color)),
@@ -673,9 +671,9 @@ class _TypeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (type) {
-      TypeMaintenance.corrective => AppTheme.error,
-      TypeMaintenance.preventive => AppTheme.primary,
-      TypeMaintenance.predictive => AppTheme.info,
+      TypeMaintenance.corrective => AppTheme.red,
+      TypeMaintenance.preventive => Colors.black,
+      TypeMaintenance.predictive => AppTheme.blueLight,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -716,7 +714,7 @@ class _OrdreDetail extends StatelessWidget {
               Expanded(
                 child: Text(ordre.id,
                     style: theme.textTheme.headlineMedium
-                        ?.copyWith(color: AppTheme.primary)),
+                        ?.copyWith(color: Colors.black)),
               ),
               _StatutBadgeMaint(statut: ordre.statut),
             ],
@@ -744,18 +742,18 @@ class _OrdreDetail extends StatelessWidget {
               style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.textMuted,
+                  color: AppTheme.greyLight,
                   letterSpacing: 0.6)),
           const SizedBox(height: AppTheme.sp8),
           Container(
             padding: const EdgeInsets.all(AppTheme.sp12),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(ordre.description,
                 style: theme.textTheme.bodyMedium
-                    ?.copyWith(height: 1.5, color: AppTheme.textPrimary)),
+                    ?.copyWith(height: 1.5, color: Colors.black)),
           ),
           const SizedBox(height: AppTheme.sp20),
 
@@ -842,17 +840,17 @@ class _CalendrierTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final prioColor = switch (ordre.priorite) {
-      PrioriteMaintenance.critique => AppTheme.error,
-      PrioriteMaintenance.haute => AppTheme.warning,
-      PrioriteMaintenance.moyenne => AppTheme.info,
-      PrioriteMaintenance.basse => AppTheme.textMuted,
+      PrioriteMaintenance.critique => AppTheme.red,
+      PrioriteMaintenance.haute => AppTheme.yellow,
+      PrioriteMaintenance.moyenne => AppTheme.blueLight,
+      PrioriteMaintenance.basse => AppTheme.greyLight,
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp16),
       decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppTheme.divider))),
+          border: Border(bottom: BorderSide(color: AppTheme.blueLightest))),
       child: Row(
         children: [
           // Date block
@@ -860,8 +858,8 @@ class _CalendrierTile extends StatelessWidget {
             width: 52,
             padding: const EdgeInsets.symmetric(vertical: AppTheme.sp8),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
               children: [
@@ -870,14 +868,14 @@ class _CalendrierTile extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
+                    color: Colors.black,
                   ),
                 ),
                 Text(
                   DateFormat('MMM').format(ordre.dateDebut),
                   style: const TextStyle(
                     fontSize: 10,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -916,7 +914,7 @@ class _CalendrierTile extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '${ordre.dureeEstimeeH}h — ${ordre.technicien}',
-                style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                style: const TextStyle(fontSize: 11, color: AppTheme.greyLight),
               ),
             ],
           ),

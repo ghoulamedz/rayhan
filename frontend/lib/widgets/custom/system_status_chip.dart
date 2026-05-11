@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 class SystemStatusChip extends StatelessWidget {
   const SystemStatusChip({super.key});
@@ -13,22 +13,22 @@ class SystemStatusChip extends StatelessWidget {
         vertical: AppTheme.sp8,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.successSurface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
+        color: AppTheme.greenLight,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.greenBright.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.check_circle_rounded,
-              size: 14, color: AppTheme.success),
+              size: 14, color: AppTheme.greenBright),
           const SizedBox(width: 6),
           const Text(
             'Système: Opérationnel',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppTheme.success,
+              color: AppTheme.greenBright,
             ),
           ),
           const SizedBox(width: 12),
@@ -36,7 +36,7 @@ class SystemStatusChip extends StatelessWidget {
             DateFormat('HH:mm').format(DateTime.now()),
             style: const TextStyle(
               fontSize: 12,
-              color: AppTheme.textMuted,
+              color: AppTheme.greyLight,
             ),
           ),
         ],

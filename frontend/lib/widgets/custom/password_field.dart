@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 class PasswordField extends StatelessWidget {
   const PasswordField({
@@ -23,7 +23,7 @@ class PasswordField extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textSecondary,
+            color: AppTheme.grey,
             letterSpacing: 0.3,
           ),
         ),
@@ -43,7 +43,7 @@ class PasswordField extends StatelessWidget {
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
                 size: 16,
-                color: AppTheme.textMuted,
+                color: AppTheme.greyLight,
               ),
             ),
           ),

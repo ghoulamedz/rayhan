@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 import 'package:rayhan_erp/widgets/custom/status_badge.dart';
 
@@ -62,8 +62,8 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
                   trend: '+12%',
                   trendPositive: true,
                   icon: Icons.euro_rounded,
-                  iconColor: AppTheme.primary,
-                  iconBackground: AppTheme.primarySurface,
+                  iconColor: Colors.black,
+                  iconBackground: Colors.black,
                 ),
               ),
               const SizedBox(width: AppTheme.sp16),
@@ -73,8 +73,8 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
                   value: '24',
                   subtitle: 'Actif',
                   icon: Icons.pending_actions_rounded,
-                  iconColor: AppTheme.info,
-                  iconBackground: AppTheme.infoSurface,
+                  iconColor: AppTheme.blueLight,
+                  iconBackground: AppTheme.blueLightest,
                 ),
               ),
               const SizedBox(width: AppTheme.sp16),
@@ -84,8 +84,8 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
                   value: '98.2%',
                   subtitle: 'Objectif industriel: >95%',
                   icon: Icons.local_shipping_outlined,
-                  iconColor: AppTheme.success,
-                  iconBackground: AppTheme.successSurface,
+                  iconColor: AppTheme.greenBright,
+                  iconBackground: AppTheme.greenLight,
                 ),
               ),
             ],
@@ -157,7 +157,7 @@ class _VentesTable extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary,
+                  color: Colors.black,
                 ),
               ),
               const Spacer(),
@@ -200,16 +200,16 @@ class _FilterChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.whiteSurface2,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
       ),
       child: Text(
         label,
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: AppTheme.textSecondary,
+          color: AppTheme.grey,
         ),
       ),
     );
@@ -222,7 +222,7 @@ class _TableHeader extends StatelessWidget {
     const style = TextStyle(
       fontSize: 11,
       fontWeight: FontWeight.w600,
-      color: AppTheme.textMuted,
+      color: AppTheme.greyLight,
       letterSpacing: 0.5,
     );
     return Padding(
@@ -268,8 +268,8 @@ class _VenteRow extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 120),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primarySurface : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          color: isSelected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
         ),
         padding: const EdgeInsets.symmetric(vertical: AppTheme.sp12),
         child: Row(
@@ -279,7 +279,7 @@ class _VenteRow extends StatelessWidget {
               child: Text(
                 vente.id,
                 style: theme.textTheme.labelLarge?.copyWith(
-                  color: AppTheme.primary,
+                  color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -295,7 +295,7 @@ class _VenteRow extends StatelessWidget {
                       'ID: ENT-402',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppTheme.textMuted,
+                        color: AppTheme.greyLight,
                       ),
                     ),
                 ],
@@ -340,7 +340,7 @@ class _Pagination extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+          style: const TextStyle(fontSize: 11, color: AppTheme.greyLight),
         ),
         const Spacer(),
         TextButton(onPressed: () {}, child: const Text('Précédent')),
@@ -372,7 +372,7 @@ class _VenteDetailPanel extends StatelessWidget {
       children: [
         // Focus card
         AppCard(
-          color: AppTheme.sidebarBg,
+          color: AppTheme.blueStrongHighlight,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -384,13 +384,13 @@ class _VenteDetailPanel extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.sidebarText,
+                      color: AppTheme.blueStrongHighlight,
                       letterSpacing: 0.8,
                     ),
                   ),
                   const Spacer(),
                   const Icon(Icons.info_outline_rounded,
-                      size: 16, color: AppTheme.primaryLight),
+                      size: 16, color: Colors.black),
                 ],
               ),
               const SizedBox(height: AppTheme.sp12),
@@ -407,7 +407,7 @@ class _VenteDetailPanel extends StatelessWidget {
                 vente.client,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppTheme.sidebarText,
+                  color: AppTheme.blueStrongHighlight,
                 ),
               ),
               const SizedBox(height: AppTheme.sp16),
@@ -424,7 +424,7 @@ class _VenteDetailPanel extends StatelessWidget {
                     child: _DarkMetric(
                       label: 'PAIEMENT',
                       value: '30 Jours Net',
-                      valueColor: AppTheme.primaryLight,
+                      valueColor: Colors.black,
                     ),
                   ),
                 ],
@@ -440,15 +440,15 @@ class _VenteDetailPanel extends StatelessWidget {
           trailing: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              color: AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               '${vente.lignesProduits.length} items',
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textSecondary,
+                color: AppTheme.grey,
               ),
             ),
           ),
@@ -462,7 +462,7 @@ class _VenteDetailPanel extends StatelessWidget {
                       child: Text(
                         'Aucune ligne produit',
                         style:
-                            TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                            TextStyle(fontSize: 12, color: AppTheme.greyLight),
                       ),
                     )
                   ]
@@ -532,7 +532,7 @@ class _DarkMetric extends StatelessWidget {
           label,
           style: const TextStyle(
             fontSize: 10,
-            color: AppTheme.sidebarText,
+            color: AppTheme.blueStrongHighlight,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
@@ -565,7 +565,7 @@ class _LigneProduitTile extends StatelessWidget {
         vertical: AppTheme.sp12,
       ),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.divider)),
+        border: Border(bottom: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         children: [
@@ -573,11 +573,11 @@ class _LigneProduitTile extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              color: AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(6),
             ),
             child: const Icon(Icons.widgets_outlined,
-                size: 16, color: AppTheme.textMuted),
+                size: 16, color: AppTheme.greyLight),
           ),
           const SizedBox(width: AppTheme.sp12),
           Expanded(
@@ -615,10 +615,10 @@ class _LogisticsStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = done
-        ? AppTheme.success
+        ? AppTheme.greenBright
         : active
-            ? AppTheme.primary
-            : AppTheme.textMuted;
+            ? Colors.black
+            : AppTheme.greyLight;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.sp12),
@@ -637,9 +637,7 @@ class _LogisticsStep extends StatelessWidget {
                 Text(
                   label,
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color: done || active
-                        ? AppTheme.textPrimary
-                        : AppTheme.textMuted,
+                    color: done || active ? Colors.black : AppTheme.greyLight,
                   ),
                 ),
                 Text(detail, style: theme.textTheme.bodySmall),

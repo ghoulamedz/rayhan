@@ -4,10 +4,10 @@ import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'dart:ui' as ui;
 
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/dialogs.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
-import 'package:rayhan_erp/widgets/custom/responsive.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
+import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 
 /// "Contrôle Qualité" screen — inspection history, defect rate trends,
@@ -70,9 +70,8 @@ class _QualiteScreenState extends State<QualiteScreen> {
           const SizedBox(height: AppTheme.sp24),
 
           // ── Inspection table + detail ──────────────────────────────────
-          AdaptiveLayout(
-            breakpoint: 960,
-            expanded: Row(
+          ResponsiveLayout(
+            desktop: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
@@ -91,7 +90,7 @@ class _QualiteScreenState extends State<QualiteScreen> {
                 ],
               ],
             ),
-            stacked: Column(
+            mobile: Column(
               children: [
                 _InspectionTable(
                   inspections: MockData.inspections,
@@ -144,8 +143,8 @@ class _KpiRow extends StatelessWidget {
             value: '$conformes / ${insp.length}',
             subtitle: 'Ce mois-ci',
             icon: Icons.verified_outlined,
-            iconColor: AppTheme.success,
-            iconBackground: AppTheme.successSurface,
+            iconColor: AppTheme.greenBright,
+            iconBackground: AppTheme.greenLight,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -156,8 +155,8 @@ class _KpiRow extends StatelessWidget {
             subtitle: 'Lots rejetés',
             alertLevel: nonConformes > 0 ? 'error' : null,
             icon: Icons.cancel_outlined,
-            iconColor: AppTheme.error,
-            iconBackground: AppTheme.errorSurface,
+            iconColor: AppTheme.red,
+            iconBackground: AppTheme.red,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -167,8 +166,8 @@ class _KpiRow extends StatelessWidget {
             value: '${(avgDefaut * 100).toStringAsFixed(2)}%',
             subtitle: 'Objectif: < 2%',
             icon: Icons.bar_chart_rounded,
-            iconColor: AppTheme.info,
-            iconBackground: AppTheme.infoSurface,
+            iconColor: AppTheme.blueLight,
+            iconBackground: AppTheme.blueLightest,
           ),
         ),
         const SizedBox(width: AppTheme.sp16),
@@ -179,8 +178,8 @@ class _KpiRow extends StatelessWidget {
             subtitle: 'Nécessite inspection',
             alertLevel: enAttente > 0 ? 'warning' : null,
             icon: Icons.pending_outlined,
-            iconColor: AppTheme.warning,
-            iconBackground: AppTheme.warningSurface,
+            iconColor: AppTheme.yellow,
+            iconBackground: AppTheme.yellow,
           ),
         ),
       ],
@@ -220,7 +219,7 @@ class _DefectTrendCard extends StatelessWidget {
               children: _labels
                   .map((l) => Text(l,
                       style: const TextStyle(
-                          fontSize: 10, color: AppTheme.textMuted)))
+                          fontSize: 10, color: AppTheme.greyLight)))
                   .toList(),
             ),
           ],
@@ -248,7 +247,7 @@ class _DefectBarPainter extends CustomPainter {
       Offset(0, ty),
       Offset(size.width, ty),
       Paint()
-        ..color = AppTheme.error.withOpacity(0.4)
+        ..color = AppTheme.red.withOpacity(0.4)
         ..strokeWidth = 1.5
         ..strokeCap = StrokeCap.round,
     );
@@ -258,7 +257,7 @@ class _DefectBarPainter extends CustomPainter {
       final bh = frac * h;
       final x = gap * i + (gap - barW) / 2;
       final overTarget = values[i] > target;
-      final color = overTarget ? AppTheme.error : AppTheme.primary;
+      final color = overTarget ? AppTheme.red : Colors.black;
       final isLast = i == values.length - 1;
 
       final rrect = RRect.fromRectAndCorners(
@@ -280,7 +279,7 @@ class _DefectBarPainter extends CustomPainter {
           style: TextStyle(
             fontSize: 9,
             fontWeight: FontWeight.w600,
-            color: overTarget ? AppTheme.error : AppTheme.textSecondary,
+            color: overTarget ? AppTheme.red : AppTheme.grey,
           ),
         ),
         textDirection: ui.TextDirection.ltr,
@@ -335,7 +334,7 @@ class _StatutBreakdown extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: AppTheme.textPrimary)),
+                              color: Colors.black)),
                     ),
                     Text(
                       '$count (${(pct * 100).round()}%)',
@@ -352,7 +351,7 @@ class _StatutBreakdown extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: pct,
                     minHeight: 6,
-                    backgroundColor: AppTheme.surfaceVariant,
+                    backgroundColor: AppTheme.whiteSurface2,
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                   ),
                 ),
@@ -365,10 +364,10 @@ class _StatutBreakdown extends StatelessWidget {
   }
 
   Color _statutColor(StatutInspection s) => switch (s) {
-        StatutInspection.conforme => AppTheme.success,
-        StatutInspection.nonConforme => AppTheme.error,
-        StatutInspection.enAttente => AppTheme.warning,
-        StatutInspection.conditionnel => AppTheme.info,
+        StatutInspection.conforme => AppTheme.greenBright,
+        StatutInspection.nonConforme => AppTheme.red,
+        StatutInspection.enAttente => AppTheme.yellow,
+        StatutInspection.conditionnel => AppTheme.blueLight,
       };
 }
 
@@ -412,13 +411,14 @@ class _TableHeader extends StatelessWidget {
     const style = TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: AppTheme.textMuted,
+        color: AppTheme.greyLight,
         letterSpacing: 0.5);
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp10),
       decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppTheme.border))),
+          border: Border(
+              bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02))),
       child: const Row(
         children: [
           Expanded(flex: 2, child: Text('RÉFÉRENCE', style: style)),
@@ -452,8 +452,9 @@ class _InspectionRow extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 120),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primarySurface : Colors.transparent,
-          border: const Border(bottom: BorderSide(color: AppTheme.divider)),
+          color: isSelected ? Colors.black : Colors.transparent,
+          border:
+              const Border(bottom: BorderSide(color: AppTheme.blueLightest)),
         ),
         padding: const EdgeInsets.symmetric(
             horizontal: AppTheme.sp20, vertical: AppTheme.sp14),
@@ -465,7 +466,7 @@ class _InspectionRow extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primary)),
+                      color: Colors.black)),
             ),
             Expanded(
               flex: 3,
@@ -486,7 +487,7 @@ class _InspectionRow extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
                   color: badgeBg,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -516,8 +517,8 @@ class _InspectionRow extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: insp.tauxDefaut > 0.02
-                      ? AppTheme.error
-                      : AppTheme.success,
+                      ? AppTheme.red
+                      : AppTheme.greenBright,
                 ),
               ),
             ),
@@ -529,15 +530,15 @@ class _InspectionRow extends StatelessWidget {
 
   static (Color, Color) _statutStyle(StatutInspection s) => switch (s) {
         StatutInspection.conforme => (
-            AppTheme.success,
-            AppTheme.successSurface
+            AppTheme.greenBright,
+            AppTheme.greenLight
           ),
-        StatutInspection.nonConforme => (AppTheme.error, AppTheme.errorSurface),
-        StatutInspection.enAttente => (
-            AppTheme.warning,
-            AppTheme.warningSurface
+        StatutInspection.nonConforme => (AppTheme.red, AppTheme.red),
+        StatutInspection.enAttente => (AppTheme.yellow, AppTheme.yellow),
+        StatutInspection.conditionnel => (
+            AppTheme.blueLight,
+            AppTheme.blueLightest
           ),
-        StatutInspection.conditionnel => (AppTheme.info, AppTheme.infoSurface),
       };
 }
 
@@ -567,7 +568,7 @@ class _InspectionDetail extends StatelessWidget {
               Expanded(
                 child: Text(inspection.id,
                     style: theme.textTheme.headlineMedium
-                        ?.copyWith(color: AppTheme.primary)),
+                        ?.copyWith(color: Colors.black)),
               ),
               _statusBadge(inspection.statut),
             ],
@@ -591,7 +592,7 @@ class _InspectionDetail extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
-                    color: isOk ? AppTheme.success : AppTheme.error,
+                    color: isOk ? AppTheme.greenBright : AppTheme.red,
                   ),
                 ),
                 Text('taux de défaut', style: theme.textTheme.bodySmall),
@@ -603,9 +604,9 @@ class _InspectionDetail extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: inspection.tauxDefaut.clamp(0.0, 0.1) / 0.1,
                       minHeight: 8,
-                      backgroundColor: AppTheme.surfaceVariant,
+                      backgroundColor: AppTheme.whiteSurface2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          isOk ? AppTheme.success : AppTheme.error),
+                          isOk ? AppTheme.greenBright : AppTheme.red),
                     ),
                   ),
                 ),
@@ -636,19 +637,19 @@ class _InspectionDetail extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                     letterSpacing: 0.6)),
             const SizedBox(height: AppTheme.sp8),
             Container(
               padding: const EdgeInsets.all(AppTheme.sp12),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                color: AppTheme.whiteSurface2,
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 inspection.commentaire,
                 style: theme.textTheme.bodyMedium
-                    ?.copyWith(height: 1.5, color: AppTheme.textPrimary),
+                    ?.copyWith(height: 1.5, color: Colors.black),
               ),
             ),
           ],
@@ -664,7 +665,7 @@ class _InspectionDetail extends StatelessWidget {
                     icon: const Icon(Icons.check_rounded, size: 15),
                     label: const Text('Valider'),
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.success),
+                        backgroundColor: AppTheme.greenBright),
                   ),
                 ),
                 const SizedBox(width: AppTheme.sp8),
@@ -673,8 +674,8 @@ class _InspectionDetail extends StatelessWidget {
                     onPressed: () {},
                     icon: const Icon(Icons.close_rounded, size: 15),
                     label: const Text('Rejeter'),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.error),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: AppTheme.red),
                   ),
                 ),
               ],
@@ -686,8 +687,7 @@ class _InspectionDetail extends StatelessWidget {
                 onPressed: () {},
                 icon: const Icon(Icons.assignment_outlined, size: 15),
                 label: const Text('Ouvrir fiche NC'),
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
+                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.red),
               ),
             ),
         ],
@@ -697,21 +697,21 @@ class _InspectionDetail extends StatelessWidget {
 
   Widget _statusBadge(StatutInspection s) {
     final color = switch (s) {
-      StatutInspection.conforme => AppTheme.success,
-      StatutInspection.nonConforme => AppTheme.error,
-      StatutInspection.enAttente => AppTheme.warning,
-      StatutInspection.conditionnel => AppTheme.info,
+      StatutInspection.conforme => AppTheme.greenBright,
+      StatutInspection.nonConforme => AppTheme.red,
+      StatutInspection.enAttente => AppTheme.yellow,
+      StatutInspection.conditionnel => AppTheme.blueLight,
     };
     final bg = switch (s) {
-      StatutInspection.conforme => AppTheme.successSurface,
-      StatutInspection.nonConforme => AppTheme.errorSurface,
-      StatutInspection.enAttente => AppTheme.warningSurface,
-      StatutInspection.conditionnel => AppTheme.infoSurface,
+      StatutInspection.conforme => AppTheme.greenLight,
+      StatutInspection.nonConforme => AppTheme.red,
+      StatutInspection.enAttente => AppTheme.yellow,
+      StatutInspection.conditionnel => AppTheme.blueLightest,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-          color: bg, borderRadius: BorderRadius.circular(AppTheme.radiusSm)),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
       child: Text(s.label,
           style: TextStyle(
               fontSize: 12, fontWeight: FontWeight.w700, color: color)),
@@ -753,7 +753,7 @@ class _NewInspectionDialogState extends State<_NewInspectionDialog> {
       title: 'Nouvelle Inspection',
       subtitle: 'Enregistrer un contrôle qualité sur un lot de production.',
       icon: Icons.fact_check_outlined,
-      iconColor: AppTheme.info,
+      iconColor: AppTheme.blueLight,
       width: 540,
       actions: [
         OutlinedButton(

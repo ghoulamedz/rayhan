@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   const AppTopBar({
@@ -31,8 +31,8 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
               child: Container(
                 height: 64,
                 decoration: const BoxDecoration(
-                  color: AppTheme.surface,
-                  border: Border(bottom: BorderSide(color: AppTheme.border)),
+                  color: AppTheme.whiteSurface,
+                  border: Border(bottom: BorderSide(color: Colors.black)),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: AppTheme.sp24),
                 child: Row(
@@ -41,7 +41,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                       IconButton(
                         onPressed: onToggleSidebar,
                         icon: const Icon(Icons.menu_rounded),
-                        color: AppTheme.textSecondary,
+                        color: Colors.black,
                         iconSize: 20,
                       ),
                       const SizedBox(width: AppTheme.sp8),
@@ -73,7 +73,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                           onPressed: onNotificationTap,
                           icon: const Icon(Icons.notifications_outlined),
                           iconSize: 22,
-                          color: AppTheme.textSecondary,
+                          color: AppTheme.greyLight,
                         ),
                         if (notificationCount > 0)
                           Positioned(
@@ -83,7 +83,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                               width: 16,
                               height: 16,
                               decoration: const BoxDecoration(
-                                color: AppTheme.error,
+                                color: AppTheme.red,
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -104,14 +104,14 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () {},
                       icon: const Icon(Icons.history_rounded),
                       iconSize: 22,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.greyLight,
                     ),
                     const SizedBox(width: AppTheme.sp8),
                     // User avatar
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 18,
-                      backgroundColor: AppTheme.primary,
-                      child: const Text(
+                      backgroundColor: Colors.black,
+                      child: Text(
                         'USER',
                         style: TextStyle(
                           color: Colors.white,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 import 'package:rayhan_erp/widgets/custom/status_badge.dart';
 import 'package:rayhan_erp/widgets/custom/stock_level_indicator.dart';
@@ -65,15 +65,17 @@ class _RapportsScreenState extends State<RapportsScreen>
               // Tab bar
               Container(
                 decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: AppTheme.border)),
+                  border: Border(
+                      bottom: BorderSide(
+                          color: AppTheme.whiteTintedorGreyAddAlpha02)),
                 ),
                 child: TabBar(
                   controller: _tab,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  labelColor: AppTheme.primary,
-                  unselectedLabelColor: AppTheme.textSecondary,
-                  indicatorColor: AppTheme.primary,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: AppTheme.grey,
+                  indicatorColor: Colors.black,
                   indicatorWeight: 2,
                   labelStyle: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w600),
@@ -128,8 +130,8 @@ class _VueGlobale extends StatelessWidget {
                   trend: '+12%',
                   trendPositive: true,
                   icon: Icons.trending_up_rounded,
-                  iconColor: AppTheme.success,
-                  iconBackground: AppTheme.successSurface,
+                  iconColor: AppTheme.greenBright,
+                  iconBackground: AppTheme.greenLight,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -141,8 +143,8 @@ class _VueGlobale extends StatelessWidget {
                   trend: '+7%',
                   trendPositive: true,
                   icon: Icons.precision_manufacturing_rounded,
-                  iconColor: AppTheme.primary,
-                  iconBackground: AppTheme.primarySurface,
+                  iconColor: Colors.black,
+                  iconBackground: Colors.black,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -154,8 +156,8 @@ class _VueGlobale extends StatelessWidget {
                   trend: '+2.3%',
                   trendPositive: true,
                   icon: Icons.speed_rounded,
-                  iconColor: AppTheme.info,
-                  iconBackground: AppTheme.infoSurface,
+                  iconColor: AppTheme.blueLight,
+                  iconBackground: AppTheme.blueLightest,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -166,8 +168,8 @@ class _VueGlobale extends StatelessWidget {
                   subtitle: '5 critiques ce mois',
                   alertLevel: 'warning',
                   icon: Icons.warning_amber_rounded,
-                  iconColor: AppTheme.warning,
-                  iconBackground: AppTheme.warningSurface,
+                  iconColor: AppTheme.yellow,
+                  iconBackground: AppTheme.yellow,
                 ),
               ),
             ],
@@ -218,9 +220,9 @@ class _TrendLineChart extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _LegendDot(color: AppTheme.primary, label: 'Production'),
+          _LegendDot(color: Colors.black, label: 'Production'),
           const SizedBox(width: 12),
-          _LegendDot(color: AppTheme.success, label: 'Ventes'),
+          _LegendDot(color: AppTheme.greenBright, label: 'Ventes'),
         ],
       ),
       child: SizedBox(
@@ -229,8 +231,8 @@ class _TrendLineChart extends StatelessWidget {
           painter: _LinePainter(
             seriesA: _production,
             seriesB: _ventes,
-            colorA: AppTheme.primary,
-            colorB: AppTheme.success,
+            colorA: Colors.black,
+            colorB: AppTheme.greenBright,
           ),
           child: Align(
             alignment: Alignment.bottomCenter,
@@ -243,7 +245,7 @@ class _TrendLineChart extends StatelessWidget {
                           m,
                           style: const TextStyle(
                             fontSize: 10,
-                            color: AppTheme.textMuted,
+                            color: AppTheme.greyLight,
                           ),
                         ))
                     .toList(),
@@ -358,9 +360,7 @@ class _LegendDot extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(label,
-            style:
-                const TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+        Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.grey)),
       ],
     );
   }
@@ -373,13 +373,13 @@ class _LegendDot extends StatelessWidget {
 class _ModuleBreakdown extends StatelessWidget {
   static const List<_BreakdownRow> _rows = [
     _BreakdownRow(
-        label: 'Ventes', value: 142600, pct: 0.46, color: AppTheme.success),
+        label: 'Ventes', value: 142600, pct: 0.46, color: AppTheme.greenBright),
     _BreakdownRow(
-        label: 'Production', value: 98200, pct: 0.32, color: AppTheme.primary),
+        label: 'Production', value: 98200, pct: 0.32, color: Colors.black),
     _BreakdownRow(
-        label: 'Achats', value: 48200, pct: 0.16, color: AppTheme.info),
+        label: 'Achats', value: 48200, pct: 0.16, color: AppTheme.blueLight),
     _BreakdownRow(
-        label: 'Maintenance', value: 18000, pct: 0.06, color: AppTheme.warning),
+        label: 'Maintenance', value: 18000, pct: 0.06, color: AppTheme.yellow),
   ];
 
   @override
@@ -475,31 +475,31 @@ class _ActivityLog extends StatelessWidget {
     _ActivityEntry(
       time: 'Aujourd\'hui, 11:00',
       module: 'Production',
-      color: AppTheme.primary,
+      color: Colors.black,
       event: 'Lot LOT-2023-442 atteint 75% — Phase 3 démarrée.',
     ),
     _ActivityEntry(
       time: 'Aujourd\'hui, 09:30',
       module: 'Maintenance',
-      color: AppTheme.warning,
+      color: AppTheme.yellow,
       event: 'Alerte Robot-A4: surchauffe détectée. Refroidissement actif.',
     ),
     _ActivityEntry(
       time: 'Aujourd\'hui, 08:15',
       module: 'Ventes',
-      color: AppTheme.success,
+      color: AppTheme.greenBright,
       event: 'VTE-2023-089 validée — Industries Mécaniques SARL — 12 450 €.',
     ),
     _ActivityEntry(
       time: 'Hier, 17:45',
       module: 'Stocks',
-      color: AppTheme.error,
+      color: AppTheme.red,
       event: 'LDPE tombe sous le seuil minimal. Réapprovisionnement requis.',
     ),
     _ActivityEntry(
       time: 'Hier, 15:00',
       module: 'Achats',
-      color: AppTheme.info,
+      color: AppTheme.blueLight,
       event: 'ACH-2023-041 livré — 5 000 kg HDPE reçus de PolyChim Industries.',
     ),
   ];
@@ -534,7 +534,7 @@ class _ActivityTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp12),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.divider)),
+        border: Border(bottom: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -577,7 +577,7 @@ class _ActivityTile extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(entry.event,
                     style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: AppTheme.textPrimary)),
+                        ?.copyWith(color: Colors.black)),
               ],
             ),
           ),
@@ -680,8 +680,7 @@ class _WeeklyBarChart extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color:
-                                isToday ? AppTheme.primary : AppTheme.textMuted,
+                            color: isToday ? Colors.black : AppTheme.greyLight,
                           ),
                         ),
                       const SizedBox(height: 4),
@@ -693,7 +692,7 @@ class _WeeklyBarChart extends StatelessWidget {
                           Container(
                             height: 160,
                             decoration: BoxDecoration(
-                              color: AppTheme.surfaceVariant,
+                              color: AppTheme.whiteSurface2,
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -704,11 +703,10 @@ class _WeeklyBarChart extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: isToday
-                                      ? AppTheme.primary
+                                      ? Colors.black
                                       : data[i] >= target
-                                          ? AppTheme.success
-                                          : AppTheme.primaryLight
-                                              .withOpacity(0.6),
+                                          ? AppTheme.greenBright
+                                          : Colors.black.withOpacity(0.6),
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(4),
                                   ),
@@ -722,7 +720,7 @@ class _WeeklyBarChart extends StatelessWidget {
                             right: 0,
                             child: Container(
                               height: 1.5,
-                              color: AppTheme.error.withOpacity(0.4),
+                              color: AppTheme.red.withOpacity(0.4),
                             ),
                           ),
                         ],
@@ -743,7 +741,7 @@ class _WeeklyBarChart extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: AppTheme.textMuted,
+                        color: AppTheme.greyLight,
                       ),
                     ),
                   ))
@@ -769,7 +767,9 @@ class _LotStatusTable extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.sp16, vertical: AppTheme.sp10),
             decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.border)),
+              border: Border(
+                  bottom:
+                      BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
             ),
             child: Row(
               children: const [
@@ -784,7 +784,8 @@ class _LotStatusTable extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.sp16, vertical: AppTheme.sp12),
                 decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: AppTheme.divider)),
+                  border:
+                      Border(bottom: BorderSide(color: AppTheme.blueLightest)),
                 ),
                 child: Row(
                   children: [
@@ -795,7 +796,7 @@ class _LotStatusTable extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primary,
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -805,7 +806,7 @@ class _LotStatusTable extends StatelessWidget {
                         p.produitDesignation,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textPrimary,
+                          color: Colors.black,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -824,9 +825,9 @@ class _LotStatusTable extends StatelessWidget {
                               child: LinearProgressIndicator(
                                 value: p.progression,
                                 minHeight: 6,
-                                backgroundColor: AppTheme.surfaceVariant,
-                                valueColor: const AlwaysStoppedAnimation(
-                                    AppTheme.primary),
+                                backgroundColor: AppTheme.whiteSurface2,
+                                valueColor:
+                                    const AlwaysStoppedAnimation(Colors.black),
                               ),
                             ),
                           ),
@@ -836,7 +837,7 @@ class _LotStatusTable extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.grey,
                             ),
                           ),
                         ],
@@ -862,7 +863,7 @@ class _TH extends StatelessWidget {
       style: const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: AppTheme.textMuted,
+        color: AppTheme.greyLight,
         letterSpacing: 0.5,
       ),
     );
@@ -892,7 +893,7 @@ class _OeeTrendCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: isLast ? AppTheme.primary : AppTheme.textPrimary,
+                        color: isLast ? Colors.black : Colors.black,
                       ),
                     ),
                     Text(
@@ -904,8 +905,7 @@ class _OeeTrendCard extends StatelessWidget {
                       height: 4,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
-                        color:
-                            isLast ? AppTheme.primary : AppTheme.surfaceVariant,
+                        color: isLast ? Colors.black : AppTheme.whiteSurface2,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -918,13 +918,13 @@ class _OeeTrendCard extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.trending_up_rounded,
-                  size: 16, color: AppTheme.success),
+                  size: 16, color: AppTheme.greenBright),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   'Amélioration de +6 points sur le mois — Objectif 95% atteint prochainement.',
                   style: theme.textTheme.bodySmall
-                      ?.copyWith(color: AppTheme.success),
+                      ?.copyWith(color: AppTheme.greenBright),
                 ),
               ),
             ],
@@ -958,8 +958,8 @@ class _VentesTab extends StatelessWidget {
                   trend: '+12%',
                   trendPositive: true,
                   icon: Icons.euro_rounded,
-                  iconColor: AppTheme.success,
-                  iconBackground: AppTheme.successSurface,
+                  iconColor: AppTheme.greenBright,
+                  iconBackground: AppTheme.greenLight,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -969,8 +969,8 @@ class _VentesTab extends StatelessWidget {
                   value: '98',
                   subtitle: 'Sur 128 commandes',
                   icon: Icons.check_circle_outline_rounded,
-                  iconColor: AppTheme.primary,
-                  iconBackground: AppTheme.primarySurface,
+                  iconColor: Colors.black,
+                  iconBackground: Colors.black,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -980,8 +980,8 @@ class _VentesTab extends StatelessWidget {
                   value: '97.2%',
                   subtitle: 'Basé sur les retours client',
                   icon: Icons.thumb_up_outlined,
-                  iconColor: AppTheme.info,
-                  iconBackground: AppTheme.infoSurface,
+                  iconColor: AppTheme.blueLight,
+                  iconBackground: AppTheme.blueLightest,
                 ),
               ),
             ],
@@ -1015,7 +1015,9 @@ class _TopClientTable extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.sp20, vertical: AppTheme.sp10),
             decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppTheme.border))),
+                border: Border(
+                    bottom: BorderSide(
+                        color: AppTheme.whiteTintedorGreyAddAlpha02))),
             child: Row(
               children: const [
                 Expanded(flex: 3, child: _TH('CLIENT')),
@@ -1029,8 +1031,8 @@ class _TopClientTable extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.sp20, vertical: AppTheme.sp14),
                 decoration: const BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: AppTheme.divider))),
+                    border: Border(
+                        bottom: BorderSide(color: AppTheme.blueLightest))),
                 child: Row(
                   children: [
                     Expanded(
@@ -1056,11 +1058,11 @@ class _TopClientTable extends StatelessWidget {
                               child: LinearProgressIndicator(
                                 value: r.livraison,
                                 minHeight: 6,
-                                backgroundColor: AppTheme.surfaceVariant,
+                                backgroundColor: AppTheme.whiteSurface2,
                                 valueColor: AlwaysStoppedAnimation(
                                     r.livraison > 0.95
-                                        ? AppTheme.success
-                                        : AppTheme.warning),
+                                        ? AppTheme.greenBright
+                                        : AppTheme.yellow),
                               ),
                             ),
                           ),
@@ -1115,8 +1117,8 @@ class _StocksTab extends StatelessWidget {
                   value: '€ 2.4M',
                   subtitle: 'Méthode FIFO',
                   icon: Icons.account_balance_wallet_outlined,
-                  iconColor: AppTheme.primary,
-                  iconBackground: AppTheme.primarySurface,
+                  iconColor: Colors.black,
+                  iconBackground: Colors.black,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -1128,8 +1130,8 @@ class _StocksTab extends StatelessWidget {
                   trend: '+0.3',
                   trendPositive: true,
                   icon: Icons.autorenew_rounded,
-                  iconColor: AppTheme.success,
-                  iconBackground: AppTheme.successSurface,
+                  iconColor: AppTheme.greenBright,
+                  iconBackground: AppTheme.greenLight,
                 ),
               ),
               SizedBox(width: AppTheme.sp16),
@@ -1140,8 +1142,8 @@ class _StocksTab extends StatelessWidget {
                   alertLevel: 'error',
                   subtitle: 'Réapprovisionnement requis',
                   icon: Icons.warning_amber_rounded,
-                  iconColor: AppTheme.error,
-                  iconBackground: AppTheme.errorSurface,
+                  iconColor: AppTheme.red,
+                  iconBackground: AppTheme.red,
                 ),
               ),
             ],

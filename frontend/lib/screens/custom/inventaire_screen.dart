@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:rayhan_erp/models/mock/enums.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 import 'package:rayhan_erp/widgets/custom/stock_level_indicator.dart';
 
@@ -66,7 +66,7 @@ class InventaireScreen extends StatelessWidget {
 class _Breadcrumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(fontSize: 12, color: AppTheme.textMuted);
+    const style = TextStyle(fontSize: 12, color: AppTheme.greyLight);
     const sep = Padding(
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Text('/', style: style),
@@ -81,7 +81,7 @@ class _Breadcrumb extends StatelessWidget {
           'Gestion des Stocks',
           style: TextStyle(
             fontSize: 12,
-            color: AppTheme.primary,
+            color: Colors.black,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -103,8 +103,8 @@ class _KpiRow extends StatelessWidget {
             trend: '+12%',
             trendPositive: true,
             icon: Icons.inventory_2_rounded,
-            iconColor: AppTheme.primary,
-            iconBackground: AppTheme.primarySurface,
+            iconColor: Colors.black,
+            iconBackground: Colors.black,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -114,8 +114,8 @@ class _KpiRow extends StatelessWidget {
             value: '€2.4M',
             subtitle: 'Estimation basée sur le coût FIFO',
             icon: Icons.account_balance_wallet_outlined,
-            iconColor: AppTheme.info,
-            iconBackground: AppTheme.infoSurface,
+            iconColor: AppTheme.blueLight,
+            iconBackground: AppTheme.blueLightest,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -126,8 +126,8 @@ class _KpiRow extends StatelessWidget {
             subtitle: 'Nécessite une action immédiate',
             alertLevel: 'error',
             icon: Icons.warning_amber_rounded,
-            iconColor: AppTheme.error,
-            iconBackground: AppTheme.errorSurface,
+            iconColor: AppTheme.red,
+            iconBackground: AppTheme.red,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -137,8 +137,8 @@ class _KpiRow extends StatelessWidget {
             value: '4.2',
             subtitle: 'x/an — Performance industrielle optimale',
             icon: Icons.autorenew_rounded,
-            iconColor: AppTheme.success,
-            iconBackground: AppTheme.successSurface,
+            iconColor: AppTheme.greenBright,
+            iconBackground: AppTheme.greenLight,
           ),
         ),
       ],
@@ -172,22 +172,22 @@ class _SilosSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Colors.black,
               ),
             ),
             const Spacer(),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppTheme.primarySurface,
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
                 'SURVEILLANCE DIRECTE',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.primary,
+                  color: Colors.black,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -216,7 +216,7 @@ class _SilosSection extends StatelessWidget {
                 poids: ldpe.stockActuel,
                 unite: ldpe.unite,
                 actionLabel: 'COMMANDER STOCK',
-                actionColor: AppTheme.error,
+                actionColor: AppTheme.red,
               ),
             ),
           ],
@@ -257,13 +257,13 @@ class _MovementsPanel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                     letterSpacing: 0.6,
                   ),
                 ),
                 Spacer(),
                 Icon(Icons.refresh_rounded,
-                    size: 14, color: AppTheme.textMuted),
+                    size: 14, color: AppTheme.greyLight),
               ],
             ),
           ),
@@ -282,7 +282,7 @@ class _JournalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isEntree = mouvement.isEntree;
-    final color = isEntree ? AppTheme.success : AppTheme.error;
+    final color = isEntree ? AppTheme.greenBright : AppTheme.red;
     final sign = isEntree ? '+' : '-';
 
     return Container(
@@ -291,7 +291,7 @@ class _JournalTile extends StatelessWidget {
         vertical: AppTheme.sp12,
       ),
       decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: AppTheme.divider)),
+        border: Border(top: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +305,7 @@ class _JournalTile extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -313,7 +313,7 @@ class _JournalTile extends StatelessWidget {
                   mouvement.designation,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.grey,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -321,7 +321,7 @@ class _JournalTile extends StatelessWidget {
                   'Par: ${mouvement.operateur} • ${_fmtTime(mouvement.date)}',
                   style: const TextStyle(
                     fontSize: 10,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                   ),
                 ),
               ],
@@ -357,8 +357,8 @@ class _MovBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isEntree ? AppTheme.success : AppTheme.error;
-    final bg = isEntree ? AppTheme.successSurface : AppTheme.errorSurface;
+    final color = isEntree ? AppTheme.greenBright : AppTheme.red;
+    final bg = isEntree ? AppTheme.greenLight : AppTheme.red;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -409,7 +409,7 @@ class _ProduitsTable extends StatelessWidget {
               children: const [
                 Text(
                   'AFFICHAGE 1–15 SUR 1,284 PRODUITS',
-                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                  style: TextStyle(fontSize: 11, color: AppTheme.greyLight),
                 ),
                 Spacer(),
               ],
@@ -431,9 +431,9 @@ class _DropdownBtn extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -441,11 +441,11 @@ class _DropdownBtn extends StatelessWidget {
           Text(label,
               style: const TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.grey,
                   fontWeight: FontWeight.w500)),
           const SizedBox(width: 6),
           const Icon(Icons.keyboard_arrow_down_rounded,
-              size: 16, color: AppTheme.textMuted),
+              size: 16, color: AppTheme.greyLight),
         ],
       ),
     );
@@ -458,7 +458,7 @@ class _ProduitTableHeader extends StatelessWidget {
     const style = TextStyle(
       fontSize: 11,
       fontWeight: FontWeight.w600,
-      color: AppTheme.textMuted,
+      color: AppTheme.greyLight,
       letterSpacing: 0.5,
     );
     return Container(
@@ -467,7 +467,8 @@ class _ProduitTableHeader extends StatelessWidget {
         vertical: AppTheme.sp12,
       ),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.border)),
+        border: Border(
+            bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
       ),
       child: Row(
         children: const [
@@ -494,7 +495,7 @@ class _ProduitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isLow = produit.isStockBas;
-    final stockColor = isLow ? AppTheme.error : AppTheme.textPrimary;
+    final stockColor = isLow ? AppTheme.red : Colors.black;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -502,7 +503,7 @@ class _ProduitRow extends StatelessWidget {
         vertical: AppTheme.sp16,
       ),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.divider)),
+        border: Border(bottom: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         children: [
@@ -522,11 +523,11 @@ class _ProduitRow extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: AppTheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    color: AppTheme.whiteSurface2,
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Icon(Icons.widgets_outlined,
-                      size: 16, color: AppTheme.textMuted),
+                      size: 16, color: AppTheme.greyLight),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -543,15 +544,15 @@ class _ProduitRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                color: AppTheme.whiteSurface2,
+                borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 produit.categorie,
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.grey,
                 ),
               ),
             ),
@@ -572,9 +573,9 @@ class _ProduitRow extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: produit.niveauReapprovisionnement,
                   minHeight: 6,
-                  backgroundColor: AppTheme.surfaceVariant,
+                  backgroundColor: AppTheme.whiteSurface2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isLow ? AppTheme.error : AppTheme.primary,
+                    isLow ? AppTheme.red : Colors.black,
                   ),
                 ),
               ),

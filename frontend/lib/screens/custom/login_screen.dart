@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/brand_panel.dart';
 import 'package:rayhan_erp/widgets/custom/demo_hint.dart';
 import 'package:rayhan_erp/widgets/custom/dialogs.dart';
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.whiteSurface,
       body: Row(
         children: [
           // ── Left brand panel ──────────────────────────────────────────
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen>
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
-                              color: AppTheme.textPrimary,
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: AppTheme.sp4),
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'Accédez à votre espace PlastiqueERP.',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.grey,
                             ),
                           ),
                           const SizedBox(height: AppTheme.sp32),
@@ -187,9 +187,9 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: ElevatedButton(
                                     onPressed: _loading ? null : _submit,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.primary,
-                                      disabledBackgroundColor: AppTheme.primary
-                                          .withValues(alpha: 0.6),
+                                      backgroundColor: Colors.black,
+                                      disabledBackgroundColor:
+                                          Colors.black.withValues(alpha: 0.6),
                                     ),
                                     child: _loading
                                         ? const SizedBox(

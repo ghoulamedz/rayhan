@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 class RayhanLogo extends StatelessWidget {
   const RayhanLogo({super.key});
@@ -15,11 +15,11 @@ class RayhanLogo extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppTheme.primary,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(Icons.precision_manufacturing_rounded,
-              color: Colors.white, size: 18),
+              color: AppTheme.blueLight, size: 18),
         ),
         const SizedBox(width: 10),
         const Text(
@@ -27,7 +27,7 @@ class RayhanLogo extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: AppTheme.textPrimary,
+            color: Colors.black,
           ),
         ),
       ],

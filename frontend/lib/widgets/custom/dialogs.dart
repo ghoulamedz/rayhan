@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // AppDialog
@@ -52,8 +52,8 @@ class AppDialog extends StatelessWidget {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+          color: AppTheme.whiteSurface,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: AppTheme.shadowLg,
         ),
         child: Column(
@@ -65,7 +65,7 @@ class AppDialog extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(
                   AppTheme.sp24, AppTheme.sp20, AppTheme.sp20, AppTheme.sp20),
               decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppTheme.border)),
+                border: Border(bottom: BorderSide(color: Colors.black)),
               ),
               child: Row(
                 children: [
@@ -74,13 +74,13 @@ class AppDialog extends StatelessWidget {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: (iconColor ?? AppTheme.primary).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        color: (iconColor ?? Colors.black).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         icon,
                         size: 18,
-                        color: iconColor ?? AppTheme.primary,
+                        color: iconColor ?? Colors.black,
                       ),
                     ),
                     const SizedBox(width: AppTheme.sp12),
@@ -100,7 +100,7 @@ class AppDialog extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded),
                     iconSize: 18,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.greyLight,
                     padding: EdgeInsets.zero,
                     constraints:
                         const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -123,7 +123,7 @@ class AppDialog extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(
                     AppTheme.sp24, AppTheme.sp16, AppTheme.sp24, AppTheme.sp20),
                 decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: AppTheme.border)),
+                  border: Border(top: BorderSide(color: Colors.black)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -202,7 +202,7 @@ class ConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final confirmColor = destructive ? AppTheme.error : AppTheme.primary;
+    final confirmColor = destructive ? AppTheme.red : Colors.black;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -210,8 +210,8 @@ class ConfirmDialog extends StatelessWidget {
         width: 400,
         padding: const EdgeInsets.all(AppTheme.sp24),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+          color: AppTheme.whiteSurface,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: AppTheme.shadowLg,
         ),
         child: Column(
@@ -224,10 +224,8 @@ class ConfirmDialog extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: destructive
-                        ? AppTheme.errorSurface
-                        : AppTheme.warningSurface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    color: destructive ? AppTheme.red : AppTheme.yellow,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon ??
@@ -235,7 +233,7 @@ class ConfirmDialog extends StatelessWidget {
                             ? Icons.delete_outline_rounded
                             : Icons.help_outline_rounded),
                     size: 20,
-                    color: destructive ? AppTheme.error : AppTheme.warning,
+                    color: destructive ? AppTheme.red : AppTheme.yellow,
                   ),
                 ),
                 const SizedBox(width: AppTheme.sp12),
@@ -247,7 +245,7 @@ class ConfirmDialog extends StatelessWidget {
             const SizedBox(height: AppTheme.sp16),
             Text(message,
                 style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: AppTheme.textSecondary, height: 1.5)),
+                    ?.copyWith(color: AppTheme.greyLight, height: 1.5)),
             const SizedBox(height: AppTheme.sp24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -329,13 +327,13 @@ class ErpTextField extends StatelessWidget {
           text: TextSpan(
             text: label,
             style: theme.textTheme.titleSmall?.copyWith(
-              color: AppTheme.textSecondary,
+              color: AppTheme.greyLight,
             ),
             children: required
                 ? [
                     const TextSpan(
                       text: ' *',
-                      style: TextStyle(color: AppTheme.error),
+                      style: TextStyle(color: AppTheme.red),
                     )
                   ]
                 : [],
@@ -357,7 +355,7 @@ class ErpTextField extends StatelessWidget {
             suffix: suffixText != null
                 ? Text(suffixText!,
                     style: const TextStyle(
-                        fontSize: 12, color: AppTheme.textMuted))
+                        fontSize: 12, color: AppTheme.greyLight))
                 : null,
           ),
         ),
@@ -395,13 +393,13 @@ class ErpDropdown<T> extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: label,
-            style: theme.textTheme.titleSmall
-                ?.copyWith(color: AppTheme.textSecondary),
+            style:
+                theme.textTheme.titleSmall?.copyWith(color: AppTheme.greyLight),
             children: required
                 ? [
                     const TextSpan(
                       text: ' *',
-                      style: TextStyle(color: AppTheme.error),
+                      style: TextStyle(color: AppTheme.red),
                     )
                   ]
                 : [],
@@ -413,13 +411,13 @@ class ErpDropdown<T> extends StatelessWidget {
           items: items,
           onChanged: onChanged,
           hint: Text(hint,
-              style: const TextStyle(fontSize: 13, color: AppTheme.textMuted)),
+              style: const TextStyle(fontSize: 13, color: AppTheme.greyLight)),
           style: theme.textTheme.bodyLarge,
           decoration: const InputDecoration(),
-          dropdownColor: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          dropdownColor: AppTheme.whiteSurface,
+          borderRadius: BorderRadius.circular(8),
           icon: const Icon(Icons.keyboard_arrow_down_rounded,
-              size: 18, color: AppTheme.textMuted),
+              size: 18, color: AppTheme.greyLight),
         ),
       ],
     );
@@ -470,7 +468,7 @@ class FormSectionLabel extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textMuted,
+              color: AppTheme.greyLight,
               letterSpacing: 0.8,
             ),
           ),
@@ -494,16 +492,16 @@ class FormSectionLabel extends StatelessWidget {
 /// ```
 abstract final class AppToast {
   static void success(BuildContext context, String message) =>
-      _show(context, message, AppTheme.success, Icons.check_circle_rounded);
+      _show(context, message, AppTheme.greenBright, Icons.check_circle_rounded);
 
   static void error(BuildContext context, String message) =>
-      _show(context, message, AppTheme.error, Icons.error_outline_rounded);
+      _show(context, message, AppTheme.red, Icons.error_outline_rounded);
 
   static void info(BuildContext context, String message) =>
-      _show(context, message, AppTheme.info, Icons.info_outline_rounded);
+      _show(context, message, AppTheme.greenBright, Icons.info_outline_rounded);
 
   static void warning(BuildContext context, String message) =>
-      _show(context, message, AppTheme.warning, Icons.warning_amber_rounded);
+      _show(context, message, AppTheme.yellow, Icons.warning_amber_rounded);
 
   static void _show(
     BuildContext context,
@@ -532,7 +530,7 @@ abstract final class AppToast {
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(8),
         ),
         margin: const EdgeInsets.all(AppTheme.sp24),
         duration: const Duration(seconds: 3),

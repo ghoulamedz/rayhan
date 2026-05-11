@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Navigation items definition
@@ -114,14 +114,13 @@ class AppSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width =
-        collapsed ? AppTheme.sidebarCollapsedWidth : AppTheme.sidebarWidth;
+    final width = collapsed ? 64.0 : 240.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       width: width,
-      color: AppTheme.sidebarBg,
+      color: AppTheme.greyLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -195,8 +194,8 @@ class _SidebarLogo extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppTheme.primary,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
               Icons.precision_manufacturing_rounded,
@@ -222,7 +221,6 @@ class _SidebarLogo extends StatelessWidget {
                 Text(
                   'La société Rayhan',
                   style: TextStyle(
-                    color: AppTheme.sidebarText,
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.8,
@@ -253,15 +251,14 @@ class _UserTile extends StatelessWidget {
         vertical: AppTheme.sp8,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.sidebarHover,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 16,
-            backgroundColor: AppTheme.primary,
-            child: const Text(
+            backgroundColor: Colors.black,
+            child: Text(
               'JD',
               style: TextStyle(
                 color: Colors.white,
@@ -272,11 +269,11 @@ class _UserTile extends StatelessWidget {
           ),
           if (!collapsed) ...[
             const SizedBox(width: AppTheme.sp8),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Jean Dupont',
                     style: TextStyle(
@@ -289,7 +286,6 @@ class _UserTile extends StatelessWidget {
                   Text(
                     'Contremaître Principal',
                     style: TextStyle(
-                      color: AppTheme.sidebarText,
                       fontSize: 10,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -326,7 +322,7 @@ class _NavTile extends StatelessWidget {
         //placement: TooltipPlacement.right,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(8),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             height: 40,
@@ -334,16 +330,15 @@ class _NavTile extends StatelessWidget {
               horizontal: collapsed ? 12 : AppTheme.sp12,
             ),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.sidebarHover : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: isSelected ? AppTheme.greyLight : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   isSelected ? item.activeIcon : item.icon,
                   size: 18,
-                  color:
-                      isSelected ? AppTheme.primaryLight : AppTheme.sidebarText,
+                  color: isSelected ? Colors.black : AppTheme.greyLight,
                 ),
                 if (!collapsed) ...[
                   const SizedBox(width: 10),
@@ -351,7 +346,7 @@ class _NavTile extends StatelessWidget {
                     child: Text(
                       item.label,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : AppTheme.sidebarText,
+                        color: isSelected ? Colors.white : AppTheme.greyLight,
                         fontSize: 13,
                         fontWeight:
                             isSelected ? FontWeight.w500 : FontWeight.w400,
@@ -380,7 +375,7 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: BoxDecoration(
-        color: AppTheme.error,
+        color: AppTheme.red,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -422,8 +417,8 @@ class _Badge extends StatelessWidget {
 //     return Container(
 //       height: 64,
 //       decoration: const BoxDecoration(
-//         color: AppTheme.surface,
-//         border: Border(bottom: BorderSide(color: AppTheme.border)),
+//         color: AppTheme.whiteSurface,
+//         border: Border(bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
 //       ),
 //       padding: const EdgeInsets.symmetric(horizontal: AppTheme.sp24),
 //       child: Row(
@@ -432,7 +427,7 @@ class _Badge extends StatelessWidget {
 //             IconButton(
 //               onPressed: onToggleSidebar,
 //               icon: const Icon(Icons.menu_rounded),
-//               color: AppTheme.textSecondary,
+//               color: AppTheme.grey,
 //               iconSize: 20,
 //             ),
 //             const SizedBox(width: AppTheme.sp8),
@@ -463,7 +458,7 @@ class _Badge extends StatelessWidget {
 //                 onPressed: onNotificationTap,
 //                 icon: const Icon(Icons.notifications_outlined),
 //                 iconSize: 22,
-//                 color: AppTheme.textSecondary,
+//                 color: AppTheme.grey,
 //               ),
 //               if (notificationCount > 0)
 //                 Positioned(
@@ -473,7 +468,7 @@ class _Badge extends StatelessWidget {
 //                     width: 16,
 //                     height: 16,
 //                     decoration: const BoxDecoration(
-//                       color: AppTheme.error,
+//                       color: AppTheme.red,
 //                       shape: BoxShape.circle,
 //                     ),
 //                     child: Center(
@@ -494,13 +489,13 @@ class _Badge extends StatelessWidget {
 //             onPressed: () {},
 //             icon: const Icon(Icons.history_rounded),
 //             iconSize: 22,
-//             color: AppTheme.textSecondary,
+//             color: AppTheme.grey,
 //           ),
 //           const SizedBox(width: AppTheme.sp8),
 //           // User avatar
 //           CircleAvatar(
 //             radius: 18,
-//             backgroundColor: AppTheme.primary,
+//             backgroundColor: Colors.black,
 //             child: const Text(
 //               'USER',
 //               style: TextStyle(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 
 /// A KPI metric card displaying a [title], large [value], optional [subtitle],
 /// optional [trend] label, and an optional [icon] with [iconColor].
@@ -56,10 +56,10 @@ class StatCard extends StatelessWidget {
         width: width,
         padding: const EdgeInsets.all(AppTheme.sp20),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          color: AppTheme.whiteSurface,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: borderColor ?? AppTheme.border,
+            color: borderColor ?? AppTheme.whiteTintedorGreyAddAlpha02,
             width: borderColor != null ? 1.5 : 1,
           ),
           boxShadow: AppTheme.shadowSm,
@@ -100,16 +100,16 @@ class StatCard extends StatelessWidget {
   }
 
   Color? get _alertBorderColor => switch (alertLevel) {
-        'warning' => AppTheme.warning.withOpacity(0.5),
-        'error' => AppTheme.error.withOpacity(0.5),
-        'success' => AppTheme.success.withOpacity(0.5),
+        'warning' => AppTheme.yellow.withOpacity(0.5),
+        'error' => AppTheme.red.withOpacity(0.5),
+        'success' => AppTheme.greenBright.withOpacity(0.5),
         _ => null,
       };
 
   Color get _valueColor => switch (alertLevel) {
-        'error' => AppTheme.error,
-        'warning' => AppTheme.warning,
-        _ => AppTheme.textPrimary,
+        'error' => AppTheme.red,
+        'warning' => AppTheme.yellow,
+        _ => Colors.black,
       };
 }
 
@@ -141,13 +141,13 @@ class _TopRow extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: iconBackground ?? AppTheme.primarySurface,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: iconBackground ?? Colors.black,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               icon,
               size: 18,
-              color: iconColor ?? AppTheme.primary,
+              color: iconColor ?? Colors.black,
             ),
           ),
           const SizedBox(width: AppTheme.sp8),
@@ -176,14 +176,14 @@ class _TrendBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = positive ? AppTheme.success : AppTheme.error;
-    final bg = positive ? AppTheme.successSurface : AppTheme.errorSurface;
+    final color = positive ? AppTheme.greenBright : AppTheme.red;
+    final bg = positive ? AppTheme.greenLight : AppTheme.red;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         label,

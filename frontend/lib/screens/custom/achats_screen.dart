@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rayhan_erp/models/fournisseur.dart';
 import 'package:rayhan_erp/models/mock/enums.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 import 'package:rayhan_erp/widgets/custom/status_badge.dart';
 
@@ -55,13 +55,15 @@ class _AchatsScreenState extends State<AchatsScreen>
           // Tab bar
           Container(
             decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.border)),
+              border: Border(
+                  bottom:
+                      BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: AppTheme.primary,
-              unselectedLabelColor: AppTheme.textSecondary,
-              indicatorColor: AppTheme.primary,
+              labelColor: Colors.black,
+              unselectedLabelColor: AppTheme.grey,
+              indicatorColor: Colors.black,
               indicatorWeight: 2,
               labelStyle:
                   const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
@@ -104,8 +106,8 @@ class _KpiRow extends StatelessWidget {
             value: '12',
             subtitle: 'Fournisseurs actifs',
             icon: Icons.local_shipping_outlined,
-            iconColor: AppTheme.primary,
-            iconBackground: AppTheme.primarySurface,
+            iconColor: Colors.black,
+            iconBackground: Colors.black,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -117,8 +119,8 @@ class _KpiRow extends StatelessWidget {
             trend: '+8%',
             trendPositive: true,
             icon: Icons.receipt_long_outlined,
-            iconColor: AppTheme.info,
-            iconBackground: AppTheme.infoSurface,
+            iconColor: AppTheme.blueLight,
+            iconBackground: AppTheme.blueLightest,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -129,8 +131,8 @@ class _KpiRow extends StatelessWidget {
             subtitle: 'Nécessite suivi',
             alertLevel: 'warning',
             icon: Icons.schedule_outlined,
-            iconColor: AppTheme.warning,
-            iconBackground: AppTheme.warningSurface,
+            iconColor: AppTheme.yellow,
+            iconBackground: AppTheme.yellow,
           ),
         ),
         SizedBox(width: AppTheme.sp16),
@@ -140,8 +142,8 @@ class _KpiRow extends StatelessWidget {
             value: '4.3/5',
             subtitle: 'Basé sur 8 fournisseurs',
             icon: Icons.star_outline_rounded,
-            iconColor: AppTheme.success,
-            iconBackground: AppTheme.successSurface,
+            iconColor: AppTheme.greenBright,
+            iconBackground: AppTheme.greenLight,
           ),
         ),
       ],
@@ -214,14 +216,15 @@ class _AchatHeader extends StatelessWidget {
     const style = TextStyle(
       fontSize: 11,
       fontWeight: FontWeight.w600,
-      color: AppTheme.textMuted,
+      color: AppTheme.greyLight,
       letterSpacing: 0.5,
     );
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp12),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.border)),
+        border: Border(
+            bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
       ),
       child: Row(
         children: [
@@ -250,7 +253,7 @@ class _AchatTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp14),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.divider)),
+        border: Border(bottom: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         children: [
@@ -259,7 +262,7 @@ class _AchatTile extends StatelessWidget {
             child: Text(
               row.ref,
               style: theme.textTheme.labelLarge?.copyWith(
-                color: AppTheme.primary,
+                color: Colors.black,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -279,8 +282,8 @@ class _AchatTile extends StatelessWidget {
               row.qteRecue,
               style: theme.textTheme.labelLarge?.copyWith(
                 color: row.statut == StatutAchat.livre
-                    ? AppTheme.success
-                    : AppTheme.textPrimary,
+                    ? AppTheme.greenBright
+                    : Colors.black,
               ),
             ),
           ),
@@ -346,9 +349,9 @@ class _FournisseurCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.sp12),
       padding: const EdgeInsets.all(AppTheme.sp16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
         boxShadow: AppTheme.shadowSm,
       ),
       child: Row(
@@ -358,10 +361,8 @@ class _FournisseurCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: fournisseur.actif
-                  ? AppTheme.primarySurface
-                  : AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: fournisseur.actif ? Colors.black : AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
               child: Text(
@@ -369,8 +370,7 @@ class _FournisseurCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color:
-                      fournisseur.actif ? AppTheme.primary : AppTheme.textMuted,
+                  color: fournisseur.actif ? Colors.black : AppTheme.greyLight,
                 ),
               ),
             ),
@@ -391,11 +391,11 @@ class _FournisseurCard extends StatelessWidget {
                     StatusBadge(
                       label: fournisseur.actif ? 'Actif' : 'Inactif',
                       color: fournisseur.actif
-                          ? AppTheme.success
-                          : AppTheme.textMuted,
+                          ? AppTheme.greenBright
+                          : AppTheme.greyLight,
                       backgroundColor: fournisseur.actif
-                          ? AppTheme.successSurface
-                          : AppTheme.surfaceVariant,
+                          ? AppTheme.greenLight
+                          : AppTheme.whiteSurface2,
                     ),
                   ],
                 ),
@@ -418,14 +418,14 @@ class _FournisseurCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppTheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        color: AppTheme.whiteSurface2,
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         m,
                         style: const TextStyle(
                           fontSize: 11,
-                          color: AppTheme.textSecondary,
+                          color: AppTheme.grey,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -446,7 +446,7 @@ class _FournisseurCard extends StatelessWidget {
                 ),
                 const Text(
                   'Délai moyen',
-                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                  style: TextStyle(fontSize: 11, color: AppTheme.greyLight),
                 ),
               ],
             ),
@@ -496,8 +496,7 @@ class _ScoreStars extends StatelessWidget {
           return Icon(
             half ? Icons.star_half_rounded : Icons.star_rounded,
             size: 14,
-            color:
-                (filled || half) ? AppTheme.warning : AppTheme.surfaceVariant,
+            color: (filled || half) ? AppTheme.yellow : AppTheme.whiteSurface2,
           );
         }),
         const SizedBox(width: 4),
@@ -506,7 +505,7 @@ class _ScoreStars extends StatelessWidget {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textSecondary,
+            color: AppTheme.grey,
           ),
         ),
       ],

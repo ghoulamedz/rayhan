@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/dashboard_provider.dart';
@@ -91,10 +93,25 @@ class _RayhanAppState extends State<RayhanApp> {
   Widget build(BuildContext context) {
     if (_router == null) return const SizedBox.shrink();
     return MaterialApp.router(
-      title: 'Rayhan ERP',
+      title: 'RayhanERP | La Précision Industrielle',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
       routerConfig: _router!,
+      scrollBehavior: const _WebScrollBehavior(),
     );
   }
+}
+
+/// Enable mouse-drag scrolling on web/desktop platforms.
+class _WebScrollBehavior extends MaterialScrollBehavior {
+  const _WebScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      };
 }

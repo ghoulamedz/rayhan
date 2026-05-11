@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/mock/index.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 
 /// A compact colored pill badge for displaying status labels.
 ///
@@ -12,7 +12,7 @@ import '../../theme/app_theme.dart';
 /// ```
 /// Or the generic constructor for custom labels:
 /// ```dart
-/// StatusBadge(label: 'Actif', color: AppTheme.success)
+/// StatusBadge(label: 'Actif', color: AppTheme.greenBright)
 /// ```
 class StatusBadge extends StatelessWidget {
   const StatusBadge({
@@ -52,15 +52,15 @@ class StatusBadge extends StatelessWidget {
 
   factory StatusBadge.operational() => const StatusBadge(
         label: 'Opérationnel',
-        color: AppTheme.success,
-        backgroundColor: AppTheme.successSurface,
+        color: AppTheme.greenBright,
+        backgroundColor: AppTheme.greenLight,
         icon: Icons.check_circle_outline_rounded,
       );
 
   factory StatusBadge.alert({required String label}) => StatusBadge(
         label: label,
-        color: AppTheme.error,
-        backgroundColor: AppTheme.errorSurface,
+        color: AppTheme.red,
+        backgroundColor: AppTheme.red,
         icon: Icons.warning_amber_rounded,
       );
 
@@ -75,7 +75,7 @@ class StatusBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: backgroundColor ?? color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -107,32 +107,29 @@ class StatusBadge extends StatelessWidget {
   // ── Private helpers ────────────────────────────────────────────────────────
 
   static (Color, Color) _commandeColors(StatutCommande s) => switch (s) {
-        StatutCommande.valide => (AppTheme.success, AppTheme.successSurface),
-        StatutCommande.livre => (AppTheme.info, AppTheme.infoSurface),
-        StatutCommande.enCours => (AppTheme.warning, AppTheme.warningSurface),
-        StatutCommande.annule => (AppTheme.error, AppTheme.errorSurface),
+        StatutCommande.valide => (AppTheme.greenBright, AppTheme.greenLight),
+        StatutCommande.livre => (AppTheme.blueLight, AppTheme.blueLightest),
+        StatutCommande.enCours => (AppTheme.yellow, AppTheme.yellow),
+        StatutCommande.annule => (AppTheme.red, AppTheme.red),
       };
 
   static (Color, Color) _productionColors(StatutProduction s) => switch (s) {
-        StatutProduction.enCours => (AppTheme.primary, AppTheme.primarySurface),
+        StatutProduction.enCours => (Colors.black, Colors.black),
         StatutProduction.planifie => (
-            AppTheme.textMuted,
-            AppTheme.surfaceVariant
+            AppTheme.greyLight,
+            AppTheme.whiteSurface2
           ),
-        StatutProduction.termine => (AppTheme.success, AppTheme.successSurface),
-        StatutProduction.annule => (AppTheme.error, AppTheme.errorSurface),
+        StatutProduction.termine => (AppTheme.greenBright, AppTheme.greenLight),
+        StatutProduction.annule => (AppTheme.red, AppTheme.red),
       };
 
   static (Color, Color) _achatColors(StatutAchat s) => switch (s) {
-        StatutAchat.livre => (AppTheme.success, AppTheme.successSurface),
-        StatutAchat.enCours => (AppTheme.info, AppTheme.infoSurface),
-        StatutAchat.livraisonPartielle => (
-            AppTheme.warning,
-            AppTheme.warningSurface
-          ),
+        StatutAchat.livre => (AppTheme.greenBright, AppTheme.greenLight),
+        StatutAchat.enCours => (AppTheme.blueLight, AppTheme.blueLightest),
+        StatutAchat.livraisonPartielle => (AppTheme.yellow, AppTheme.yellow),
         StatutAchat.refuse || StatutAchat.annule => (
-            AppTheme.error,
-            AppTheme.errorSurface
+            AppTheme.red,
+            AppTheme.red
           ),
       };
 }

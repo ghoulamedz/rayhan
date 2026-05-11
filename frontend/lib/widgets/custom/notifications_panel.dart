@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 import '../../models/mock/index.dart';
 
 /// Slide-in notification drawer used from the top bar bell icon.
@@ -70,14 +70,13 @@ class NotificationsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final unread = _notifications.where((n) => !n.lu).length;
 
     return Container(
       width: 380,
       decoration: const BoxDecoration(
-        color: AppTheme.surface,
-        border: Border(left: BorderSide(color: AppTheme.border)),
+        color: AppTheme.whiteSurface,
+        border: Border(left: BorderSide(color: Colors.black)),
         boxShadow: [
           BoxShadow(
             color: Color(0x1A000000),
@@ -95,7 +94,7 @@ class NotificationsPanel extends StatelessWidget {
               vertical: AppTheme.sp16,
             ),
             decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.border)),
+              border: Border(bottom: BorderSide(color: Colors.black)),
             ),
             child: Row(
               children: [
@@ -104,7 +103,7 @@ class NotificationsPanel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -113,7 +112,7 @@ class NotificationsPanel extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary,
+                      color: Colors.black,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -142,7 +141,7 @@ class NotificationsPanel extends StatelessWidget {
                     onPressed: onClose,
                     icon: const Icon(Icons.close_rounded),
                     iconSize: 18,
-                    color: AppTheme.textMuted,
+                    color: Colors.white,
                   ),
               ],
             ),
@@ -197,7 +196,7 @@ class _FilterPill extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           decoration: BoxDecoration(
-            color: selected ? AppTheme.primary : AppTheme.surfaceVariant,
+            color: selected ? Colors.black : AppTheme.whiteSurface2,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -205,7 +204,7 @@ class _FilterPill extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: selected ? Colors.white : AppTheme.textSecondary,
+              color: selected ? Colors.white : AppTheme.greyLight,
             ),
           ),
         ),
@@ -228,10 +227,11 @@ class _NotifTile extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color:
-            n.lu ? AppTheme.surface : AppTheme.primarySurface.withOpacity(0.4),
+        color: n.lu
+            ? AppTheme.whiteSurface
+            : AppTheme.whiteSurface.withOpacity(0.4),
         border: const Border(
-          bottom: BorderSide(color: AppTheme.divider),
+          bottom: BorderSide(color: Colors.black),
         ),
       ),
       child: InkWell(
@@ -250,7 +250,7 @@ class _NotifTile extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: bg,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, size: 17, color: color),
               ),
@@ -283,7 +283,7 @@ class _NotifTile extends StatelessWidget {
                           _timeAgo(n.dateEnvoi),
                           style: const TextStyle(
                             fontSize: 10,
-                            color: AppTheme.textMuted,
+                            color: AppTheme.greyLight,
                           ),
                         ),
                         if (!n.lu) ...[
@@ -292,7 +292,7 @@ class _NotifTile extends StatelessWidget {
                             width: 7,
                             height: 7,
                             decoration: const BoxDecoration(
-                              color: AppTheme.primary,
+                              color: Colors.black,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -304,9 +304,7 @@ class _NotifTile extends StatelessWidget {
                       n.message,
                       style: TextStyle(
                         fontSize: 13,
-                        color: n.lu
-                            ? AppTheme.textSecondary
-                            : AppTheme.textPrimary,
+                        color: n.lu ? Colors.white : Colors.white,
                         height: 1.4,
                         fontWeight: n.lu ? FontWeight.w400 : FontWeight.w500,
                       ),
@@ -323,27 +321,27 @@ class _NotifTile extends StatelessWidget {
 
   static (Color, Color, IconData) _urgenceStyle(NiveauUrgence u) => switch (u) {
         NiveauUrgence.critique => (
-            AppTheme.error,
-            AppTheme.errorSurface,
+            AppTheme.red,
+            AppTheme.red,
             Icons.error_outline_rounded,
           ),
         NiveauUrgence.avertissement => (
-            AppTheme.warning,
-            AppTheme.warningSurface,
+            AppTheme.yellow,
+            AppTheme.yellow,
             Icons.warning_amber_rounded,
           ),
         NiveauUrgence.info => (
-            AppTheme.info,
-            AppTheme.infoSurface,
+            AppTheme.greenBright,
+            AppTheme.greenBright,
             Icons.info_outline_rounded,
           ),
       };
 
   static Color _catColor(CategorieNotif c) => switch (c) {
-        CategorieNotif.stock => AppTheme.warning,
-        CategorieNotif.production => AppTheme.primary,
-        CategorieNotif.vente => AppTheme.success,
-        CategorieNotif.achat => AppTheme.info,
+        CategorieNotif.stock => AppTheme.yellow,
+        CategorieNotif.production => Colors.black,
+        CategorieNotif.vente => AppTheme.greenBright,
+        CategorieNotif.achat => AppTheme.blueLight,
       };
 
   String _timeAgo(DateTime dt) {

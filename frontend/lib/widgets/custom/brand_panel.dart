@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 class BrandPanel extends StatelessWidget {
   const BrandPanel({super.key});
@@ -36,7 +36,7 @@ class BrandPanel extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.precision_manufacturing_rounded,
@@ -110,8 +110,7 @@ class BrandPanel extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child:
-                          Icon(item.$1, size: 15, color: AppTheme.primaryLight),
+                      child: Icon(item.$1, size: 15, color: Colors.black),
                     ),
                     const SizedBox(width: 10),
                     Text(

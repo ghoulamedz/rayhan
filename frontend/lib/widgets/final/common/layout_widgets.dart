@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../../../constants/app_theme.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // SectionHeader
@@ -16,35 +16,66 @@ import '../../theme/app_theme.dart';
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
+    this.eyebrow,
     required this.title,
     this.subtitle,
-    this.action,
+    this.alignment = TextAlign.center,
+    this.titleColor,
   });
 
+  final String? eyebrow;
   final String title;
   final String? subtitle;
-  final Widget? action;
+  final TextAlign alignment;
+  final Color? titleColor;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: switch (alignment) {
+        TextAlign.left => CrossAxisAlignment.start,
+        TextAlign.right => CrossAxisAlignment.end,
+        _ => CrossAxisAlignment.center,
+      },
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(title, style: theme.textTheme.titleLarge),
-              if (subtitle != null) ...[
-                const SizedBox(height: 2),
-                Text(subtitle!, style: theme.textTheme.bodySmall),
-              ],
-            ],
+        if (eyebrow != null) ...[
+          Text(
+            eyebrow!.toUpperCase(),
+            textAlign: alignment,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 3,
+                  color: cs.onSurfaceVariant,
+                ),
           ),
+          const SizedBox(height: 16),
+        ],
+        Text(
+          title,
+          textAlign: alignment,
+          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                color: titleColor ?? cs.onSurface,
+                letterSpacing: -0.5,
+                height: 1.15,
+              ),
         ),
-        if (action != null) action!,
+        if (subtitle != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            subtitle!,
+            textAlign: alignment,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontSize: 16,
+                  color: cs.onSurfaceVariant,
+                  height: 1.6,
+                ),
+          ),
+        ],
       ],
     );
   }
@@ -87,9 +118,9 @@ class AppCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: color ?? AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppTheme.border),
+        color: color ?? AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
         boxShadow: AppTheme.shadowSm,
       ),
       child: Column(
@@ -209,7 +240,7 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: AppTheme.textMuted),
+            Icon(icon, size: 48, color: AppTheme.greyLight),
             const SizedBox(height: AppTheme.sp12),
             Text(
               message,
@@ -261,11 +292,119 @@ class InfoRow extends StatelessWidget {
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AppTheme.textPrimary,
+                color: Colors.black,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A unified button component that maps to the four button styles used
+/// across the RayhanERP landing page.
+enum AppButtonVariant { primary, secondary, outlined, ghost }
+
+class AppButton extends StatefulWidget {
+  const AppButton({
+    super.key,
+    required this.label,
+    this.onTap,
+    this.variant = AppButtonVariant.primary,
+    this.prefixIcon,
+    this.fontSize = 14,
+    this.padding,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+  final AppButtonVariant variant;
+  final IconData? prefixIcon;
+  final double fontSize;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final edge = widget.padding ??
+        EdgeInsets.symmetric(
+          horizontal: widget.fontSize < 16 ? 20 : 32,
+          vertical: widget.fontSize < 16 ? 8 : 16,
+        );
+
+    final (bg, fg, border) = switch (widget.variant) {
+      AppButtonVariant.primary => (
+          AppTheme.greenMatte,
+          AppTheme.blueLightest,
+          BorderSide.none,
+        ),
+      AppButtonVariant.secondary => (
+          _hovered ? cs.surfaceContainerHighest : cs.surfaceContainerHigh,
+          cs.onSurface,
+          BorderSide.none,
+        ),
+      AppButtonVariant.outlined => (
+          _hovered ? AppTheme.greenMatte : Colors.transparent,
+          _hovered ? AppTheme.blueStrongHighlight : AppTheme.greenMatte,
+          const BorderSide(color: AppTheme.greenMatte, width: 2),
+        ),
+      AppButtonVariant.ghost => (
+          _hovered
+              ? cs.primaryFixed.withValues(alpha: 0.2)
+              : Colors.transparent,
+          cs.onSurface,
+          BorderSide.none,
+        ),
+    };
+
+    Widget child = Text(
+      widget.label,
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontSize: widget.fontSize,
+            fontWeight: FontWeight.w800,
+            color: fg,
+          ),
+    );
+
+    if (widget.prefixIcon != null) {
+      child = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(widget.prefixIcon, color: fg, size: widget.fontSize + 4),
+          const SizedBox(width: 8),
+          child,
+        ],
+      );
+    }
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          transform:
+              _hovered ? (Matrix4.identity()..scale(1.04)) : Matrix4.identity(),
+          padding: edge,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(4),
+            border: border == BorderSide.none
+                ? null
+                : Border.fromBorderSide(border),
+          ),
+          child: child,
+        ),
       ),
     );
   }

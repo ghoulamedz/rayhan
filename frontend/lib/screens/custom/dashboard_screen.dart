@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/stat_card.dart';
 import 'package:rayhan_erp/widgets/custom/stock_level_indicator.dart';
 import 'package:rayhan_erp/widgets/custom/system_status_chip.dart';
@@ -80,8 +80,8 @@ class _KpiRow extends StatelessWidget {
             trend: '+12%',
             trendPositive: true,
             icon: Icons.speed_rounded,
-            iconColor: AppTheme.primary,
-            iconBackground: AppTheme.primarySurface,
+            iconColor: Colors.black,
+            iconBackground: Colors.black,
           ),
           _KpiData(
             title: 'Unités terminées',
@@ -90,8 +90,8 @@ class _KpiRow extends StatelessWidget {
             trend: 'Stable',
             trendPositive: true,
             icon: Icons.check_circle_outline_rounded,
-            iconColor: AppTheme.success,
-            iconBackground: AppTheme.successSurface,
+            iconColor: AppTheme.greenBright,
+            iconBackground: AppTheme.greenLight,
           ),
           _KpiData(
             title: 'Alertes de stock',
@@ -100,8 +100,8 @@ class _KpiRow extends StatelessWidget {
             trend: 'Action',
             trendPositive: false,
             icon: Icons.warning_amber_rounded,
-            iconColor: AppTheme.error,
-            iconBackground: AppTheme.errorSurface,
+            iconColor: AppTheme.red,
+            iconBackground: AppTheme.red,
             alertLevel: 'error',
           ),
           _KpiData(
@@ -112,7 +112,7 @@ class _KpiRow extends StatelessWidget {
             trendPositive: true,
             icon: Icons.bolt_rounded,
             iconColor: Colors.white,
-            iconBackground: AppTheme.sidebarBg,
+            iconBackground: AppTheme.blueStrongHighlight,
           ),
         ];
 
@@ -228,7 +228,7 @@ class _ProductionChart extends StatelessWidget {
                     l,
                     style: const TextStyle(
                       fontSize: 10,
-                      color: AppTheme.textMuted,
+                      color: AppTheme.greyLight,
                     ),
                   ),
                 )
@@ -265,8 +265,8 @@ class _BarChart extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppTheme.sidebarBg,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      color: AppTheme.blueStrongHighlight,
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text(
                       '11:00 – 820u',
@@ -282,8 +282,8 @@ class _BarChart extends StatelessWidget {
                   height: 180 * fraction,
                   decoration: BoxDecoration(
                     color: isHighlight
-                        ? AppTheme.primary
-                        : AppTheme.primaryLight.withValues(alpha: 0.35),
+                        ? Colors.black
+                        : Colors.black.withValues(alpha: 0.35),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(3),
                     ),
@@ -309,15 +309,15 @@ class _ChartToggle extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: selected ? AppTheme.primary : AppTheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        color: selected ? Colors.black : AppTheme.whiteSurface2,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: selected ? Colors.white : AppTheme.textSecondary,
+          color: selected ? Colors.white : AppTheme.grey,
         ),
       ),
     );
@@ -382,9 +382,9 @@ class _AiRecommendation extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp12),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.whiteSurface2,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.whiteTintedorGreyAddAlpha02),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,7 +395,7 @@ class _AiRecommendation extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textMuted,
+              color: AppTheme.greyLight,
               letterSpacing: 0.8,
             ),
           ),
@@ -404,7 +404,7 @@ class _AiRecommendation extends StatelessWidget {
             message,
             style: const TextStyle(
               fontSize: 12,
-              color: AppTheme.textSecondary,
+              color: AppTheme.grey,
               height: 1.4,
             ),
           ),
@@ -449,7 +449,7 @@ class _MovementTile extends StatelessWidget {
     final theme = Theme.of(context);
     final isEntree = mouvement.isEntree;
     final sign = isEntree ? '+' : '-';
-    final color = isEntree ? AppTheme.success : AppTheme.error;
+    final color = isEntree ? AppTheme.greenBright : AppTheme.red;
     final qty = '${sign} ${mouvement.quantite.toStringAsFixed(0)} kg';
 
     return Container(
@@ -458,7 +458,7 @@ class _MovementTile extends StatelessWidget {
         vertical: AppTheme.sp14,
       ),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.divider)),
+        border: Border(bottom: BorderSide(color: AppTheme.blueLightest)),
       ),
       child: Row(
         children: [
@@ -466,8 +466,8 @@ class _MovementTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: isEntree ? AppTheme.successSurface : AppTheme.errorSurface,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: isEntree ? AppTheme.greenLight : AppTheme.red,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               isEntree
@@ -534,8 +534,8 @@ class _LineStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp20),
       decoration: BoxDecoration(
-        color: AppTheme.sidebarBg,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        color: AppTheme.blueStrongHighlight,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,7 +545,7 @@ class _LineStatusCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.precision_manufacturing_rounded,
-                color: AppTheme.primaryLight,
+                color: Colors.black,
                 size: 18,
               ),
               const SizedBox(width: 8),
@@ -585,15 +585,15 @@ class _LineStatusCard extends StatelessWidget {
               horizontal: AppTheme.sp12,
             ),
             decoration: BoxDecoration(
-              color: AppTheme.success.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.success.withOpacity(0.3)),
+              color: AppTheme.greenBright.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppTheme.greenBright.withOpacity(0.3)),
             ),
             child: const Center(
               child: Text(
                 'OPÉRATIONNEL',
                 style: TextStyle(
-                  color: AppTheme.success,
+                  color: AppTheme.greenBright,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
@@ -618,8 +618,8 @@ class _MetricTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp12),
       decoration: BoxDecoration(
-        color: AppTheme.sidebarHover,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: AppTheme.greenStrong,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -629,7 +629,7 @@ class _MetricTile extends StatelessWidget {
             style: const TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: AppTheme.sidebarText,
+              color: AppTheme.blueStrongHighlight,
               letterSpacing: 0.6,
             ),
           ),

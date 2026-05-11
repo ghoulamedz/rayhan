@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 
 /// Stub screen shown for navigation items that are not yet implemented.
 class PlaceholderScreen extends StatelessWidget {
@@ -27,10 +27,10 @@ class PlaceholderScreen extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radius2xl),
+              color: AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(icon, size: 32, color: AppTheme.textMuted),
+            child: Icon(icon, size: 32, color: AppTheme.greyLight),
           ),
           const SizedBox(height: AppTheme.sp16),
           Text(
@@ -38,13 +38,13 @@ class PlaceholderScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: AppTheme.sp8),
           const Text(
             'Ce module est en cours de développement.',
-            style: TextStyle(fontSize: 14, color: AppTheme.textSecondary),
+            style: TextStyle(fontSize: 14, color: AppTheme.grey),
           ),
           const SizedBox(height: AppTheme.sp24),
           ElevatedButton(

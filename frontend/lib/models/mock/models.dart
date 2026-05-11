@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'enums.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -119,8 +121,9 @@ class Produit {
 
   bool get isStockBas => stockActuel <= seuilMinimal;
 
-  double get niveauReapprovisionnement =>
-      seuilMinimal > 0 ? (stockActuel / (seuilMinimal * 2)).clamp(0.0, 1.0) : 1.0;
+  double get niveauReapprovisionnement => seuilMinimal > 0
+      ? (stockActuel / (seuilMinimal * 2)).clamp(0.0, 1.0)
+      : 1.0;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -148,8 +151,9 @@ class MatierePremiere {
 
   bool get isStockBas => stockActuel <= seuilMinimal;
 
-  double get pourcentageStock =>
-      seuilMinimal > 0 ? (stockActuel / (seuilMinimal * 2)).clamp(0.0, 1.0) : 1.0;
+  double get pourcentageStock => seuilMinimal > 0
+      ? (stockActuel / (seuilMinimal * 2)).clamp(0.0, 1.0)
+      : 1.0;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -311,10 +315,10 @@ enum StatutMaintenance {
   annulee;
 
   String get label => switch (this) {
-        StatutMaintenance.planifiee  => 'Planifiée',
-        StatutMaintenance.enCours    => 'En cours',
-        StatutMaintenance.terminee   => 'Terminée',
-        StatutMaintenance.annulee    => 'Annulée',
+        StatutMaintenance.planifiee => 'Planifiée',
+        StatutMaintenance.enCours => 'En cours',
+        StatutMaintenance.terminee => 'Terminée',
+        StatutMaintenance.annulee => 'Annulée',
       };
 }
 
@@ -324,9 +328,9 @@ enum TypeMaintenance {
   predictive;
 
   String get label => switch (this) {
-        TypeMaintenance.preventive  => 'Préventive',
-        TypeMaintenance.corrective  => 'Corrective',
-        TypeMaintenance.predictive  => 'Prédictive',
+        TypeMaintenance.preventive => 'Préventive',
+        TypeMaintenance.corrective => 'Corrective',
+        TypeMaintenance.predictive => 'Prédictive',
       };
 }
 
@@ -337,9 +341,9 @@ enum PrioriteMaintenance {
   critique;
 
   String get label => switch (this) {
-        PrioriteMaintenance.basse    => 'Basse',
-        PrioriteMaintenance.moyenne  => 'Moyenne',
-        PrioriteMaintenance.haute    => 'Haute',
+        PrioriteMaintenance.basse => 'Basse',
+        PrioriteMaintenance.moyenne => 'Moyenne',
+        PrioriteMaintenance.haute => 'Haute',
         PrioriteMaintenance.critique => 'Critique',
       };
 }
@@ -424,10 +428,10 @@ enum StatutInspection {
   conditionnel;
 
   String get label => switch (this) {
-        StatutInspection.conforme      => 'Conforme',
-        StatutInspection.nonConforme   => 'Non conforme',
-        StatutInspection.enAttente     => 'En attente',
-        StatutInspection.conditionnel  => 'Conditionnel',
+        StatutInspection.conforme => 'Conforme',
+        StatutInspection.nonConforme => 'Non conforme',
+        StatutInspection.enAttente => 'En attente',
+        StatutInspection.conditionnel => 'Conditionnel',
       };
 }
 
@@ -463,4 +467,86 @@ class Inspection {
   double get tauxDefaut =>
       echantillonSize > 0 ? defautsDetectes / echantillonSize : 0.0;
   bool get isConforme => statut == StatutInspection.conforme;
+}
+
+class ValueCardData {
+  const ValueCardData({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.accentColor,
+    required this.hoverIconBg,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color accentColor;
+  final Color hoverIconBg;
+}
+
+// ── KPI Metric ────────────────────────────────────────────────────────────────
+
+class KpiData {
+  const KpiData({
+    required this.label,
+    required this.value,
+    this.subtitle,
+    this.subtitleColor,
+    this.progressValue,
+  });
+
+  final String label;
+  final String value;
+  final String? subtitle;
+  final Color? subtitleColor;
+
+  /// 0.0 – 1.0; if non-null a progress bar is shown instead of the subtitle.
+  final double? progressValue;
+}
+
+// ── Production Order ──────────────────────────────────────────────────────────
+
+enum OrderStatus { inProgress, pending }
+
+class ProductionOrder {
+  const ProductionOrder({
+    required this.orderNumber,
+    required this.machine,
+    required this.status,
+    required this.statusDetail,
+    required this.accentColor,
+  });
+
+  final String orderNumber;
+  final String machine;
+  final OrderStatus status;
+  final String statusDetail;
+  final Color accentColor;
+}
+
+// ── System Alert ──────────────────────────────────────────────────────────────
+
+class SystemAlert {
+  const SystemAlert({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+}
+
+class ModuleData {
+  const ModuleData({
+    required this.icon,
+    required this.title,
+    required this.features,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<String> features;
 }

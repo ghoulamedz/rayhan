@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rayhan_erp/models/mock/enums.dart';
 import 'package:rayhan_erp/models/mock/mock_data.dart';
 import 'package:rayhan_erp/models/mock/models.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/dialogs.dart';
-import 'package:rayhan_erp/widgets/custom/layout_widgets.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 import 'package:rayhan_erp/widgets/custom/status_badge.dart';
 
 /// "Paramètres" screen — user management, system preferences,
@@ -55,14 +55,16 @@ class _ParametresScreenState extends State<ParametresScreen>
               const SizedBox(height: AppTheme.sp20),
               Container(
                 decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: AppTheme.border))),
+                    border: Border(
+                        bottom: BorderSide(
+                            color: AppTheme.whiteTintedorGreyAddAlpha02))),
                 child: TabBar(
                   controller: _tab,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  labelColor: AppTheme.primary,
-                  unselectedLabelColor: AppTheme.textSecondary,
-                  indicatorColor: AppTheme.primary,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: AppTheme.grey,
+                  indicatorColor: Colors.black,
                   indicatorWeight: 2,
                   labelStyle: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w600),
@@ -134,7 +136,7 @@ class _UsersTab extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary,
+                  color: Colors.black,
                 ),
               ),
               const Spacer(),
@@ -191,13 +193,14 @@ class _UserTableHeader extends StatelessWidget {
     const style = TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: AppTheme.textMuted,
+        color: AppTheme.greyLight,
         letterSpacing: 0.5);
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp10),
       decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppTheme.border))),
+          border: Border(
+              bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02))),
       child: const Row(
         children: [
           Expanded(flex: 1, child: Text('', style: style)),
@@ -228,7 +231,7 @@ class _UserRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.sp20, vertical: AppTheme.sp12),
       decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppTheme.divider))),
+          border: Border(bottom: BorderSide(color: AppTheme.blueLightest))),
       child: Row(
         children: [
           // Avatar
@@ -236,7 +239,7 @@ class _UserRow extends StatelessWidget {
             flex: 1,
             child: CircleAvatar(
               radius: 16,
-              backgroundColor: isActive ? AppTheme.primary : AppTheme.textMuted,
+              backgroundColor: isActive ? Colors.black : AppTheme.greyLight,
               child: Text(
                 initials,
                 style: const TextStyle(
@@ -265,15 +268,15 @@ class _UserRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                color: AppTheme.whiteSurface2,
+                borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 user.role.label,
                 style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textSecondary),
+                    color: AppTheme.grey),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -282,9 +285,9 @@ class _UserRow extends StatelessWidget {
             flex: 1,
             child: StatusBadge(
               label: isActive ? 'Actif' : 'Inactif',
-              color: isActive ? AppTheme.success : AppTheme.textMuted,
+              color: isActive ? AppTheme.greenBright : AppTheme.greyLight,
               backgroundColor:
-                  isActive ? AppTheme.successSurface : AppTheme.surfaceVariant,
+                  isActive ? AppTheme.greenLight : AppTheme.whiteSurface2,
             ),
           ),
           Expanded(
@@ -585,7 +588,7 @@ class _ModuleNotifRowState extends State<_ModuleNotifRow> {
       padding: const EdgeInsets.only(bottom: AppTheme.sp12),
       child: Row(
         children: [
-          Icon(_icon, size: 18, color: AppTheme.textSecondary),
+          Icon(_icon, size: 18, color: AppTheme.grey),
           const SizedBox(width: AppTheme.sp12),
           Expanded(
             child: Text(
@@ -593,13 +596,13 @@ class _ModuleNotifRowState extends State<_ModuleNotifRow> {
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: AppTheme.textPrimary),
+                  color: Colors.black),
             ),
           ),
           Switch.adaptive(
             value: _enabled,
             onChanged: (v) => setState(() => _enabled = v),
-            activeColor: AppTheme.primary,
+            activeColor: Colors.black,
           ),
         ],
       ),
@@ -676,12 +679,12 @@ class _IntegrationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp20),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: item.connected
-              ? AppTheme.success.withOpacity(0.3)
-              : AppTheme.border,
+              ? AppTheme.greenBright.withOpacity(0.3)
+              : AppTheme.whiteTintedorGreyAddAlpha02,
         ),
         boxShadow: AppTheme.shadowSm,
       ),
@@ -691,15 +694,14 @@ class _IntegrationCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: item.connected
-                  ? AppTheme.successSurface
-                  : AppTheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color:
+                  item.connected ? AppTheme.greenLight : AppTheme.whiteSurface2,
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               item.icon,
               size: 22,
-              color: item.connected ? AppTheme.success : AppTheme.textMuted,
+              color: item.connected ? AppTheme.greenBright : AppTheme.greyLight,
             ),
           ),
           const SizedBox(width: AppTheme.sp16),
@@ -715,7 +717,7 @@ class _IntegrationCard extends StatelessWidget {
                     item.endpoint!,
                     style: const TextStyle(
                       fontSize: 11,
-                      color: AppTheme.primary,
+                      color: Colors.black,
                       fontFamily: 'monospace',
                     ),
                   ),
@@ -729,10 +731,11 @@ class _IntegrationCard extends StatelessWidget {
             children: [
               StatusBadge(
                 label: item.connected ? 'Connecté' : 'Déconnecté',
-                color: item.connected ? AppTheme.success : AppTheme.textMuted,
+                color:
+                    item.connected ? AppTheme.greenBright : AppTheme.greyLight,
                 backgroundColor: item.connected
-                    ? AppTheme.successSurface
-                    : AppTheme.surfaceVariant,
+                    ? AppTheme.greenLight
+                    : AppTheme.whiteSurface2,
                 icon: item.connected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
@@ -798,13 +801,13 @@ class _ToggleSetting extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: value ? AppTheme.primarySurface : AppTheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            color: value ? Colors.black : AppTheme.whiteSurface2,
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
             size: 18,
-            color: value ? AppTheme.primary : AppTheme.textMuted,
+            color: value ? Colors.black : AppTheme.greyLight,
           ),
         ),
         const SizedBox(width: AppTheme.sp12),
@@ -820,7 +823,7 @@ class _ToggleSetting extends StatelessWidget {
         Switch.adaptive(
           value: value,
           onChanged: onChanged,
-          activeColor: AppTheme.primary,
+          activeColor: Colors.black,
         ),
       ],
     );

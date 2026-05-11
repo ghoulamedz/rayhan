@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../../constants/app_theme.dart';
 
 /// Horizontal stock level progress bar with label and percentage.
 ///
@@ -45,7 +45,7 @@ class StockLevelIndicator extends StatelessWidget {
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: level < 0.2 ? AppTheme.error : AppTheme.textPrimary,
+                  color: level < 0.2 ? AppTheme.red : Colors.black,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -71,7 +71,7 @@ class StockLevelIndicator extends StatelessWidget {
           child: LinearProgressIndicator(
             value: level.clamp(0.0, 1.0),
             minHeight: height,
-            backgroundColor: AppTheme.surfaceVariant,
+            backgroundColor: AppTheme.whiteSurface2,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
@@ -80,9 +80,9 @@ class StockLevelIndicator extends StatelessWidget {
   }
 
   Color _barColor(double l) {
-    if (l < 0.2) return AppTheme.error;
-    if (l < 0.5) return AppTheme.warning;
-    return AppTheme.primary;
+    if (l < 0.2) return AppTheme.red;
+    if (l < 0.5) return AppTheme.yellow;
+    return Colors.black;
   }
 }
 
@@ -121,10 +121,12 @@ class SiloIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.sp16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        color: AppTheme.whiteSurface,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isLow ? AppTheme.error.withOpacity(0.4) : AppTheme.border,
+          color: isLow
+              ? AppTheme.red.withOpacity(0.4)
+              : AppTheme.whiteTintedorGreyAddAlpha02,
         ),
         boxShadow: AppTheme.shadowSm,
       ),
@@ -161,9 +163,8 @@ class SiloIndicator extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: onTap,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: actionColor ?? AppTheme.primary,
-                        side:
-                            BorderSide(color: actionColor ?? AppTheme.primary),
+                        foregroundColor: actionColor ?? Colors.black,
+                        side: BorderSide(color: actionColor ?? Colors.black),
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         textStyle: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w600),
@@ -180,9 +181,9 @@ class SiloIndicator extends StatelessWidget {
   }
 
   Color _siloColor(double l) {
-    if (l < 0.2) return AppTheme.error;
-    if (l < 0.5) return AppTheme.warning;
-    return AppTheme.primary;
+    if (l < 0.2) return AppTheme.red;
+    if (l < 0.5) return AppTheme.yellow;
+    return Colors.black;
   }
 }
 
@@ -219,7 +220,7 @@ class _VerticalBar extends StatelessWidget {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
-                Container(color: AppTheme.surfaceVariant),
+                Container(color: AppTheme.whiteSurface2),
                 FractionallySizedBox(
                   heightFactor: level.clamp(0.0, 1.0),
                   child: Container(color: color.withOpacity(0.85)),
@@ -274,7 +275,7 @@ class _StatusChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         label,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayhan_erp/theme/app_theme.dart';
+import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/app_sidebar.dart';
 import 'package:rayhan_erp/widgets/custom/app_topbar.dart';
 import 'package:rayhan_erp/widgets/custom/notifications_panel.dart';
@@ -106,7 +106,7 @@ class _MainLayoutState extends State<MainLayout>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.whiteSurface,
       body: Stack(
         children: [
           // ── Core two-column layout ─────────────────────────────────────
