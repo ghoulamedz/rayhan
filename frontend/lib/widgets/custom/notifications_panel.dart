@@ -148,8 +148,8 @@ class NotificationsPanel extends StatelessWidget {
           ),
 
           // Filter chips
-          Padding(
-            padding: const EdgeInsets.symmetric(
+          const Padding(
+            padding: EdgeInsets.symmetric(
               horizontal: AppTheme.sp16,
               vertical: AppTheme.sp10,
             ),

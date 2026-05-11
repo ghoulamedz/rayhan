@@ -35,7 +35,7 @@ class _LandingScreenState extends State<LandingScreen>
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
   double _scrollOffset = 0;
   int _carouselIndex = 0;
   Timer? _carouselTimer;

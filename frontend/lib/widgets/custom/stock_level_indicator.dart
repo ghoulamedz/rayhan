@@ -153,7 +153,7 @@ class SiloIndicator extends StatelessWidget {
                 _Row(
                     label: 'Poids', value: '$poids', unit: unite, theme: theme),
                 const SizedBox(height: AppTheme.sp4),
-                _Row(label: 'Actuel', value: '$unite', unit: '', theme: theme),
+                _Row(label: 'Actuel', value: unite, unit: '', theme: theme),
                 const SizedBox(height: AppTheme.sp12),
                 _StatusChip(label: isLow ? 'BAS' : 'OPTIMAL', color: color),
                 const SizedBox(height: AppTheme.sp12),

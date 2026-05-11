@@ -130,11 +130,11 @@ class _DashboardFrame extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                _TrafficLight(color: AppTheme.red),
+                const _TrafficLight(color: AppTheme.red),
                 const SizedBox(width: 8),
-                _TrafficLight(color: AppTheme.yellow),
+                const _TrafficLight(color: AppTheme.yellow),
                 const SizedBox(width: 8),
-                _TrafficLight(color: AppTheme.greenBright),
+                const _TrafficLight(color: AppTheme.greenBright),
                 const Spacer(),
                 Text(
                   'system status: active',

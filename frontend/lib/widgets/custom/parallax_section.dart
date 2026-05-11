@@ -37,7 +37,7 @@ class ParallaxSection extends StatelessWidget {
             // Parallax Background Element
             Transform.translate(
               offset: Offset(0, -offset * 0.3),
-              child: Opacity(
+              child: const Opacity(
                 opacity: 0.3,
                 child: Center(
                   child: Icon(

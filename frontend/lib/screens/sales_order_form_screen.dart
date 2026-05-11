@@ -80,12 +80,14 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
 
     setState(() => _saving = true);
 
-    final lignes = _lignes.map((l) => SalesOrderLine(
-          article: l.article,
-          quantiteCommandee: double.tryParse(l.qteCtrl.text) ?? 0,
-          prixUnitaireHT: double.tryParse(l.prixCtrl.text) ?? 0,
-          tauxTVA: 19.0,
-        )).toList();
+    final lignes = _lignes
+        .map((l) => SalesOrderLine(
+              article: l.article,
+              quantiteCommandee: double.tryParse(l.qteCtrl.text) ?? 0,
+              prixUnitaireHT: double.tryParse(l.prixCtrl.text) ?? 0,
+              tauxTVA: 19.0,
+            ))
+        .toList();
 
     final order = SalesOrder(
       client: _selectedClient,
@@ -112,15 +114,16 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
   }
 
   void _showError(String msg) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), backgroundColor: Colors.red));
   }
 
   @override
   Widget build(BuildContext context) {
     final clients = context.watch<VentesProvider>().clients;
     final articles = context.watch<ArticleProvider>().articles;
-    final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+    final fmt =
+        NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -139,7 +142,7 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
             _SectionCard(
               title: 'Client',
               child: DropdownButtonFormField<Client>(
-                value: _selectedClient,
+                initialValue: _selectedClient,
                 hint: const Text('Sélectionner un client'),
                 decoration: _deco('Client'),
                 items: clients
@@ -161,17 +164,15 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
                 onTap: () async {
                   final d = await showDatePicker(
                     context: context,
-                    initialDate:
-                        DateTime.now().add(const Duration(days: 7)),
+                    initialDate: DateTime.now().add(const Duration(days: 7)),
                     firstDate: DateTime.now(),
-                    lastDate:
-                        DateTime.now().add(const Duration(days: 365)),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
                   );
                   if (d != null) setState(() => _dateLivraison = d);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF8F9FA),
                     border: Border.all(color: Colors.grey[400]!),
@@ -228,8 +229,8 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
               child: TextFormField(
                 controller: _notesCtrl,
                 maxLines: 3,
-                decoration: _deco('Notes / instructions').copyWith(
-                    hintText: 'Remarques, conditions particulières…'),
+                decoration: _deco('Notes / instructions')
+                    .copyWith(hintText: 'Remarques, conditions particulières…'),
               ),
             ),
             const SizedBox(height: 12),
@@ -245,7 +246,9 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
                 child: Column(
                   children: [
                     _TotalRow(
-                        label: 'Total HT', value: fmt.format(_totalHT), white: true),
+                        label: 'Total HT',
+                        value: fmt.format(_totalHT),
+                        white: true),
                     _TotalRow(
                         label: 'TVA (19%)',
                         value: fmt.format(_totalTTC - _totalHT),
@@ -332,11 +335,11 @@ class _LigneWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<Article>(
-            value: ligne.article,
+            initialValue: ligne.article,
             hint: const Text('Article', style: TextStyle(fontSize: 13)),
             decoration: _deco('Article').copyWith(
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 10)),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
             items: articles
                 .map((a) => DropdownMenuItem(
                       value: a,
@@ -466,8 +469,7 @@ class _TotalRow extends StatelessWidget {
           Text(value,
               style: TextStyle(
                   color: color,
-                  fontWeight:
-                      bold ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: bold ? FontWeight.bold : FontWeight.normal,
                   fontSize: bold ? 16 : 13)),
         ],
       ),
@@ -480,6 +482,5 @@ InputDecoration _deco(String label) => InputDecoration(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
       fillColor: const Color(0xFFF8F9FA),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );

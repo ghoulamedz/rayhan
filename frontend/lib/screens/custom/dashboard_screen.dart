@@ -450,7 +450,7 @@ class _MovementTile extends StatelessWidget {
     final isEntree = mouvement.isEntree;
     final sign = isEntree ? '+' : '-';
     final color = isEntree ? AppTheme.greenBright : AppTheme.red;
-    final qty = '${sign} ${mouvement.quantite.toStringAsFixed(0)} kg';
+    final qty = '$sign ${mouvement.quantite.toStringAsFixed(0)} kg';
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -541,15 +541,15 @@ class _LineStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.precision_manufacturing_rounded,
                 color: Colors.black,
                 size: 18,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Ligne Alpha-1',
                 style: TextStyle(
                   color: Colors.white,
@@ -560,8 +560,8 @@ class _LineStatusCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppTheme.sp16),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Expanded(
                 child: _MetricTile(
                   label: 'TEMPÉRATURE',

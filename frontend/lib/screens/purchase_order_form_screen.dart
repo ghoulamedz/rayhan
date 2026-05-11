@@ -12,7 +12,8 @@ class PurchaseOrderFormScreen extends StatefulWidget {
   const PurchaseOrderFormScreen({super.key});
 
   @override
-  State<PurchaseOrderFormScreen> createState() => _PurchaseOrderFormScreenState();
+  State<PurchaseOrderFormScreen> createState() =>
+      _PurchaseOrderFormScreenState();
 }
 
 class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
@@ -36,7 +37,9 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
   @override
   void dispose() {
     _notesCtrl.dispose();
-    for (final l in _lignes) l.dispose();
+    for (final l in _lignes) {
+      l.dispose();
+    }
     super.dispose();
   }
 
@@ -67,12 +70,14 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
 
     setState(() => _saving = true);
 
-    final lignes = _lignes.map((l) => PurchaseOrderLine(
-          article: l.article,
-          quantiteCommandee: double.tryParse(l.qteCtrl.text) ?? 0,
-          prixUnitaireHT: double.tryParse(l.prixCtrl.text) ?? 0,
-          tauxTVA: 19.0,
-        )).toList();
+    final lignes = _lignes
+        .map((l) => PurchaseOrderLine(
+              article: l.article,
+              quantiteCommandee: double.tryParse(l.qteCtrl.text) ?? 0,
+              prixUnitaireHT: double.tryParse(l.prixCtrl.text) ?? 0,
+              tauxTVA: 19.0,
+            ))
+        .toList();
 
     final order = PurchaseOrder(
       fournisseur: _selectedFournisseur,
@@ -104,7 +109,8 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
   Widget build(BuildContext context) {
     final fournisseurs = context.watch<AchatsProvider>().fournisseurs;
     final articles = context.watch<ArticleProvider>().articles;
-    final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+    final fmt =
+        NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -122,13 +128,15 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
             _SectionCard(
               title: 'Fournisseur',
               child: DropdownButtonFormField<Fournisseur>(
-                value: _selectedFournisseur,
+                initialValue: _selectedFournisseur,
                 hint: const Text('Sélectionner un fournisseur'),
                 decoration: _deco('Fournisseur'),
-                items: fournisseurs.map((f) => DropdownMenuItem(
-                      value: f,
-                      child: Text(f.raisonSociale),
-                    )).toList(),
+                items: fournisseurs
+                    .map((f) => DropdownMenuItem(
+                          value: f,
+                          child: Text(f.raisonSociale),
+                        ))
+                    .toList(),
                 onChanged: (v) => setState(() => _selectedFournisseur = v),
                 validator: (v) => v == null ? 'Obligatoire' : null,
               ),
@@ -147,7 +155,8 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                   if (d != null) setState(() => _dateLivraison = d);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF8F9FA),
                     border: Border.all(color: Colors.grey[400]!),
@@ -155,14 +164,17 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today_outlined, size: 18, color: Colors.grey),
+                      const Icon(Icons.calendar_today_outlined,
+                          size: 18, color: Colors.grey),
                       const SizedBox(width: 8),
                       Text(
                         _dateLivraison != null
                             ? DateFormat('dd/MM/yyyy').format(_dateLivraison!)
                             : 'Choisir une date',
                         style: TextStyle(
-                            color: _dateLivraison != null ? Colors.black87 : Colors.grey[600]),
+                            color: _dateLivraison != null
+                                ? Colors.black87
+                                : Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -186,7 +198,8 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                       )),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
-                    onPressed: () => setState(() => _lignes.add(_LigneSaisie())),
+                    onPressed: () =>
+                        setState(() => _lignes.add(_LigneSaisie())),
                     icon: const Icon(Icons.add),
                     label: const Text('Ajouter une ligne'),
                   ),
@@ -199,7 +212,8 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
               child: TextFormField(
                 controller: _notesCtrl,
                 maxLines: 3,
-                decoration: _deco('Notes').copyWith(hintText: 'Conditions, remarques…'),
+                decoration:
+                    _deco('Notes').copyWith(hintText: 'Conditions, remarques…'),
               ),
             ),
             const SizedBox(height: 12),
@@ -213,9 +227,14 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                 child: Column(
                   children: [
                     _TotalRow(label: 'Total HT', value: fmt.format(_totalHT)),
-                    _TotalRow(label: 'TVA (19%)', value: fmt.format(_totalTTC - _totalHT)),
+                    _TotalRow(
+                        label: 'TVA (19%)',
+                        value: fmt.format(_totalTTC - _totalHT)),
                     const Divider(color: Colors.white30),
-                    _TotalRow(label: 'Total TTC', value: fmt.format(_totalTTC), bold: true),
+                    _TotalRow(
+                        label: 'Total TTC',
+                        value: fmt.format(_totalTTC),
+                        bold: true),
                   ],
                 ),
               ),
@@ -227,14 +246,18 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8B5CF6),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 child: _saving
                     ? const SizedBox(
-                        width: 22, height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white))
                     : const Text('Créer la commande',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
               ),
             ),
             const SizedBox(height: 32),
@@ -253,8 +276,11 @@ class _LigneWidget extends StatelessWidget {
   final VoidCallback onChanged;
 
   const _LigneWidget({
-    required this.index, required this.ligne, required this.articles,
-    required this.onRemove, required this.onChanged,
+    required this.index,
+    required this.ligne,
+    required this.articles,
+    required this.onRemove,
+    required this.onChanged,
   });
 
   @override
@@ -273,23 +299,28 @@ class _LigneWidget extends StatelessWidget {
           Row(
             children: [
               Text('Ligne ${index + 1}',
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 12)),
               const Spacer(),
-              GestureDetector(onTap: onRemove,
+              GestureDetector(
+                  onTap: onRemove,
                   child: const Icon(Icons.close, size: 18, color: Colors.red)),
             ],
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<Article>(
-            value: ligne.article,
+            initialValue: ligne.article,
             hint: const Text('Article', style: TextStyle(fontSize: 13)),
             decoration: _deco('Article').copyWith(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
-            items: articles.map((a) => DropdownMenuItem(
-                  value: a,
-                  child: Text('${a.reference} — ${a.designation}',
-                      style: const TextStyle(fontSize: 13)),
-                )).toList(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
+            items: articles
+                .map((a) => DropdownMenuItem(
+                      value: a,
+                      child: Text('${a.reference} — ${a.designation}',
+                          style: const TextStyle(fontSize: 13)),
+                    ))
+                .toList(),
             onChanged: (a) {
               ligne.article = a;
               if (a != null) ligne.prixCtrl.text = a.prixUnitaire.toString();
@@ -304,7 +335,8 @@ class _LigneWidget extends StatelessWidget {
                   controller: ligne.qteCtrl,
                   keyboardType: TextInputType.number,
                   decoration: _deco('Quantité').copyWith(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10)),
                   onChanged: (_) => onChanged(),
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Requis';
@@ -319,7 +351,8 @@ class _LigneWidget extends StatelessWidget {
                   controller: ligne.prixCtrl,
                   keyboardType: TextInputType.number,
                   decoration: _deco('Prix HT').copyWith(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10)),
                   onChanged: (_) => onChanged(),
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Requis';
@@ -340,7 +373,10 @@ class _LigneSaisie {
   Article? article;
   final qteCtrl = TextEditingController();
   final prixCtrl = TextEditingController();
-  void dispose() { qteCtrl.dispose(); prixCtrl.dispose(); }
+  void dispose() {
+    qteCtrl.dispose();
+    prixCtrl.dispose();
+  }
 }
 
 class _SectionCard extends StatelessWidget {
@@ -353,13 +389,22 @@ class _SectionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF6B7280))),
+            Text(title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    color: Color(0xFF6B7280))),
             const SizedBox(height: 10),
             child,
           ],
@@ -371,7 +416,8 @@ class _TotalRow extends StatelessWidget {
   final String label;
   final String value;
   final bool bold;
-  const _TotalRow({required this.label, required this.value, this.bold = false});
+  const _TotalRow(
+      {required this.label, required this.value, this.bold = false});
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -379,10 +425,13 @@ class _TotalRow extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-            Text(value, style: TextStyle(
-                color: Colors.white, fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-                fontSize: bold ? 16 : 13)),
+            Text(label,
+                style: const TextStyle(color: Colors.white70, fontSize: 13)),
+            Text(value,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+                    fontSize: bold ? 16 : 13)),
           ],
         ),
       );

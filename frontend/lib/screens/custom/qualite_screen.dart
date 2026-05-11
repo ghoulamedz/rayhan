@@ -206,11 +206,11 @@ class _DefectTrendCard extends StatelessWidget {
         height: 200,
         child: Column(
           children: [
-            Expanded(
+            const Expanded(
               child: CustomPaint(
                 painter:
                     _DefectBarPainter(values: _values, target: _targetLine),
-                child: const SizedBox.expand(),
+                child: SizedBox.expand(),
               ),
             ),
             const SizedBox(height: AppTheme.sp8),

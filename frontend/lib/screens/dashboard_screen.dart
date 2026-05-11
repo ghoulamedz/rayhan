@@ -100,17 +100,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _SectionHeader(title: 'Ventes — Ce mois'),
+            const _SectionHeader(title: 'Ventes — Ce mois'),
             const SizedBox(height: 12),
             _VentesGrid(kpi: kpi, currencyFmt: currencyFmt),
             const SizedBox(height: 24),
-
-            _SectionHeader(title: 'Achats & Production'),
+            const _SectionHeader(title: 'Achats & Production'),
             const SizedBox(height: 12),
             _AchatsProductionGrid(kpi: kpi),
             const SizedBox(height: 24),
-
-            _SectionHeader(title: 'Stock'),
+            const _SectionHeader(title: 'Stock'),
             const SizedBox(height: 12),
             _StockSection(kpi: kpi),
             const SizedBox(height: 32),
@@ -240,9 +238,8 @@ class _StockSection extends StatelessWidget {
           icon: enAlerte == 0
               ? Icons.check_circle_outline
               : Icons.warning_amber_outlined,
-          color: enAlerte == 0
-              ? const Color(0xFF10B981)
-              : const Color(0xFFEF4444),
+          color:
+              enAlerte == 0 ? const Color(0xFF10B981) : const Color(0xFFEF4444),
         ),
         if (details.isNotEmpty) ...[
           const SizedBox(height: 12),

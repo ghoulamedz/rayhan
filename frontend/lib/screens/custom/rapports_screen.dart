@@ -120,8 +120,8 @@ class _VueGlobale extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Summary KPIs ──────────────────────────────────────────────
-          Row(
-            children: const [
+          const Row(
+            children: [
               Expanded(
                 child: StatCard(
                   title: 'Chiffre d\'affaires',
@@ -217,11 +217,11 @@ class _TrendLineChart extends StatelessWidget {
     return AppCard(
       title: 'Tendance Mensuelle',
       subtitle: 'Production vs Ventes (milliers d\'unités)',
-      trailing: Row(
+      trailing: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _LegendDot(color: Colors.black, label: 'Production'),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           _LegendDot(color: AppTheme.greenBright, label: 'Ventes'),
         ],
       ),
@@ -619,7 +619,7 @@ class _ProductionTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Weekly bar chart card
-          AppCard(
+          const AppCard(
             title: 'Production par Jour (Semaine Actuelle)',
             subtitle: 'Unités produites vs objectif (1 500 u/j)',
             child: SizedBox(
@@ -771,8 +771,8 @@ class _LotStatusTable extends StatelessWidget {
                   bottom:
                       BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
             ),
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Expanded(flex: 2, child: _TH('LOT')),
                 Expanded(flex: 3, child: _TH('PRODUIT')),
                 Expanded(flex: 2, child: _TH('STATUT')),
@@ -949,8 +949,8 @@ class _VentesTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Expanded(
                 child: StatCard(
                   title: 'Ventes Totales',
@@ -1018,8 +1018,8 @@ class _TopClientTable extends StatelessWidget {
                 border: Border(
                     bottom: BorderSide(
                         color: AppTheme.whiteTintedorGreyAddAlpha02))),
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Expanded(flex: 3, child: _TH('CLIENT')),
                 Expanded(flex: 2, child: _TH('CA TOTAL')),
                 Expanded(flex: 1, child: _TH('CMDS')),
@@ -1109,8 +1109,8 @@ class _StocksTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Expanded(
                 child: StatCard(
                   title: 'Valeur Totale Stock',

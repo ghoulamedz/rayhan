@@ -157,7 +157,7 @@ class _AchatsTable extends StatelessWidget {
   const _AchatsTable();
 
   static final List<_AchatRow> _rows = [
-    _AchatRow(
+    const _AchatRow(
       ref: 'ACH-2023-041',
       matiere: 'HDPE — Granulés',
       fournisseur: 'PolyChim Industries',
@@ -166,7 +166,7 @@ class _AchatsTable extends StatelessWidget {
       datePrevue: '20 Oct. 2023',
       statut: StatutAchat.livre,
     ),
-    _AchatRow(
+    const _AchatRow(
       ref: 'ACH-2023-042',
       matiere: 'LDPE — Granulés',
       fournisseur: 'EuroPlast SA',
@@ -175,7 +175,7 @@ class _AchatsTable extends StatelessWidget {
       datePrevue: '24 Oct. 2023',
       statut: StatutAchat.livraisonPartielle,
     ),
-    _AchatRow(
+    const _AchatRow(
       ref: 'ACH-2023-043',
       matiere: 'Colorant Noir Carbone',
       fournisseur: 'ChemColor GmbH',
@@ -184,7 +184,7 @@ class _AchatsTable extends StatelessWidget {
       datePrevue: '28 Oct. 2023',
       statut: StatutAchat.enCours,
     ),
-    _AchatRow(
+    const _AchatRow(
       ref: 'ACH-2023-044',
       matiere: 'Additifs Anti-UV',
       fournisseur: 'PolyChim Industries',
@@ -226,7 +226,7 @@ class _AchatHeader extends StatelessWidget {
         border: Border(
             bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
       ),
-      child: Row(
+      child: const Row(
         children: [
           Expanded(flex: 2, child: Text('RÉFÉRENCE', style: style)),
           Expanded(flex: 3, child: Text('MATIÈRE', style: style)),
@@ -453,7 +453,7 @@ class _FournisseurCard extends StatelessWidget {
           ),
 
           // Score stars
-          Expanded(
+          const Expanded(
             flex: 2,
             child: _ScoreStars(score: 10),
           ),

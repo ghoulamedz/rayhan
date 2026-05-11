@@ -129,7 +129,7 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
-                    value: _type,
+                    initialValue: _type,
                     decoration: _inputDeco('Type d\'article'),
                     items: const [
                       DropdownMenuItem(value: 'MP', child: Text('Matière Première (MP)')),

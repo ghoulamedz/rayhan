@@ -71,8 +71,8 @@ class _Breadcrumb extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Text('/', style: style),
     );
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Text('RayhanERP', style: style),
         sep,
         Text('Production', style: style),
@@ -93,8 +93,8 @@ class _Breadcrumb extends StatelessWidget {
 class _KpiRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: StatCard(
             title: "Total SKU 'Produit'",
@@ -245,13 +245,13 @@ class _MovementsPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
+          const Padding(
+            padding: EdgeInsets.symmetric(
               horizontal: AppTheme.sp16,
               vertical: AppTheme.sp8,
             ),
             child: Row(
-              children: const [
+              children: [
                 Text(
                   'DERNIÈRE HEURE',
                   style: TextStyle(
@@ -387,7 +387,7 @@ class _ProduitsTable extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _DropdownBtn(label: 'Toutes les Catégories'),
+          const _DropdownBtn(label: 'Toutes les Catégories'),
           const SizedBox(width: 8),
           IconButton(
             onPressed: () {},
@@ -403,10 +403,10 @@ class _ProduitsTable extends StatelessWidget {
         children: [
           _ProduitTableHeader(),
           ...produits.map((p) => _ProduitRow(produit: p)),
-          Padding(
-            padding: const EdgeInsets.all(AppTheme.sp16),
+          const Padding(
+            padding: EdgeInsets.all(AppTheme.sp16),
             child: Row(
-              children: const [
+              children: [
                 Text(
                   'AFFICHAGE 1–15 SUR 1,284 PRODUITS',
                   style: TextStyle(fontSize: 11, color: AppTheme.greyLight),
@@ -470,8 +470,8 @@ class _ProduitTableHeader extends StatelessWidget {
         border: Border(
             bottom: BorderSide(color: AppTheme.whiteTintedorGreyAddAlpha02)),
       ),
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           Expanded(flex: 2, child: Text('SKU CODE', style: style)),
           Expanded(flex: 4, child: Text("DÉSIGNATION 'PRODUIT'", style: style)),
           Expanded(flex: 2, child: Text('CATÉGORIE', style: style)),
@@ -611,8 +611,9 @@ class _ProduitRow extends StatelessWidget {
   }
 
   String _fmtQty(double q) {
-    if (q >= 1000)
+    if (q >= 1000) {
       return '${(q / 1000).toStringAsFixed(q % 1000 == 0 ? 0 : 1)}K';
+    }
     return q.toStringAsFixed(0);
   }
 }

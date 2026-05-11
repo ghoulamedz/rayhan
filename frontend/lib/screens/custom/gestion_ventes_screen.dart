@@ -53,7 +53,7 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
           const SizedBox(height: AppTheme.sp24),
 
           // ── KPI row ────────────────────────────────────────────────────────
-          Row(
+          const Row(
             children: [
               Expanded(
                 child: StatCard(
@@ -66,7 +66,7 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
                   iconBackground: Colors.black,
                 ),
               ),
-              const SizedBox(width: AppTheme.sp16),
+              SizedBox(width: AppTheme.sp16),
               Expanded(
                 child: StatCard(
                   title: 'Commandes en cours',
@@ -77,7 +77,7 @@ class _GestionVentesScreenState extends State<GestionVentesScreen> {
                   iconBackground: AppTheme.blueLightest,
                 ),
               ),
-              const SizedBox(width: AppTheme.sp16),
+              SizedBox(width: AppTheme.sp16),
               Expanded(
                 child: StatCard(
                   title: 'Taux de Livraison',
@@ -150,9 +150,9 @@ class _VentesTable extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Table header row
-          Row(
+          const Row(
             children: [
-              const Text(
+              Text(
                 'Registre des Ventes',
                 style: TextStyle(
                   fontSize: 15,
@@ -160,9 +160,9 @@ class _VentesTable extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               _FilterChip(label: 'Filtre: Tout'),
-              const SizedBox(width: AppTheme.sp8),
+              SizedBox(width: AppTheme.sp8),
               _FilterChip(label: 'Tri: Date Desc.'),
             ],
           ),
@@ -183,7 +183,7 @@ class _VentesTable extends StatelessWidget {
           ),
 
           const SizedBox(height: AppTheme.sp8),
-          _Pagination(label: 'AFFICHAGE 1–4 SUR 128 VENTES'),
+          const _Pagination(label: 'AFFICHAGE 1–4 SUR 128 VENTES'),
         ],
       ),
     );
@@ -225,10 +225,10 @@ class _TableHeader extends StatelessWidget {
       color: AppTheme.greyLight,
       letterSpacing: 0.5,
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.sp8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: AppTheme.sp8),
       child: Row(
-        children: const [
+        children: [
           Expanded(flex: 2, child: Text('RÉF. COMMANDE', style: style)),
           Expanded(flex: 3, child: Text('CLIENT', style: style)),
           Expanded(flex: 2, child: Text('DATE', style: style)),
@@ -377,9 +377,9 @@ class _VenteDetailPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
+              const Row(
                 children: [
-                  const Text(
+                  Text(
                     'FOCUS COMMANDE',
                     style: TextStyle(
                       fontSize: 10,
@@ -388,8 +388,8 @@ class _VenteDetailPanel extends StatelessWidget {
                       letterSpacing: 0.8,
                     ),
                   ),
-                  const Spacer(),
-                  const Icon(Icons.info_outline_rounded,
+                  Spacer(),
+                  Icon(Icons.info_outline_rounded,
                       size: 16, color: Colors.black),
                 ],
               ),
@@ -474,7 +474,7 @@ class _VenteDetailPanel extends StatelessWidget {
         const SizedBox(height: AppTheme.sp16),
 
         // Flux logistique
-        AppCard(
+        const AppCard(
           title: 'Flux Logistique',
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -576,7 +576,7 @@ class _OrdreTile extends StatelessWidget {
                     children: [
                       Text(
                         ordre.id,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,

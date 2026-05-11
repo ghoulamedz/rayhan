@@ -348,7 +348,7 @@ abstract final class MockData {
   ];
   // ── Équipements ────────────────────────────────────────────────────────────
   static final List<Equipement> equipements = [
-    Equipement(
+    const Equipement(
       id: 'eq1',
       nom: 'Presse Injection Alpha-1',
       ligne: 'Ligne Alpha',
@@ -360,7 +360,7 @@ abstract final class MockData {
       heuresDepuisRevision: 340,
       heuresRevisionMax: 500,
     ),
-    Equipement(
+    const Equipement(
       id: 'eq2',
       nom: 'Robot-A4 Bras Articulé',
       ligne: 'Ligne Alpha',
@@ -373,7 +373,7 @@ abstract final class MockData {
       heuresRevisionMax: 500,
       alerte: 'Surchauffe détectée — refroidissement actif',
     ),
-    Equipement(
+    const Equipement(
       id: 'eq3',
       nom: 'Extrudeuse Beta-2',
       ligne: 'Ligne Beta',
@@ -385,7 +385,7 @@ abstract final class MockData {
       heuresDepuisRevision: 120,
       heuresRevisionMax: 500,
     ),
-    Equipement(
+    const Equipement(
       id: 'eq4',
       nom: 'Convoyeur Gamma-1',
       ligne: 'Ligne Gamma',

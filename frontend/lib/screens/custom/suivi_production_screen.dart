@@ -60,8 +60,8 @@ class SuiviProductionScreen extends StatelessWidget {
 class _KpiRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: _KpiCard(
             label: 'EFFICACITÉ GLOBALE',
@@ -433,12 +433,12 @@ class _EquipementPanel extends StatelessWidget {
             color: AppTheme.blueStrongHighlight,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                children: const [
+                children: [
                   Text(
                     'Statut Équipement',
                     style: TextStyle(
@@ -451,19 +451,19 @@ class _EquipementPanel extends StatelessWidget {
                   Icon(Icons.sensors_rounded, color: Colors.black, size: 18),
                 ],
               ),
-              const SizedBox(height: AppTheme.sp20),
+              SizedBox(height: AppTheme.sp20),
               Center(child: _OeeGauge(value: 0.88)),
-              const SizedBox(height: AppTheme.sp20),
+              SizedBox(height: AppTheme.sp20),
               _EquipTile(
                   label: 'Température',
                   value: '42°C',
                   icon: Icons.thermostat_rounded),
-              const SizedBox(height: AppTheme.sp8),
+              SizedBox(height: AppTheme.sp8),
               _EquipTile(
                   label: 'Vibration',
                   value: 'Nominal',
                   icon: Icons.waves_rounded),
-              const SizedBox(height: AppTheme.sp8),
+              SizedBox(height: AppTheme.sp8),
               _EquipTile(
                   label: 'Cadence',
                   value: '12.5 u/min',

@@ -40,8 +40,11 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
     super.dispose();
   }
 
-  List<Article> get _produitsFinis =>
-      context.read<ArticleProvider>().articles.where((a) => a.type == 'PF').toList();
+  List<Article> get _produitsFinis => context
+      .read<ArticleProvider>()
+      .articles
+      .where((a) => a.type == 'PF')
+      .toList();
 
   Future<void> _onProduitSelected(Article? article) async {
     setState(() {
@@ -121,13 +124,14 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
               child: articles.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : DropdownButtonFormField<Article>(
-                      value: _selectedProduit,
+                      initialValue: _selectedProduit,
                       hint: const Text('Sélectionner un produit fini (PF)'),
                       decoration: _deco('Produit fini'),
                       items: _produitsFinis
                           .map((a) => DropdownMenuItem(
                                 value: a,
-                                child: Text('${a.reference} — ${a.designation}'),
+                                child:
+                                    Text('${a.reference} — ${a.designation}'),
                               ))
                           .toList(),
                       onChanged: _onProduitSelected,
@@ -138,9 +142,10 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
 
             // BOM affiché après sélection
             if (_loadingBom)
-              const Center(child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: CircularProgressIndicator())),
+              const Center(
+                  child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: CircularProgressIndicator())),
             if (_bom.isNotEmpty) ...[
               _Card(
                 title: 'Nomenclature (BOM)',
@@ -153,8 +158,12 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Row(
                         children: [
-                          Icon(ok ? Icons.check_circle_outline : Icons.warning_amber_outlined,
-                              size: 16, color: ok ? Colors.green : Colors.orange),
+                          Icon(
+                              ok
+                                  ? Icons.check_circle_outline
+                                  : Icons.warning_amber_outlined,
+                              size: 16,
+                              color: ok ? Colors.green : Colors.orange),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(b.composant?.designation ?? '—',
@@ -168,10 +177,13 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: ok ? const Color(0xFF374151) : Colors.orange),
+                                    color: ok
+                                        ? const Color(0xFF374151)
+                                        : Colors.orange),
                               ),
                               Text('Stock: ${stock.toStringAsFixed(2)}',
-                                  style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.grey[500])),
                             ],
                           ),
                         ],
@@ -193,10 +205,12 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.warning_amber, color: Colors.orange[700], size: 18),
+                    Icon(Icons.warning_amber,
+                        color: Colors.orange[700], size: 18),
                     const SizedBox(width: 8),
                     const Expanded(
-                      child: Text('Aucune nomenclature BOM définie pour ce produit.',
+                      child: Text(
+                          'Aucune nomenclature BOM définie pour ce produit.',
                           style: TextStyle(fontSize: 13)),
                     ),
                   ],
@@ -215,7 +229,8 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                     onChanged: (_) => setState(() {}),
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Obligatoire';
-                      if ((double.tryParse(v) ?? 0) <= 0) return 'Doit être > 0';
+                      if ((double.tryParse(v) ?? 0) <= 0)
+                        return 'Doit être > 0';
                       return null;
                     },
                   ),
@@ -224,14 +239,16 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                     onTap: () async {
                       final d = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now().add(const Duration(days: 1)),
+                        initialDate:
+                            DateTime.now().add(const Duration(days: 1)),
                         firstDate: DateTime.now(),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
                       );
                       if (d != null) setState(() => _datePlanifiee = d);
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF8F9FA),
                         border: Border.all(color: Colors.grey[400]!),
@@ -239,14 +256,18 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, size: 18, color: Colors.grey),
+                          const Icon(Icons.calendar_today_outlined,
+                              size: 18, color: Colors.grey),
                           const SizedBox(width: 8),
                           Text(
                             _datePlanifiee != null
-                                ? DateFormat('dd/MM/yyyy').format(_datePlanifiee!)
+                                ? DateFormat('dd/MM/yyyy')
+                                    .format(_datePlanifiee!)
                                 : 'Date planifiée *',
                             style: TextStyle(
-                                color: _datePlanifiee != null ? Colors.black87 : Colors.grey[600]),
+                                color: _datePlanifiee != null
+                                    ? Colors.black87
+                                    : Colors.grey[600]),
                           ),
                         ],
                       ),
@@ -263,13 +284,18 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6366F1),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 child: _saving
-                    ? const SizedBox(width: 22, height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white))
                     : const Text('Planifier l\'OF',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
               ),
             ),
             const SizedBox(height: 32),
@@ -290,13 +316,22 @@ class _Card extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF6B7280))),
+            Text(title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    color: Color(0xFF6B7280))),
             const SizedBox(height: 10),
             child,
           ],

@@ -407,7 +407,7 @@ class ErpDropdown<T> extends StatelessWidget {
         ),
         const SizedBox(height: AppTheme.sp4),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           hint: Text(hint,
