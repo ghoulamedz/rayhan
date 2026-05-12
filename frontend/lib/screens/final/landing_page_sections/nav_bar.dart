@@ -5,7 +5,7 @@ import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
 
-  static const double _height = 64;
+  static const double _height = 70;
 
   static const _navLinks = [
     ('Product', true),
@@ -18,7 +18,7 @@ class NavBar extends StatelessWidget {
     return SizedBox(
       height: _height,
       child: Material(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.85),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: .85),
         elevation: 10,
         shadowColor: Colors.black12,
         child: Padding(

@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:rayhan_erp/constants/app_text.dart';
 import 'package:rayhan_erp/screens/custom/main_layout.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/screens/dashboard_screen.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/dashboard_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/footer_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/hero_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/module_grid_section.dart';
+import 'package:rayhan_erp/screens/final/landing_page_sections/nav_bar.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/trust_and_cta_sections.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/value_proposition_section.dart';
 import 'package:rayhan_erp/widgets/custom/box_shadow_logo.dart';
@@ -32,13 +34,13 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen>
     with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final bool _obscurePassword = true;
+  // final _formKey = GlobalKey<FormState>();
+  // final _usernameController = TextEditingController();
+  // final _passwordController = TextEditingController();
+  // bool _obscurePassword = true;
   double _scrollOffset = 0;
-  int _carouselIndex = 0;
-  Timer? _carouselTimer;
+  // int _carouselIndex = 0;
+  // Timer? _carouselTimer;
 
   late final AnimationController _anim = AnimationController(
     vsync: this,
@@ -53,26 +55,26 @@ class _LandingScreenState extends State<LandingScreen>
   ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOut));
 
   late ScrollController _scrollController;
-  late PageController _pageController;
+  // late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-    _pageController = PageController(viewportFraction: 0.85);
-    _pageController.addListener(_onCarouselScroll);
-    // _startCarouselTimer();
+    // _pageController = PageController(viewportFraction: 0.85);
+    // _pageController.addListener(_onCarouselScroll);
+    // // _startCarouselTimer();
   }
 
   @override
   void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
+    // _usernameController.dispose();
+    // _passwordController.dispose();
     _anim.dispose();
     _scrollController.dispose();
-    _pageController.dispose();
-    _carouselTimer?.cancel();
+    // _pageController.dispose();
+    // _carouselTimer?.cancel();
     super.dispose();
   }
 
@@ -82,136 +84,102 @@ class _LandingScreenState extends State<LandingScreen>
     });
   }
 
-  void _onCarouselScroll() {
-    setState(() {
-      _carouselIndex = _pageController.page?.round() ?? 0;
-    });
-  }
+  // void _onCarouselScroll() {
+  //   setState(() {
+  //     _carouselIndex = _pageController.page?.round() ?? 0;
+  //   });
+  // }
 
-  void _startCarouselTimer() {
-    _carouselTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
+  // void _startCarouselTimer() {
+  //   _carouselTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+  //     _pageController.nextPage(
+  //       duration: const Duration(milliseconds: 800),
+  //       curve: Curves.easeInOut,
+  //     );
+  //   });
+  // }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+  // Future<void> _submit() async {
+  //   if (!_formKey.currentState!.validate()) return;
 
-    final auth = context.read<AuthProvider>();
-    final success = await auth.login(
-      _usernameController.text.trim(),
-      _passwordController.text,
-    );
-    if (success && mounted) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const MainLayout(),
-          transitionDuration: const Duration(milliseconds: 400),
-          transitionsBuilder: (_, anim, __, child) =>
-              FadeTransition(opacity: anim, child: child),
-        ),
-      );
-      // context.go('/dashboard');
-    }
-  }
+  //   final auth = context.read<AuthProvider>();
+  //   final success = await auth.login(
+  //     _usernameController.text.trim(),
+  //     _passwordController.text,
+  //   );
+  //   if (success && mounted) {
+  //     Navigator.of(context).pushReplacement(
+  //       PageRouteBuilder(
+  //         pageBuilder: (_, __, ___) => const DashboardScreen(),
+  //         transitionDuration: const Duration(milliseconds: 400),
+  //         transitionsBuilder: (_, anim, __, child) =>
+  //             FadeTransition(opacity: anim, child: child),
+  //       ),
+  //     );
+  //     // context.go('/dashboard');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
-    final carouselItems = [
-      {
-        'imageUrl':
-            'https://images.unsplash.com/photo-1505228395891-9a51e7e86e81?w=400&h=300&fit=crop',
-        'heading': 'Beautiful Landscape',
-        'description':
-            'Explore stunning natural sceneries and breathtaking views',
-      },
-      {
-        'imageUrl':
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-        'heading': 'Mountain Adventure',
-        'description':
-            'Experience the thrill of mountain climbing and exploration',
-      },
-    ];
+    // final auth = context.watch<AuthProvider>();
+    // final carouselItems = [
+    //   {
+    //     'imageUrl':
+    //         'https://images.unsplash.com/photo-1505228395891-9a51e7e86e81?w=400&h=300&fit=crop',
+    //     'heading': 'Beautiful Landscape',
+    //     'description':
+    //         'Explore stunning natural sceneries and breathtaking views',
+    //   },
+    //   {
+    //     'imageUrl':
+    //         'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    //     'heading': 'Mountain Adventure',
+    //     'description':
+    //         'Experience the thrill of mountain climbing and exploration',
+    //   },
+    // ];
 
     return Scaffold(
       backgroundColor: AppTheme.whiteSurface,
-      // extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   elevation: 10,
-      //   title: const Text('Rayhan Logo'),
-      //   backgroundColor: Colors.transparent,
-      //   flexibleSpace: const FlexibleSpaceBar(
-      //     title: Text('SliverAppBar'),
-      //     background: FlutterLogo(),
-      //   ),
-      // ),
       body: CustomScrollView(
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: <Widget>[
           SliverAppBar(
+            centerTitle: true,
             stretch: true,
             floating: false,
             pinned: true,
-            onStretchTrigger: () async {
-              // Triggers when stretching
-            },
-            // [stretchTriggerOffset] describes the amount of overscroll that must occur
-            // to trigger [onStretchTrigger]
-            //
-            // Setting [stretchTriggerOffset] to a value of 300.0 will trigger
-            // [onStretchTrigger] when the user has overscrolled by 300.0 pixels.
-            stretchTriggerOffset: 300.0,
             expandedHeight: 200.0,
             elevation: _scrollOffset > 100 ? 10 : 0,
-            backgroundColor: Color.lerp(
-              AppTheme.greenStrong,
-              AppTheme.greenMatte,
-              (_scrollOffset / 300).clamp(0, 1),
-            ),
-            leading: const RayhanLogo(),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Opacity(
-                opacity: (_scrollOffset / 200).clamp(0, 1),
-                child: const Text(
-                  'RayhanERP',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.blueLightest,
+                    AppTheme.blueLightTinted.withValues(alpha: 0.3),
+                  ],
                 ),
               ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppTheme.greenStrong, AppTheme.greenMatte],
-                  ),
-                ),
-                child: Center(
-                  child: Opacity(
-                    opacity: 1 - (_scrollOffset / 300).clamp(0, 1),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        // BoxShadowLogo(),
-                        // SizedBox(height: 16),
-                        Text(
-                          'Welcome to RayhanERP',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+              child: FlexibleSpaceBar(
+                titlePadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                centerTitle: false,
+                title: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Logo(),
+                    Opacity(
+                      opacity: (1 - (_scrollOffset / 200)).clamp(0.0, 1.0),
+                      child: const Text('Welcome to RayhanERP'),
                     ),
-                  ),
+                    NavActions()
+                  ],
                 ),
               ),
             ),

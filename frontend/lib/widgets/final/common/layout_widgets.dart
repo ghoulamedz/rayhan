@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
+import 'package:rayhan_erp/widgets/final/common/login_form.dart';
 import '../../../constants/app_theme.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -406,6 +408,100 @@ class _AppButtonState extends State<AppButton> {
           child: child,
         ),
       ),
+    );
+  }
+}
+
+class Logo extends StatelessWidget {
+  const Logo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: Image.asset(
+            'assets/images/logo.png',
+            width: 42,
+            height: 42,
+            fit: BoxFit.fitHeight,
+            color: AppTheme.whiteTintedorGreyAddAlpha02.withValues(alpha: 0.2),
+            colorBlendMode: BlendMode.srcATop,
+          ),
+          hoverColor: Colors.transparent,
+          onPressed: () {
+            // Handle tap
+          },
+        ),
+        if (context.isDesktop)
+          Text(
+            'RayhanERP',
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+          ),
+      ],
+    );
+  }
+}
+
+class NavLinks extends StatelessWidget {
+  const NavLinks({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      children: ['Products,Features,PricingS'].map((label) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            label.toUpperCase(),
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.2,
+                  color: cs.onSurface,
+                ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class NavActions extends StatelessWidget {
+  const NavActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(width: 8),
+        AppButton(
+          prefixIcon: Icons.login,
+          label: 'S\'identifier',
+          variant: AppButtonVariant.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => const Dialog(
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: LoginFormWidget(
+                    height: 400,
+                    width: 300,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
