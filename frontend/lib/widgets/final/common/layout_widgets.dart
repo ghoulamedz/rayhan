@@ -367,18 +367,25 @@ class _AppButtonState extends State<AppButton> {
         ),
     };
 
-    Widget child = Text(
-      widget.label,
-      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            fontSize: widget.fontSize,
-            fontWeight: FontWeight.w800,
-            color: fg,
-          ),
+    Widget child = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          widget.label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: widget.fontSize,
+                fontWeight: FontWeight.w800,
+                color: fg,
+              ),
+        ),
+      ],
     );
 
     if (widget.prefixIcon != null) {
       child = Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(widget.prefixIcon, color: fg, size: widget.fontSize + 4),
           const SizedBox(width: 8),
@@ -483,13 +490,17 @@ class NavActions extends StatelessWidget {
         const SizedBox(width: 8),
         AppButton(
           prefixIcon: Icons.login,
-          label: 'S\'identifier',
+          label: '',
           variant: AppButtonVariant.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.all(11),
           onTap: () {
             showDialog(
               context: context,
               builder: (context) => const Dialog(
+                elevation: 5,
+                shadowColor: AppTheme.blueStrongHighlight,
+                surfaceTintColor: AppTheme.blueLightTinted,
+                alignment: Alignment.topRight,
                 child: Padding(
                   padding: EdgeInsets.all(24),
                   child: LoginFormWidget(

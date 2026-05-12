@@ -151,7 +151,7 @@ class _LandingScreenState extends State<LandingScreen>
             stretch: true,
             floating: false,
             pinned: true,
-            expandedHeight: 200.0,
+            expandedHeight: 85.0,
             elevation: _scrollOffset > 100 ? 10 : 0,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
@@ -167,7 +167,8 @@ class _LandingScreenState extends State<LandingScreen>
                 ),
               ),
               child: FlexibleSpaceBar(
-                titlePadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                titlePadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                 centerTitle: false,
                 title: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -175,8 +176,16 @@ class _LandingScreenState extends State<LandingScreen>
                   children: [
                     const Logo(),
                     Opacity(
-                      opacity: (1 - (_scrollOffset / 200)).clamp(0.0, 1.0),
-                      child: const Text('Welcome to RayhanERP'),
+                      opacity: (1 - (_scrollOffset / 100)).clamp(0.0, 1.0),
+                      child: Text(
+                        'Welcome to RayhanERP',
+                        style:
+                            Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppTheme.blueStrongHighlight,
+                                ),
+                      ),
                     ),
                     NavActions()
                   ],
