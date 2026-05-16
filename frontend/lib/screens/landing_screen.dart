@@ -176,11 +176,11 @@ class _LandingScreenState extends State<LandingScreen>
                       HeroSection(
                         onScrollToOffset: scrollToOffset,
                       ),
-                      ValuePropositionSection(),
-                      DashboardSection(),
-                      ModuleGridSection(),
-                      TrustSection(),
-                      CtaSection(),
+                      const ValuePropositionSection(),
+                      const DashboardSection(),
+                      const ModuleGridSection(),
+                      const TrustSection(),
+                      const CtaSection(),
                       FooterSection(
                         onScrollToOffset: scrollToOffset,
                       )
