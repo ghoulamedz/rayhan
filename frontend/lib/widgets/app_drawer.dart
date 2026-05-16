@@ -28,15 +28,15 @@ class AppDrawer extends StatelessWidget {
                   child: Icon(Icons.person, color: Colors.white, size: 28),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Rayhan ERP',
-                  style: TextStyle(
+                Text(
+                  auth.isAuthenticated ? auth.user ?? 'VISITEUR' : 'VISITEUR',
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  auth.role?.replaceAll('ROLE_', '') ?? '',
+                  auth.role?.replaceAll('ROLE_', '') ?? 'VISITEUR',
                   style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
@@ -81,8 +81,8 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Déconnexion',
-                style: TextStyle(color: Colors.red)),
+            title:
+                const Text('Déconnexion', style: TextStyle(color: Colors.red)),
             onTap: () async {
               await auth.logout();
               if (context.mounted) context.go('/login');
@@ -121,7 +121,8 @@ class _DrawerItem extends StatelessWidget {
       leading: Icon(icon, color: color),
       title: Text(label,
           style: TextStyle(
-              color: color, fontWeight: selected ? FontWeight.w600 : FontWeight.normal)),
+              color: color,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.normal)),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onTap: () {
         Navigator.pop(context);

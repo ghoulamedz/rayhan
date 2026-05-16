@@ -4,11 +4,13 @@ import '../services/auth_service.dart';
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   String? _role;
+  String? _user;
   String? _errorMessage;
   bool _isLoading = false;
 
   bool get isAuthenticated => _isAuthenticated;
   String? get role => _role;
+  String? get user => _user;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
 
@@ -21,14 +23,17 @@ class AuthProvider extends ChangeNotifier {
       final data = await AuthService.login(username, password);
       final token = data['token'] as String;
       final roles = data['roles'] as List<dynamic>;
-      final role = roles.isNotEmpty ? roles.first as String : 'ROLE_USER';
+      final user = data['username'] as String;
+      final role = roles.isNotEmpty ? roles.first as String : 'Visiteur';
 
       await AuthService.saveToken(token, role);
       _isAuthenticated = true;
       _role = role;
+      _user = user;
       return true;
     } catch (e) {
-      _errorMessage = 'Identifiants incorrects. Vérifiez votre nom d\'utilisateur et mot de passe.';
+      _errorMessage =
+          'Identifiants incorrects. Vérifiez votre nom d\'utilisateur et mot de passe.';
       return false;
     } finally {
       _isLoading = false;

@@ -1,29 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
-import 'package:rayhan_erp/constants/app_text.dart';
-import 'package:rayhan_erp/screens/custom/main_layout.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
-import 'package:rayhan_erp/screens/dashboard_screen.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/dashboard_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/footer_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/hero_section.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/module_grid_section.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/nav_bar.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/trust_and_cta_sections.dart';
 import 'package:rayhan_erp/screens/final/landing_page_sections/value_proposition_section.dart';
-import 'package:rayhan_erp/widgets/custom/box_shadow_logo.dart';
-import 'package:rayhan_erp/widgets/custom/brand_panel.dart';
-import 'package:rayhan_erp/widgets/custom/carousel_card.dart';
-import 'package:rayhan_erp/widgets/custom/demo_hint.dart';
 import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
-import 'package:rayhan_erp/widgets/custom/parallax_section.dart';
-
-import 'package:rayhan_erp/widgets/custom/rayhan_logo.dart';
-import 'package:rayhan_erp/widgets/custom/system_status_chip.dart';
-import '../providers/auth_provider.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -42,6 +25,7 @@ class _LandingScreenState extends State<LandingScreen>
   // int _carouselIndex = 0;
   // Timer? _carouselTimer;
 
+//animation stuff :
   late final AnimationController _anim = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 600),
@@ -56,6 +40,15 @@ class _LandingScreenState extends State<LandingScreen>
 
   late ScrollController _scrollController;
   // late PageController _pageController;
+  void scrollToOffset(double offset) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
 
   @override
   void initState() {
@@ -97,27 +90,6 @@ class _LandingScreenState extends State<LandingScreen>
   //       curve: Curves.easeInOut,
   //     );
   //   });
-  // }
-
-  // Future<void> _submit() async {
-  //   if (!_formKey.currentState!.validate()) return;
-
-  //   final auth = context.read<AuthProvider>();
-  //   final success = await auth.login(
-  //     _usernameController.text.trim(),
-  //     _passwordController.text,
-  //   );
-  //   if (success && mounted) {
-  //     Navigator.of(context).pushReplacement(
-  //       PageRouteBuilder(
-  //         pageBuilder: (_, __, ___) => const DashboardScreen(),
-  //         transitionDuration: const Duration(milliseconds: 400),
-  //         transitionsBuilder: (_, anim, __, child) =>
-  //             FadeTransition(opacity: anim, child: child),
-  //       ),
-  //     );
-  //     // context.go('/dashboard');
-  //   }
   // }
 
   @override
@@ -187,7 +159,7 @@ class _LandingScreenState extends State<LandingScreen>
                                 ),
                       ),
                     ),
-                    NavActions()
+                    const NavActionsLogin()
                   ],
                 ),
               ),
@@ -199,15 +171,19 @@ class _LandingScreenState extends State<LandingScreen>
                 opacity: _fadeIn,
                 child: SlideTransition(
                   position: _slideIn,
-                  child: const Column(
+                  child: Column(
                     children: [
-                      HeroSection(),
+                      HeroSection(
+                        onScrollToOffset: scrollToOffset,
+                      ),
                       ValuePropositionSection(),
                       DashboardSection(),
                       ModuleGridSection(),
                       TrustSection(),
                       CtaSection(),
-                      FooterSection(),
+                      FooterSection(
+                        onScrollToOffset: scrollToOffset,
+                      )
                     ],
                   ),
                 ),
@@ -216,6 +192,22 @@ class _LandingScreenState extends State<LandingScreen>
           ),
         ],
       ),
+      floatingActionButton: _scrollOffset > 300 // Show after scrolling 300px
+          ? FloatingActionButton(
+              onPressed: () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeInOutCubic,
+                  );
+                });
+              },
+              elevation: 4,
+              backgroundColor: AppTheme.blueStrongHighlight,
+              child: const Icon(Icons.arrow_upward, color: Colors.white),
+            )
+          : null,
     );
   }
 }
@@ -285,174 +277,156 @@ class _LandingScreenState extends State<LandingScreen>
 //                           ],
 //                         ),
 //                       ),
-                      // const SizedBox(height: 32), //   const BrandPanel(),
-                      // const SizedBox(height: 32),
-                      // // Parallax Sections
-                      // ParallaxSection(
-                      //   title: AppText.head1,
-                      //   offset: _scrollOffset * 0.5,
-                      //   color: Colors.orange,
-                      //   text: AppText.para1,
-                      // ),
-                      // const SizedBox(height: 32),
-                      // ParallaxSection(
-                      //   title: AppText.head2,
-                      //   offset: _scrollOffset * 0.4,
-                      //   color: Colors.purple,
-                      //   text: AppText.para2,
-                      // ),
-                      // const SizedBox(height: 32),
-                      // ParallaxSection(
-                      //   title: AppText.head3,
-                      //   offset: _scrollOffset * 0.3,
-                      //   color: Colors.teal,
-                      //   text: AppText.para3,
-                      // ),
-                      // const SizedBox(height: 32),
-                      // ParallaxSection(
-                      //   title: AppText.head4,
-                      //   offset: _scrollOffset * 0.2,
-                      //   color: Colors.orange,
-                      //   text: AppText.para4,
-                      // ),
-                      // const SizedBox(height: 32),
-                      // ParallaxSection(
-                      //   title: AppText.head5,
-                      //   offset: _scrollOffset * 0.1,
-                      //   color: Colors.purple,
-                      //   text: AppText.para5,
-                      // ),
-                      // const SizedBox(height: 32),
-                      // Container(
-                      //   decoration: const BoxDecoration(
-                      //     gradient: LinearGradient(
-                      //       begin: Alignment.topLeft,
-                      //       end: Alignment.bottomRight,
-                      //       colors: [
-                      //         AppTheme.blueStrongHighlight, // slate-900
-                      //         Colors.black, // teal-600
-                      //       ],
-                      //       stops: [0.0, 1.0],
-                      //     ),
-                      //   ),
-                      //   padding: const EdgeInsets.symmetric(
-                      //       horizontal: AppTheme.sp24, vertical: AppTheme.sp20),
-                      //   child: Column(
-                      //     children: [
-                      //       Row(
-                      //         children: [
-                      //           const Column(
-                      //             children: [
-                      //               Text(
-                      //                 'La performance industrielle à portée de main.',
-                      //                 style: TextStyle(
-                      //                   color: AppTheme.blueLightest,
-                      //                   fontSize: 32,
-                      //                   fontWeight: FontWeight.w800,
-                      //                   height: 1.2,
-                      //                 ),
-                      //               ),
-                      //               SizedBox(height: AppTheme.sp12),
-                      //               Text(
-                      //                 'Gérez vos ventes, votre production, vos stocks et '
-                      //                 'vos achats depuis une interface unifiée et temps réel.',
-                      //                 style: TextStyle(
-                      //                   color: Colors.white70,
-                      //                   fontSize: 14,
-                      //                   height: 1.6,
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //           const Spacer(),
-                      //           Column(
-                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                      //             mainAxisAlignment: MainAxisAlignment.start,
-                      //             children: [
-                      //               const SizedBox(width: AppTheme.sp8),
+  // const SizedBox(height: 32), //   const BrandPanel(),
+  // const SizedBox(height: 32),
+  // // Parallax Sections
+  // ParallaxSection(
+  //   title: AppText.head1,
+  //   offset: _scrollOffset * 0.5,
+  //   color: Colors.orange,
+  //   text: AppText.para1,
+  // ),
+  // const SizedBox(height: 32),
+  // ParallaxSection(
+  //   title: AppText.head2,
+  //   offset: _scrollOffset * 0.4,
+  //   color: Colors.purple,
+  //   text: AppText.para2,
+  // ),
+  // const SizedBox(height: 32),
+  // ParallaxSection(
+  //   title: AppText.head3,
+  //   offset: _scrollOffset * 0.3,
+  //   color: Colors.teal,
+  //   text: AppText.para3,
+  // ),
+  // const SizedBox(height: 32),
+  // ParallaxSection(
+  //   title: AppText.head4,
+  //   offset: _scrollOffset * 0.2,
+  //   color: Colors.orange,
+  //   text: AppText.para4,
+  // ),
+  // const SizedBox(height: 32),
+  // ParallaxSection(
+  //   title: AppText.head5,
+  //   offset: _scrollOffset * 0.1,
+  //   color: Colors.purple,
+  //   text: AppText.para5,
+  // ),
+  // const SizedBox(height: 32),
+  // Container(
+  //   decoration: const BoxDecoration(
+  //     gradient: LinearGradient(
+  //       begin: Alignment.topLeft,
+  //       end: Alignment.bottomRight,
+  //       colors: [
+  //         AppTheme.blueStrongHighlight, // slate-900
+  //         Colors.black, // teal-600
+  //       ],
+  //       stops: [0.0, 1.0],
+  //     ),
+  //   ),
+  //   padding: const EdgeInsets.symmetric(
+  //       horizontal: AppTheme.sp24, vertical: AppTheme.sp20),
+  //   child: Column(
+  //     children: [
+  //       Row(
+  //         children: [
+  //           const Column(
+  //             children: [
+  //               Text(
+  //                 'La performance industrielle à portée de main.',
+  //                 style: TextStyle(
+  //                   color: AppTheme.blueLightest,
+  //                   fontSize: 32,
+  //                   fontWeight: FontWeight.w800,
+  //                   height: 1.2,
+  //                 ),
+  //               ),
+  //               SizedBox(height: AppTheme.sp12),
+  //               Text(
+  //                 'Gérez vos ventes, votre production, vos stocks et '
+  //                 'vos achats depuis une interface unifiée et temps réel.',
+  //                 style: TextStyle(
+  //                   color: Colors.white70,
+  //                   fontSize: 14,
+  //                   height: 1.6,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const Spacer(),
+  //           Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             children: [
+  //               const SizedBox(width: AppTheme.sp8),
 
-                      //               // Feature list
-                      //               ...[
-                      //                 (
-                      //                   Icons.speed_rounded,
-                      //                   'Tableau de bord en temps réel'
-                      //                 ),
-                      //                 (
-                      //                   Icons.precision_manufacturing_rounded,
-                      //                   'Suivi production OEE'
-                      //                 ),
-                      //                 (
-                      //                   Icons.inventory_2_rounded,
-                      //                   'Gestion stocks & silos'
-                      //                 ),
-                      //                 (
-                      //                   Icons.shopping_cart_rounded,
-                      //                   'Commandes & facturation'
-                      //                 ),
-                      //               ].map(
-                      //                 (item) => Padding(
-                      //                   padding: const EdgeInsets.only(
-                      //                       bottom: AppTheme.sp12),
-                      //                   child: Row(
-                      //                     children: [
-                      //                       Container(
-                      //                         width: 28,
-                      //                         height: 28,
-                      //                         decoration: BoxDecoration(
-                      //                           color: Colors.white
-                      //                               .withValues(alpha: 0.12),
-                      //                           borderRadius:
-                      //                               BorderRadius.circular(6),
-                      //                         ),
-                      //                         child: Icon(item.$1,
-                      //                             size: 15,
-                      //                             color: Colors.black),
-                      //                       ),
-                      //                       const SizedBox(width: 10),
-                      //                       Text(
-                      //                         item.$2,
-                      //                         style: const TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 13,
-                      //                           fontWeight: FontWeight.w500,
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           )
-                      //         ],
-                      //       ),
+  //               // Feature list
+  //               ...[
+  //                 (
+  //                   Icons.speed_rounded,
+  //                   'Tableau de bord en temps réel'
+  //                 ),
+  //                 (
+  //                   Icons.precision_manufacturing_rounded,
+  //                   'Suivi production OEE'
+  //                 ),
+  //                 (
+  //                   Icons.inventory_2_rounded,
+  //                   'Gestion stocks & silos'
+  //                 ),
+  //                 (
+  //                   Icons.shopping_cart_rounded,
+  //                   'Commandes & facturation'
+  //                 ),
+  //               ].map(
+  //                 (item) => Padding(
+  //                   padding: const EdgeInsets.only(
+  //                       bottom: AppTheme.sp12),
+  //                   child: Row(
+  //                     children: [
+  //                       Container(
+  //                         width: 28,
+  //                         height: 28,
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.white
+  //                               .withValues(alpha: 0.12),
+  //                           borderRadius:
+  //                               BorderRadius.circular(6),
+  //                         ),
+  //                         child: Icon(item.$1,
+  //                             size: 15,
+  //                             color: Colors.black),
+  //                       ),
+  //                       const SizedBox(width: 10),
+  //                       Text(
+  //                         item.$2,
+  //                         style: const TextStyle(
+  //                           color: Colors.white,
+  //                           fontSize: 13,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           )
+  //         ],
+  //       ),
 
-                      //       // Footer
-                      //       Text(
-                      //         '© ${DateTime.now().year} RayhanERP — v1.0.0',
-                      //         style: const TextStyle(
-                      //             color: Colors.white38, fontSize: 11),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  //       // Footer
+  //       Text(
+  //         '© ${DateTime.now().year} RayhanERP — v1.0.0',
+  //         style: const TextStyle(
+  //             color: Colors.white38, fontSize: 11),
+  //       ),
+  //     ],
+  //   ),
+  // ),
 
 //______________________________________________________________________________
 // body: Center(
@@ -624,3 +598,4 @@ class _LandingScreenState extends State<LandingScreen>
 //     ),
 //   ),
 // ),
+

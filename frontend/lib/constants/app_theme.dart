@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rayhan_erp/constants/custom_page_transition.dart';
 
 abstract final class AppTheme {
   static const Color blueLightTinted = Color(0xFFD3E4FE);
@@ -217,6 +218,13 @@ abstract final class AppTheme {
         labelMedium: labelMedium,
         labelSmall: labelSmall,
       ),
+      pageTransitionsTheme: PageTransitionsTheme(builders: {
+        TargetPlatform.android: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.iOS: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.windows: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.macOS: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.linux: MySlideFadePageTransitionsBuilder(),
+      }),
     );
   }
 
@@ -246,6 +254,13 @@ abstract final class AppTheme {
         labelMedium: labelMedium,
         labelSmall: labelSmall,
       ),
+      pageTransitionsTheme: PageTransitionsTheme(builders: {
+        TargetPlatform.android: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.iOS: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.windows: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.macOS: MySlideFadePageTransitionsBuilder(),
+        TargetPlatform.linux: MySlideFadePageTransitionsBuilder(),
+      }),
     );
   }
 }

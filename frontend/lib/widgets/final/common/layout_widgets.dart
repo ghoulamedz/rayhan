@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rayhan_erp/providers/auth_provider.dart';
 import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
 import 'package:rayhan_erp/widgets/final/common/login_form.dart';
 import '../../../constants/app_theme.dart';
@@ -480,8 +482,8 @@ class NavLinks extends StatelessWidget {
   }
 }
 
-class NavActions extends StatelessWidget {
-  const NavActions({super.key});
+class NavActionsLogin extends StatelessWidget {
+  const NavActionsLogin({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -502,9 +504,9 @@ class NavActions extends StatelessWidget {
                 surfaceTintColor: AppTheme.blueLightTinted,
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(15),
                   child: LoginFormWidget(
-                    height: 400,
+                    height: 500,
                     width: 300,
                   ),
                 ),
@@ -513,6 +515,104 @@ class NavActions extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class UserTile extends StatefulWidget {
+  const UserTile({
+    super.key,
+    required this.collapsed,
+  });
+  final bool collapsed;
+
+  @override
+  State<UserTile> createState() => _UserTileState();
+}
+
+class _UserTileState extends State<UserTile> {
+  String lookupUser() {
+    setState(() {});
+    final auth = context.read<AuthProvider>();
+    if (auth.isAuthenticated) {
+      final String user = auth.user as String;
+      return user;
+    }
+    return 'Visiteur';
+  }
+
+  String lookupRole() {
+    setState(() {});
+    final auth = context.read<AuthProvider>();
+    if (auth.isAuthenticated) {
+      final String role = auth.role as String;
+      return role;
+    }
+    return 'Visiteur';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: widget.collapsed ? 8 : AppTheme.sp12,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.sp12,
+        vertical: AppTheme.sp8,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: Colors.black,
+            child: Text(
+              auth.isAuthenticated
+                  ? lookupUser().substring(3).toUpperCase()
+                  : 'VI',
+              style: const TextStyle(
+                color: AppTheme.blueStrongHighlight,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          if (!widget.collapsed) ...[
+            const SizedBox(width: AppTheme.sp8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    auth.isAuthenticated ? lookupUser() : 'Visiteur',
+                    style: const TextStyle(
+                      color: AppTheme.blueStrongHighlight,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    auth.isAuthenticated
+                        ? lookupRole().toUpperCase()
+                        : 'VISITEUR',
+                    style: const TextStyle(
+                      color: AppTheme.blueStrongHighlight,
+                      fontSize: 10,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

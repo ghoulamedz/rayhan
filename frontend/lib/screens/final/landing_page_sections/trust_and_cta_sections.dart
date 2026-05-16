@@ -160,7 +160,7 @@ class _CtaContent extends StatelessWidget {
               filled: true,
             ),
             _CtaButton(
-              label: 'Parler à un Expert',
+              label: 'Contactez Nous',
               filled: false,
             ),
           ],
@@ -198,12 +198,11 @@ class _CtaButtonState extends State<_CtaButton> {
           decoration: BoxDecoration(
             color: widget.filled
                 ? AppTheme.greenMatte
-                : (_hovered ? AppTheme.whiteSurface2 : Colors.transparent),
+                : (_hovered ? AppTheme.greenMatte : Colors.transparent),
             borderRadius: BorderRadius.circular(6),
             border: widget.filled
                 ? null
-                : Border.all(
-                    color: AppTheme.whiteTintedorGreyAddAlpha02, width: 2),
+                : Border.all(color: AppTheme.greenMatte, width: 0),
           ),
           child: Text(
             widget.label,
@@ -214,7 +213,7 @@ class _CtaButtonState extends State<_CtaButton> {
                       ? AppTheme.blueLightest
                       : (_hovered
                           ? AppTheme.blueStrongHighlight
-                          : AppTheme.whiteTintedorGreyAddAlpha02),
+                          : AppTheme.blueLightest),
                 ),
           ),
         ),

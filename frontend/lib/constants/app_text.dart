@@ -1,7 +1,7 @@
 abstract final class AppText {
   static const String head1 = "Le Défi de l'Industrie du Plastique";
   static const String para1 =
-      "L'industrie manufacturière du plastique fait face à des défis sans précédent. Entre la volatilité des prix des matières premières, la complexité de la chaîne d'approvisionnement, les exigences réglementaires strictes et la concurrence internationale féroce, les entreprises doivent gérer des opérations de plus en plus complexes. Les systèmes traditionnels fragmentés ne suffisent plus pour maintenir une efficacité opérationnelle et une rentabilité optimales. Vous avez besoin d'une solution holistique qui intègre tous vos processus métier en un seul système puissant et flexible."; // teal-500
+      "L'industrie manufacturière du plastique fait face à des défis sans précédent. Entre la volatilité des prix des matières premières, la complexité de la chaîne d'approvisionnement, les exigences réglementaires strictes et la concurrence internationale féroce, les entreprises doivent gérer des opérations de plus en plus complexes. Les systèmes traditionnels fragmentés ne suffisent plus pour maintenir une efficacité opérationnelle et une rentabilité optimales. Vous avez besoin d'une solution holistique qui intègre tous vos processus métier en un seul système puissant et flexible.";
   static const String head2 =
       "Une Solution Conçue pour le Secteur du Plastique";
   static const String para2 =

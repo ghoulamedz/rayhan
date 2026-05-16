@@ -4,7 +4,11 @@ import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
 import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 
 class HeroSection extends StatelessWidget {
-  const HeroSection({super.key});
+  final Function(double) onScrollToOffset;
+  const HeroSection({
+    super.key,
+    required this.onScrollToOffset,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,11 @@ class HeroSection extends StatelessWidget {
             ),
           ),
           // ── Content ───────────────────────────────────────
-          const Padding(
-            padding: EdgeInsets.fromLTRB(48, 80, 48, 48),
-            child: _HeroContent(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(48, 80, 48, 48),
+            child: _HeroContent(
+              onScrollToOffset: onScrollToOffset,
+            ),
           ),
         ],
       ),
@@ -55,7 +61,11 @@ class HeroSection extends StatelessWidget {
 }
 
 class _HeroContent extends StatelessWidget {
-  const _HeroContent();
+  final Function(double) onScrollToOffset;
+
+  const _HeroContent({
+    required this.onScrollToOffset,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -120,19 +130,25 @@ class _HeroContent extends StatelessWidget {
         const SizedBox(height: 36),
 
         // CTA buttons
-        const Wrap(
+        Wrap(
           spacing: 16,
           runSpacing: 12,
           children: [
             AppButton(
-              label: 'Démarrer un Essai Gratuit',
+              onTap: () => onScrollToOffset(
+                500,
+              ),
+              label: 'Réduisez les Coûts, Augmentez la Productivité',
               variant: AppButtonVariant.primary,
               fontSize: 17,
             ),
             AppButton(
-              label: 'Voir la Démo',
+              onTap: () => onScrollToOffset(
+                1900,
+              ),
+              label: 'Les Modules Intégrées',
               variant: AppButtonVariant.outlined,
-              prefixIcon: Icons.play_circle_outline,
+              // prefixIcon: Icons.play_circle_outline,
               fontSize: 17,
             ),
           ],

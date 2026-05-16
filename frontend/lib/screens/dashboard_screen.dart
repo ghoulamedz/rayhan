@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
 
 import '../providers/dashboard_provider.dart';
 import '../models/dashboard_kpi.dart';
@@ -52,6 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             tooltip: 'Actualiser',
             onPressed: () => context.read<DashboardProvider>().load(),
           ),
+          const SizedBox(width: 8),
           const SizedBox(width: 8),
         ],
       ),

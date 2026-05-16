@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/custom/responsive_layout.dart';
 
 class FooterSection extends StatelessWidget {
-  const FooterSection({super.key});
+  final Function(double) onScrollToOffset;
+  const FooterSection({
+    super.key,
+    required this.onScrollToOffset,
+  });
 
   static const _links = [
     'Privacy Policy',
     'Terms of Service',
-    'System Status',
     'Technical Support',
   ];
 
@@ -59,7 +63,7 @@ class _BrandColumn extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
           child: Text(
-            '© 2024 RayhanERP Industrial Systems.\nBuilt for Precision Manufacturing.',
+            '© ${DateFormat('yyyy').format(DateTime.now())} RayhanERP Industrial Systems.\nBuilt for Precision Manufacturing.',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontSize: 13,
                   color: AppTheme.blueStrongHighlight,
