@@ -1,0 +1,36 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main, master, gh-pages]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Build Web
+        run: |
+          cd frontend
+          flutter pub get
+          flutter build web --release
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build/web
+          publish_branch: gh-pages
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'

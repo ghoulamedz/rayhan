@@ -1,9 +1,11 @@
+//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import '../models/purchase_order.dart';
 import '../providers/achats_provider.dart';
+import '../constants/app_theme.dart';
+import '../widgets/professional_dialogs.dart';
 
 class PurchaseOrderDetailScreen extends StatelessWidget {
   final PurchaseOrder order;
@@ -11,16 +13,14 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+    final fmt =
+        NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
     final statusColor = Color(order.statutColor);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.kBackgroundOffWhite,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(order.reference ?? '—',
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(order.reference ?? '—'),
         actions: [
           if (order.peutReceptionner)
             Padding(
@@ -30,9 +30,10 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.inventory_outlined, size: 18),
                 label: const Text('Réceptionner'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B5CF6),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  backgroundColor: AppTheme.kPrimaryTeal,
+                  foregroundColor: AppTheme.kSurfaceWhite,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),
@@ -44,48 +45,60 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: statusColor.withOpacity(0.3)),
+              border: Border.all(color: statusColor.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
                 Icon(Icons.circle, color: statusColor, size: 10),
                 const SizedBox(width: 8),
                 Text(order.statutLabel,
-                    style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 14)),
+                    style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          _InfoCard(children: [
-            _InfoRow(label: 'Fournisseur', value: order.fournisseur?.raisonSociale ?? '—'),
-            _InfoRow(label: 'Date commande', value: order.dateCommande),
-            if (order.dateLivraisonPrevue != null)
-              _InfoRow(label: 'Livraison prévue', value: order.dateLivraisonPrevue!),
-            if (order.notes != null && order.notes!.isNotEmpty)
-              _InfoRow(label: 'Notes', value: order.notes!),
-          ]),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: AppTheme.cardDecorationMd,
+            child: Column(
+              children: [
+                _infoRow(
+                    label: 'Fournisseur',
+                    value: order.fournisseur?.raisonSociale ?? '—'),
+                _infoRow(label: 'Date commande', value: order.dateCommande),
+                if (order.dateLivraisonPrevue != null)
+                  _infoRow(
+                      label: 'Livraison prévue',
+                      value: order.dateLivraisonPrevue!),
+                if (order.notes != null && order.notes!.isNotEmpty)
+                  _infoRow(label: 'Notes', value: order.notes!),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
-          const Text('Lignes de commande',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+          Text('Lignes de commande',
+              style: AppTheme.titleSmall.copyWith(fontSize: 14)),
           const SizedBox(height: 8),
           ...order.lignes.map((l) => _LigneCard(ligne: l, fmt: fmt)),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
-            ),
+            decoration: AppTheme.cardDecorationMd,
             child: Column(
               children: [
-                _TotalRow(label: 'Total HT', value: fmt.format(order.totalHT)),
-                _TotalRow(label: 'TVA (19%)', value: fmt.format(order.totalTVA)),
-                const Divider(),
-                _TotalRow(label: 'Total TTC', value: fmt.format(order.totalTTC),
-                    bold: true, color: const Color(0xFF8B5CF6)),
+                _infoRow(
+                    label: 'Total HT', value: fmt.format(order.totalHT)),
+                _infoRow(label: 'TVA (19%)', value: fmt.format(order.totalTVA)),
+                const Divider(color: AppTheme.kBorderLight),
+                _totalRow(
+                    label: 'Total TTC',
+                    value: fmt.format(order.totalTTC),
+                    bold: true),
               ],
             ),
           ),
@@ -96,130 +109,119 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
   }
 
   void _confirmReceive(BuildContext context) {
-    showDialog(
+    AppDialogs.showConfirm(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Confirmer la réception ?'),
-        content: Text(
-            'Réceptionner toutes les lignes de ${order.reference} ?\n\nLe stock sera incrémenté automatiquement.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B5CF6)),
-            onPressed: () async {
+      title: 'Confirmer la réception ?',
+      message:
+          'Réceptionner toutes les lignes de ${order.reference} ?\n\nLe stock sera incrémenté automatiquement.',
+      confirmLabel: 'Réceptionner',
+      icon: Icons.inventory_outlined,
+      accentColor: AppTheme.kPrimaryTeal,
+    ).then((confirmed) {
+      if (confirmed == true) {
+        context
+            .read<AchatsProvider>()
+            .receive(order.id!, order.lignes)
+            .then((err) {
+          if (context.mounted) {
+            if (err == null) {
               Navigator.pop(context);
-              final err = await context.read<AchatsProvider>().receive(order.id!, order.lignes);
-              if (context.mounted) {
-                if (err == null) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Réception enregistrée — stock mis à jour'),
-                    backgroundColor: Colors.green,
-                  ));
-                } else {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(err), backgroundColor: Colors.red));
-                }
-              }
-            },
-            child: const Text('Confirmer', style: TextStyle(color: Colors.white)),
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Réception enregistrée — stock mis à jour'),
+                backgroundColor: AppTheme.kSuccessGreen,
+              ));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(err),
+                  backgroundColor: AppTheme.kErrorRed));
+            }
+          }
+        });
+      }
+    });
+  }
+}
+
+Widget _infoRow({required String label, required String value}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(label,
+                style: AppTheme.bodySmall
+                    .copyWith(color: AppTheme.kTextSecondary)),
+          ),
+          Expanded(
+            child: Text(value,
+                style: AppTheme.bodyMedium
+                    .copyWith(fontWeight: FontWeight.w500)),
           ),
         ],
       ),
     );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  final List<Widget> children;
-  const _InfoCard({required this.children});
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
-        child: Column(children: children),
-      );
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _InfoRow({required this.label, required this.value});
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(width: 130,
-                child: Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13))),
-            Expanded(child: Text(value,
-                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13))),
-          ],
-        ),
-      );
-}
 
 class _LigneCard extends StatelessWidget {
   final PurchaseOrderLine ligne;
   final NumberFormat fmt;
   const _LigneCard({required this.ligne, required this.fmt});
+
   @override
   Widget build(BuildContext context) => Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.kSurfaceWhite,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 1))],
+          boxShadow: AppTheme.shadowSm,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(ligne.article?.designation ?? '—',
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '${ligne.quantiteCommandee} ${ligne.article?.uniteMesure ?? ''} × ${fmt.format(ligne.prixUnitaireHT)}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: AppTheme.bodySmall
+                      .copyWith(color: AppTheme.kTextSecondary),
                 ),
                 Text(fmt.format(ligne.montantTTC ?? ligne.montantTTCCalc),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF8B5CF6))),
+                    style: AppTheme.titleSmall
+                        .copyWith(color: AppTheme.kPrimaryTeal)),
               ],
             ),
             if (ligne.quantiteRecue > 0)
               Text('Reçu : ${ligne.quantiteRecue}',
-                  style: const TextStyle(color: Color(0xFF10B981), fontSize: 11)),
+                  style: AppTheme.bodySmall
+                      .copyWith(color: AppTheme.kSuccessGreen)),
           ],
         ),
       );
 }
 
-class _TotalRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool bold;
-  final Color? color;
-  const _TotalRow({required this.label, required this.value, this.bold = false, this.color});
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-            Text(value, style: TextStyle(
-                fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-                fontSize: bold ? 16 : 13,
-                color: color ?? const Color(0xFF374151))),
-          ],
-        ),
-      );
-}
+Widget _totalRow({
+  required String label,
+  required String value,
+  bool bold = false,
+}) =>
+    Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: AppTheme.bodySmall
+                  .copyWith(color: AppTheme.kTextSecondary)),
+          Text(value,
+              style: TextStyle(
+                  fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+                  fontSize: bold ? 16 : 13,
+                  color: AppTheme.kTextPrimary)),
+        ],
+      ),
+    );

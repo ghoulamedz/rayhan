@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/production_provider.dart';
 import '../models/production_order.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/brand_app_bar.dart';
+import '../widgets/professional_dialogs.dart';
+import '../constants/app_theme.dart';
 import 'production_form_screen.dart';
 import 'production_detail_screen.dart';
 
@@ -43,66 +45,68 @@ class _ProductionScreenState extends State<ProductionScreen> {
     final filtered = _filtered(provider.orders);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
-            if (!provider.isLoading)
-              Text('${provider.ofPlanifies} planifié(s) · ${provider.ofEnCours} en cours',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
+        child: BrandAppBar(
+          title: 'Production',
+          subtitle: !provider.isLoading
+              ? '${provider.ofPlanifies} planifié(s) · ${provider.ofEnCours} en cours'
+              : null,
+          currentRoute: '/production',
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              onPressed: () => context.read<ProductionProvider>().load(),
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_outlined),
-            onPressed: () => context.read<ProductionProvider>().load(),
-          ),
-        ],
       ),
       drawer: const AppDrawer(currentRoute: '/production'),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const ProductionFormScreen())),
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const ProductionFormScreen())),
         icon: const Icon(Icons.add),
         label: const Text('Nouvel OF'),
-        backgroundColor: const Color(0xFF6366F1),
       ),
-      body: Column(
-        children: [
-          // Chips filtre
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _filters.map((f) {
-                  final selected = _filterStatut == f.$1;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
-                      label: Text(f.$2),
-                      selected: selected,
-                      onSelected: (_) => setState(() => _filterStatut = f.$1),
-                      selectedColor: const Color(0xFF6366F1).withOpacity(0.15),
-                      checkmarkColor: const Color(0xFF6366F1),
-                      labelStyle: TextStyle(
-                        fontSize: 12,
-                        color: selected ? const Color(0xFF6366F1) : Colors.grey[700],
-                        fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                  );
-                }).toList(),
+      body: AppTheme.glassBackground(
+        child: Column(
+          children: [
+            AppTheme.withGlass(
+              radius: 0,
+              blur: 16,
+              opacity: 0.7,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _filters.map((f) {
+                      final selected = _filterStatut == f.$1;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: FilterChip(
+                          label: Text(f.$2),
+                          selected: selected,
+                          onSelected: (_) => setState(() => _filterStatut = f.$1),
+                          selectedColor: AppTheme.kPrimaryBurgundyLight,
+                          checkmarkColor: AppTheme.kPrimaryBurgundy,
+                          labelStyle: TextStyle(
+                            fontSize: 12,
+                            color: selected
+                                ? AppTheme.kPrimaryBurgundy
+                                : AppTheme.kTextSecondary,
+                            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
             ),
-          ),
-          Expanded(child: _buildBody(provider, filtered)),
-        ],
+            Expanded(child: _buildBody(provider, filtered)),
+          ],
+        ),
       ),
     );
   }
@@ -114,12 +118,15 @@ class _ProductionScreenState extends State<ProductionScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+            Icon(Icons.error_outline, size: 48, color: AppTheme.kTextHint),
             const SizedBox(height: 12),
-            Text(provider.error!),
+            Text(provider.error!,
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.read<ProductionProvider>().load(),
+              style: AppTheme.primaryButton,
               child: const Text('Réessayer'),
             ),
           ],
@@ -131,10 +138,12 @@ class _ProductionScreenState extends State<ProductionScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.precision_manufacturing_outlined, size: 64, color: Colors.grey[300]),
+            Icon(Icons.precision_manufacturing_outlined,
+                size: 64, color: AppTheme.kBorderLight),
             const SizedBox(height: 16),
             Text('Aucun ordre de fabrication',
-                style: TextStyle(color: Colors.grey[500], fontSize: 16)),
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
           ],
         ),
       );
@@ -161,45 +170,59 @@ class _OFCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(context,
           MaterialPageRoute(builder: (_) => ProductionDetailScreen(order: order))),
-      child: Container(
+      child: AppTheme.withGlass(
+        radius: 12,
+        blur: 16,
+        opacity: 0.7,
         margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: IntrinsicHeight(
+          child: Row(
             children: [
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
               Row(
                 children: [
                   Expanded(
                     child: Text(order.reference ?? '—',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        style: AppTheme.titleSmall.copyWith(fontSize: 15)),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(order.statutLabel,
-                        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            color: color,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.factory_outlined, size: 14, color: Colors.grey),
+                  const Icon(Icons.factory_outlined,
+                      size: 14, color: AppTheme.kTextSecondary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(order.produitFini?.designation ?? '—',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 13)),
+                        style: AppTheme.bodySmall.copyWith(fontSize: 13)),
                   ),
                 ],
               ),
@@ -209,10 +232,12 @@ class _OFCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_outlined, size: 13, color: Colors.grey),
+                      const Icon(Icons.calendar_today_outlined,
+                          size: 13, color: AppTheme.kTextSecondary),
                       const SizedBox(width: 4),
                       Text(order.datePlanifiee,
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                          style: AppTheme.bodySmall
+                              .copyWith(color: AppTheme.kTextSecondary)),
                     ],
                   ),
                   Row(
@@ -220,29 +245,29 @@ class _OFCard extends StatelessWidget {
                       Text(
                         '${order.quantitePlanifiee.toStringAsFixed(0)} ${order.produitFini?.uniteMesure ?? ''}',
                         style: TextStyle(
-                            color: color, fontWeight: FontWeight.bold, fontSize: 13),
+                            color: color,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
                       ),
-                      if (order.quantiteRealisee > 0) ...[
+                      if (order.quantiteRealisee > 0)
                         Text(' / réalisé: ${order.quantiteRealisee.toStringAsFixed(0)}',
-                            style: TextStyle(color: Colors.grey[500], fontSize: 11)),
-                      ],
+                            style: AppTheme.bodySmall
+                                .copyWith(color: AppTheme.kTextSecondary)),
                     ],
                   ),
                 ],
               ),
-              // Barre de progression si lancé
               if (order.statut == 'LANCE' || order.statut == 'EN_COURS') ...[
                 const SizedBox(height: 10),
                 LinearProgressIndicator(
                   value: order.quantitePlanifiee > 0
                       ? (order.quantiteRealisee / order.quantitePlanifiee).clamp(0.0, 1.0)
                       : 0,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: AppTheme.kBorderLight,
                   color: color,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ],
-              // Actions rapides
               if (order.peutLancer || order.peutTerminer) ...[
                 const SizedBox(height: 10),
                 Row(
@@ -252,14 +277,14 @@ class _OFCard extends StatelessWidget {
                       _ActionBtn(
                         label: 'Lancer',
                         icon: Icons.play_arrow_rounded,
-                        color: const Color(0xFFF59E0B),
+                        color: AppTheme.kSecondaryTan,
                         onTap: () => _launch(context, order),
                       ),
                     if (order.peutTerminer)
                       _ActionBtn(
                         label: 'Terminer',
                         icon: Icons.check_circle_outline,
-                        color: const Color(0xFF10B981),
+                        color: AppTheme.kSuccessGreen,
                         onTap: () => Navigator.push(context,
                             MaterialPageRoute(
                                 builder: (_) => ProductionDetailScreen(order: order))),
@@ -267,39 +292,37 @@ class _OFCard extends StatelessWidget {
                   ],
                 ),
               ],
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      ],
+    ),
+  ),
+  ),
     );
   }
 
   void _launch(BuildContext context, ProductionOrder order) {
-    showDialog(
+    AppDialogs.showConfirm(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Lancer l\'OF ?'),
-        content: Text(
-            'Lancer ${order.reference} ?\n\nLes matières premières seront consommées du stock.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF59E0B)),
-            onPressed: () async {
-              Navigator.pop(context);
-              final err = await context.read<ProductionProvider>().launch(order.id!);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(err ?? 'OF lancé — matières premières consommées'),
-                  backgroundColor: err == null ? Colors.green : Colors.red,
-                ));
-              }
-            },
-            child: const Text('Lancer', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+      title: "Lancer l'OF ?",
+      message: 'Lancer ${order.reference} ?\n\nLes matières premières seront consommées du stock.',
+      confirmLabel: 'Lancer',
+      icon: Icons.play_arrow_rounded,
+      accentColor: AppTheme.kSecondaryTan,
+    ).then((confirmed) {
+      if (confirmed == true) {
+        context.read<ProductionProvider>().launch(order.id!).then((err) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(err ?? 'OF lancé — matières premières consommées'),
+              backgroundColor: err == null ? AppTheme.kSuccessGreen : AppTheme.kErrorRed,
+            ));
+          }
+        });
+      }
+    });
   }
 }
 
@@ -308,7 +331,12 @@ class _ActionBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
-  const _ActionBtn({required this.label, required this.icon, required this.color, required this.onTap});
+  const _ActionBtn({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -317,7 +345,7 @@ class _ActionBtn extends StatelessWidget {
           margin: const EdgeInsets.only(left: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -325,7 +353,11 @@ class _ActionBtn extends StatelessWidget {
             children: [
               Icon(icon, size: 14, color: color),
               const SizedBox(width: 4),
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12)),
+              Text(label,
+                  style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12)),
             ],
           ),
         ),

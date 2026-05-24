@@ -1,34 +1,39 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
-
-import 'providers/auth_provider.dart';
-import 'providers/dashboard_provider.dart';
-import 'providers/article_provider.dart';
-import 'providers/ventes_provider.dart';
-import 'providers/achats_provider.dart';
-import 'providers/production_provider.dart';
-import 'providers/stock_provider.dart';
-import 'screens/landing_screen.dart';
-import 'screens/dashboard_screen.dart';
-import 'screens/articles_screen.dart';
-import 'screens/ventes_screen.dart';
-import 'screens/achats_screen.dart';
-import 'screens/production_screen.dart';
-import 'screens/stock_screen.dart';
+import 'package:rayhan_erp/providers/auth_provider.dart';
+import 'package:rayhan_erp/providers/dashboard_provider.dart';
+import 'package:rayhan_erp/providers/article_provider.dart';
+import 'package:rayhan_erp/providers/ventes_provider.dart';
+import 'package:rayhan_erp/providers/achats_provider.dart';
+import 'package:rayhan_erp/providers/production_provider.dart';
+import 'package:rayhan_erp/providers/stock_provider.dart';
+import 'package:rayhan_erp/screens/landing_screen.dart';
+import 'package:rayhan_erp/screens/dashboard_screen.dart';
+import 'package:rayhan_erp/screens/articles_screen.dart';
+import 'package:rayhan_erp/screens/ventes_screen.dart';
+import 'package:rayhan_erp/screens/achats_screen.dart';
+import 'package:rayhan_erp/screens/production_screen.dart';
+import 'package:rayhan_erp/screens/stock_screen.dart';
+import 'package:rayhan_erp/screens/signup_screen.dart';
+import 'package:rayhan_erp/screens/forgot_password_screen.dart';
+import 'package:rayhan_erp/widgets/role_guard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('fr_FR');
   await initializeDateFormatting('fr_TN');
+
+  final auth = AuthProvider();
+  await auth.checkAuth();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider.value(value: auth),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
         ChangeNotifierProvider(create: (_) => VentesProvider()),
@@ -61,9 +66,23 @@ class _RayhanAppState extends State<RayhanApp> {
         refreshListenable: auth,
         redirect: (_, state) {
           final loggedIn = auth.isAuthenticated;
+          final role = auth.role;
           final onLogin = state.matchedLocation == '/login';
-          if (!loggedIn && !onLogin) return '/login';
-          if (loggedIn && onLogin) return '/dashboard';
+          final onSignup = state.matchedLocation == '/signup';
+          final onForgot = state.matchedLocation == '/forgot-password';
+          final publicRoutes = ['/login', '/signup', '/forgot-password'];
+
+          if (!loggedIn && !publicRoutes.contains(state.matchedLocation)) {
+            return '/login';
+          }
+          if (loggedIn && onLogin) {
+            return RoleGuard.getDefaultRoute(role);
+          }
+          if (loggedIn && !publicRoutes.contains(state.matchedLocation)) {
+            if (!RoleGuard.hasAccess(role, state.matchedLocation)) {
+              return RoleGuard.getDefaultRoute(role);
+            }
+          }
           return null;
         },
         routes: [
@@ -78,6 +97,10 @@ class _RayhanAppState extends State<RayhanApp> {
               path: '/production',
               builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
+          GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
+          GoRoute(
+              path: '/forgot-password',
+              builder: (_, __) => const ForgotPasswordScreen()),
         ],
       );
     }
@@ -104,7 +127,6 @@ class _RayhanAppState extends State<RayhanApp> {
   }
 }
 
-/// Enable mouse-drag scrolling on web/desktop platforms.
 class _WebScrollBehavior extends MaterialScrollBehavior {
   const _WebScrollBehavior();
 

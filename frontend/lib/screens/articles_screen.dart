@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import '../providers/article_provider.dart';
 import '../models/article.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/brand_app_bar.dart';
+import '../widgets/professional_dialogs.dart';
+import '../constants/app_theme.dart';
 import 'article_form_screen.dart';
 
 class ArticlesScreen extends StatefulWidget {
@@ -36,18 +38,18 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
     final provider = context.watch<ArticleProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('Articles',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_outlined),
-            onPressed: () => context.read<ArticleProvider>().load(),
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
+        child: BrandAppBar(
+          title: 'Articles',
+          currentRoute: '/articles',
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              onPressed: () => context.read<ArticleProvider>().load(),
+            ),
+          ],
+        ),
       ),
       drawer: const AppDrawer(currentRoute: '/articles'),
       floatingActionButton: FloatingActionButton.extended(
@@ -55,12 +57,14 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
         icon: const Icon(Icons.add),
         label: const Text('Nouvel article'),
       ),
-      body: Column(
-        children: [
-          _SearchBar(controller: _searchController, provider: provider),
-          _FilterChips(provider: provider),
-          Expanded(child: _ArticleList(provider: provider)),
-        ],
+      body: AppTheme.glassBackground(
+        child: Column(
+          children: [
+            _SearchBar(controller: _searchController, provider: provider),
+            _FilterChips(provider: provider),
+            Expanded(child: _ArticleList(provider: provider)),
+          ],
+        ),
       ),
     );
   }
@@ -78,35 +82,38 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
   final ArticleProvider provider;
-
   const _SearchBar({required this.controller, required this.provider});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: TextField(
-        controller: controller,
-        onChanged: provider.setSearch,
-        decoration: InputDecoration(
-          hintText: 'Rechercher par référence ou désignation…',
-          prefixIcon: const Icon(Icons.search, size: 20),
-          suffixIcon: controller.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear, size: 18),
-                  onPressed: () {
-                    controller.clear();
-                    provider.setSearch('');
-                  },
-                )
-              : null,
-          filled: true,
-          fillColor: const Color(0xFFF5F7FA),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
+    return AppTheme.withGlass(
+      radius: 0,
+      blur: 16,
+      opacity: 0.7,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: TextField(
+          controller: controller,
+          onChanged: provider.setSearch,
+          decoration: InputDecoration(
+            hintText: 'Rechercher par référence ou désignation…',
+            prefixIcon: const Icon(Icons.search, size: 20),
+            suffixIcon: controller.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear, size: 18),
+                    onPressed: () {
+                      controller.clear();
+                      provider.setSearch('');
+                    },
+                  )
+                : null,
+            filled: true,
+            fillColor: AppTheme.kInputFill,
+            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
       ),
@@ -127,34 +134,37 @@ class _FilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: filters.map((f) {
-            final selected = provider.filterType == f.$1;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(f.$2),
-                selected: selected,
-                onSelected: (_) => provider.setFilter(f.$1),
-                selectedColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.15),
-                checkmarkColor: Theme.of(context).colorScheme.primary,
-                labelStyle: TextStyle(
-                  fontSize: 12,
-                  color: selected
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey[700],
-                  fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.normal,
+    return AppTheme.withGlass(
+      radius: 0,
+      blur: 16,
+      opacity: 0.7,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: filters.map((f) {
+              final selected = provider.filterType == f.$1;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: FilterChip(
+                  label: Text(f.$2),
+                  selected: selected,
+                  onSelected: (_) => provider.setFilter(f.$1),
+                  selectedColor: AppTheme.kPrimaryBurgundyLight,
+                  checkmarkColor: AppTheme.kPrimaryBurgundy,
+                  labelStyle: TextStyle(
+                    fontSize: 12,
+                    color: selected
+                        ? AppTheme.kPrimaryBurgundy
+                        : AppTheme.kTextSecondary,
+                    fontWeight:
+                        selected ? FontWeight.w600 : FontWeight.normal,
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -175,12 +185,16 @@ class _ArticleList extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+            Icon(Icons.error_outline,
+                size: 48, color: AppTheme.kTextHint),
             const SizedBox(height: 12),
-            Text(provider.error!, style: TextStyle(color: Colors.grey[600])),
+            Text(provider.error!,
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.read<ArticleProvider>().load(),
+              style: AppTheme.primaryButton,
               child: const Text('Réessayer'),
             ),
           ],
@@ -192,10 +206,12 @@ class _ArticleList extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey[300]),
+            Icon(Icons.inventory_2_outlined,
+                size: 64, color: AppTheme.kBorderLight),
             const SizedBox(height: 16),
             Text('Aucun article trouvé',
-                style: TextStyle(color: Colors.grey[500], fontSize: 16)),
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
           ],
         ),
       );
@@ -206,8 +222,7 @@ class _ArticleList extends StatelessWidget {
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.articles.length,
-        itemBuilder: (ctx, i) =>
-            _ArticleCard(article: provider.articles[i]),
+        itemBuilder: (ctx, i) => _ArticleCard(article: provider.articles[i]),
       ),
     );
   }
@@ -218,119 +233,131 @@ class _ArticleCard extends StatelessWidget {
   const _ArticleCard({required this.article});
 
   static const typeColors = {
-    'MP': Color(0xFF3B82F6),
-    'PSF': Color(0xFF8B5CF6),
-    'PF': Color(0xFF10B981),
+    'MP': AppTheme.kPrimaryBurgundy,
+    'PSF': AppTheme.kSecondaryTan,
+    'PF': AppTheme.kSuccessGreen,
   };
 
   @override
   Widget build(BuildContext context) {
-    final color = typeColors[article.type] ?? Colors.grey;
-    final priceFmt = NumberFormat.currency(
-        locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+    final color = typeColors[article.type] ?? AppTheme.kTextSecondary;
+    final priceFmt =
+        NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
-    return Container(
+    return AppTheme.withGlass(
+      radius: 12,
+      blur: 16,
+      opacity: 0.7,
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2)),
-        ],
-        border: article.enAlerte
-            ? Border.all(color: Colors.red[300]!, width: 1.5)
-            : null,
-      ),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              article.type,
-              style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12),
-            ),
-          ),
-        ),
-        title: Row(
+      child: IntrinsicHeight(
+        child: Row(
           children: [
-            Expanded(
-              child: Text(
-                article.designation,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 14),
+            Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
               ),
             ),
-            if (article.enAlerte)
-              const Icon(Icons.warning_amber,
-                  color: Colors.orange, size: 16),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text('Réf: ${article.reference}',
-                style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-            const SizedBox(height: 2),
-            Row(
-              children: [
-                Text(
-                  'Stock: ${article.stockActuel} ${article.uniteMesure ?? ''}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: article.enAlerte
-                        ? Colors.red[600]
-                        : Colors.grey[600],
-                    fontWeight: article.enAlerte
-                        ? FontWeight.w600
-                        : FontWeight.normal,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(article.type,
+                            style: TextStyle(
+                                color: color,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(article.designation,
+                                    style: AppTheme.titleSmall.copyWith(fontSize: 14)),
+                              ),
+                              if (article.enAlerte)
+                                const Icon(Icons.warning_amber,
+                                    color: AppTheme.kPrimaryBurgundyLight, size: 16),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text('Réf: ${article.reference}',
+                              style: AppTheme.bodySmall
+                                  .copyWith(color: AppTheme.kTextSecondary)),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Text(
+                                'Stock: ${article.stockActuel} ${article.uniteMesure ?? ''}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: article.enAlerte
+                                      ? AppTheme.kErrorRed
+                                      : AppTheme.kTextSecondary,
+                                  fontWeight: article.enAlerte
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(priceFmt.format(article.prixUnitaire),
+                                  style: AppTheme.bodySmall
+                                      .copyWith(color: AppTheme.kTextPrimary)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert, color: AppTheme.kTextSecondary),
+                      onSelected: (val) => _onAction(context, val),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      itemBuilder: (_) => [
+                        const PopupMenuItem(
+                            value: 'edit',
+                            child: Row(children: [
+                              Icon(Icons.edit_outlined, size: 18),
+                              SizedBox(width: 8),
+                              Text('Modifier'),
+                            ])),
+                        const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(children: [
+                              Icon(Icons.delete_outline,
+                                  size: 18, color: AppTheme.kErrorRed),
+                              SizedBox(width: 8),
+                              Text('Supprimer',
+                                  style: TextStyle(color: AppTheme.kErrorRed)),
+                            ])),
+                      ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  priceFmt.format(article.prixUnitaire),
-                  style: const TextStyle(
-                      fontSize: 12, color: Color(0xFF374151)),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
-        trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.grey),
-          onSelected: (val) => _onAction(context, val),
-          itemBuilder: (_) => [
-            const PopupMenuItem(
-                value: 'edit',
-                child: Row(children: [
-                  Icon(Icons.edit_outlined, size: 18),
-                  SizedBox(width: 8),
-                  Text('Modifier'),
-                ])),
-            const PopupMenuItem(
-                value: 'delete',
-                child: Row(children: [
-                  Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Supprimer',
-                      style: TextStyle(color: Colors.red)),
-                ])),
-          ],
-        ),
-      ),
     );
   }
 
@@ -347,37 +374,21 @@ class _ArticleCard extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context) {
-    showDialog(
+    AppDialogs.showDelete(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Supprimer l\'article ?'),
-        content: Text(
-            'Voulez-vous vraiment archiver "${article.designation}" ?'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              Navigator.pop(context);
-              final ok = await context
-                  .read<ArticleProvider>()
-                  .delete(article.id!);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(ok
-                      ? 'Article archivé'
-                      : 'Erreur lors de la suppression'),
-                  backgroundColor: ok ? Colors.green : Colors.red,
-                ));
-              }
-            },
-            child: const Text('Supprimer',
-                style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+      title: "Supprimer l'article ?",
+      itemName: article.designation,
+    ).then((confirmed) {
+      if (confirmed == true) {
+        context.read<ArticleProvider>().delete(article.id!).then((ok) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(ok ? 'Article archivé' : 'Erreur lors de la suppression'),
+              backgroundColor: ok ? AppTheme.kSuccessGreen : AppTheme.kErrorRed,
+            ));
+          }
+        });
+      }
+    });
   }
 }

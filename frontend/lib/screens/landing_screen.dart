@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/dashboard_section.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/footer_section.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/hero_section.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/module_grid_section.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/trust_and_cta_sections.dart';
-import 'package:rayhan_erp/screens/final/landing_page_sections/value_proposition_section.dart';
-import 'package:rayhan_erp/widgets/final/common/layout_widgets.dart';
+import 'package:rayhan_erp/constants/app_text.dart';
+import 'package:rayhan_erp/providers/auth_provider.dart';
+import 'package:rayhan_erp/mock/mock_config.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -17,585 +15,891 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen>
     with TickerProviderStateMixin {
-  // final _formKey = GlobalKey<FormState>();
-  // final _usernameController = TextEditingController();
-  // final _passwordController = TextEditingController();
-  // bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
+  final _usernameCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  bool _obscurePassword = true;
   double _scrollOffset = 0;
-  // int _carouselIndex = 0;
-  // Timer? _carouselTimer;
-
-//animation stuff :
-  late final AnimationController _anim = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 600),
-  )..forward();
-
-  late final Animation<double> _fadeIn =
-      CurvedAnimation(parent: _anim, curve: Curves.easeOut);
-  late final Animation<Offset> _slideIn = Tween<Offset>(
-    begin: const Offset(0, 0.06),
-    end: Offset.zero,
-  ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOut));
-
-  late ScrollController _scrollController;
-  // late PageController _pageController;
-  void scrollToOffset(double offset) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        offset,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
+  late final ScrollController _scrollCtrl;
+  late final AnimationController _heroAnimCtrl;
+  late final Animation<double> _heroFade;
+  late final Animation<Offset> _heroSlide;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
-    // _pageController = PageController(viewportFraction: 0.85);
-    // _pageController.addListener(_onCarouselScroll);
-    // // _startCarouselTimer();
+    _scrollCtrl = ScrollController()..addListener(_onScroll);
+    _heroAnimCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
+    _heroFade = CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0, 0.6, curve: Curves.easeOut));
+    _heroSlide = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0, 0.6, curve: Curves.easeOut)));
   }
 
   @override
   void dispose() {
-    // _usernameController.dispose();
-    // _passwordController.dispose();
-    _anim.dispose();
-    _scrollController.dispose();
-    // _pageController.dispose();
-    // _carouselTimer?.cancel();
+    _usernameCtrl.dispose();
+    _passwordCtrl.dispose();
+    _scrollCtrl.dispose();
+    _heroAnimCtrl.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    setState(() {
-      _scrollOffset = _scrollController.offset;
-    });
+  void _onScroll() => setState(() => _scrollOffset = _scrollCtrl.offset);
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    final auth = context.read<AuthProvider>();
+    final ok = await auth.login(_usernameCtrl.text, _passwordCtrl.text);
+    if (!mounted) return;
+    if (ok) {
+      context.go('/dashboard');
+    }
   }
-
-  // void _onCarouselScroll() {
-  //   setState(() {
-  //     _carouselIndex = _pageController.page?.round() ?? 0;
-  //   });
-  // }
-
-  // void _startCarouselTimer() {
-  //   _carouselTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-  //     _pageController.nextPage(
-  //       duration: const Duration(milliseconds: 800),
-  //       curve: Curves.easeInOut,
-  //     );
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // final auth = context.watch<AuthProvider>();
-    // final carouselItems = [
-    //   {
-    //     'imageUrl':
-    //         'https://images.unsplash.com/photo-1505228395891-9a51e7e86e81?w=400&h=300&fit=crop',
-    //     'heading': 'Beautiful Landscape',
-    //     'description':
-    //         'Explore stunning natural sceneries and breathtaking views',
-    //   },
-    //   {
-    //     'imageUrl':
-    //         'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-    //     'heading': 'Mountain Adventure',
-    //     'description':
-    //         'Experience the thrill of mountain climbing and exploration',
-    //   },
-    // ];
-
     return Scaffold(
-      backgroundColor: AppTheme.whiteSurface,
       body: CustomScrollView(
-        controller: _scrollController,
+        controller: _scrollCtrl,
         physics: const BouncingScrollPhysics(),
-        slivers: <Widget>[
-          SliverAppBar(
-            centerTitle: true,
-            stretch: true,
-            floating: false,
-            pinned: true,
-            expandedHeight: 85.0,
-            elevation: _scrollOffset > 100 ? 10 : 0,
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.blueLightest,
-                    AppTheme.blueLightTinted.withValues(alpha: 0.3),
-                  ],
-                ),
-              ),
-              child: FlexibleSpaceBar(
-                titlePadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                centerTitle: false,
-                title: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Logo(),
-                    Opacity(
-                      opacity: (1 - (_scrollOffset / 100)).clamp(0.0, 1.0),
-                      child: Text(
-                        'Welcome to RayhanERP',
-                        style:
-                            Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.blueStrongHighlight,
-                                ),
-                      ),
-                    ),
-                    const NavActionsLogin()
-                  ],
-                ),
-              ),
-            ),
-          ),
+        slivers: [
+          _buildAppBar(),
           SliverToBoxAdapter(
-            child: Center(
-              child: FadeTransition(
-                opacity: _fadeIn,
-                child: SlideTransition(
-                  position: _slideIn,
-                  child: Column(
-                    children: [
-                      HeroSection(
-                        onScrollToOffset: scrollToOffset,
-                      ),
-                      const ValuePropositionSection(),
-                      const DashboardSection(),
-                      const ModuleGridSection(),
-                      const TrustSection(),
-                      const CtaSection(),
-                      FooterSection(
-                        onScrollToOffset: scrollToOffset,
-                      )
-                    ],
-                  ),
-                ),
-              ),
+            child: Column(
+              children: [
+                _buildHeroSection(),
+                _buildProductsSection(),
+                _buildPourquoiSection(),
+                _buildModulesSection(),
+                _buildFooter(),
+              ],
             ),
           ),
         ],
       ),
-      floatingActionButton: _scrollOffset > 300 // Show after scrolling 300px
-          ? FloatingActionButton(
-              onPressed: () {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollController.animateTo(
-                    0,
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeInOutCubic,
-                  );
-                });
+    );
+  }
+
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      centerTitle: false,
+      floating: false,
+      pinned: true,
+      expandedHeight: 80,
+      elevation: _scrollOffset > 50 ? 2 : 0,
+      backgroundColor:
+          _scrollOffset > 50 ? AppTheme.kSurfaceWhite : Colors.transparent,
+      automaticallyImplyLeading: false,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: _scrollOffset > 50
+              ? null
+              : LinearGradient(
+                  colors: [
+                    AppTheme.kPrimaryTealDark,
+                    AppTheme.kPrimaryTeal,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+          color: _scrollOffset > 50 ? AppTheme.kSurfaceWhite : null,
+        ),
+        child: FlexibleSpaceBar(
+          titlePadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: _scrollOffset > 50
+                          ? AppTheme.kPrimaryTeal
+                          : Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.factory_rounded,
+                        color: _scrollOffset > 50
+                            ? AppTheme.kSurfaceWhite
+                            : Colors.white,
+                        size: 24),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'RayhanERP',
+                    style: TextStyle(
+                      fontFamily: 'Manrope',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                      color: _scrollOffset > 50
+                          ? AppTheme.kTextPrimary
+                          : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              FilledButton.icon(
+                onPressed: () => _scrollTo(0),
+                icon: const Icon(Icons.login_rounded, size: 18),
+                label: const Text('Se connecter'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: _scrollOffset > 50
+                      ? AppTheme.kPrimaryTeal
+                      : Colors.white.withValues(alpha: 0.2),
+                  foregroundColor: _scrollOffset > 50
+                      ? AppTheme.kSurfaceWhite
+                      : Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroSection() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.kPrimaryTealDark,
+            AppTheme.kPrimaryTeal,
+            Color(0xFF0A8F7E)
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 32, 24, 60),
+      child: FadeTransition(
+        opacity: _heroFade,
+        child: SlideTransition(
+          position: _heroSlide,
+          child: LayoutBuilder(
+            builder: (ctx, constraints) {
+              final isWide = constraints.maxWidth > 800;
+              return isWide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(flex: 3, child: _heroTextContent()),
+                        const SizedBox(width: 40),
+                        Expanded(flex: 2, child: _loginCard()),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        _heroTextContent(),
+                        const SizedBox(height: 40),
+                        _loginCard(),
+                      ],
+                    );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _heroTextContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Text(
+          AppText.heroTitle,
+          style: const TextStyle(
+            fontFamily: 'Manrope',
+            fontSize: 36,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          AppText.heroSubtitle,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white.withValues(alpha: 0.85),
+            height: 1.6,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white, size: 16),
+                  SizedBox(width: 8),
+                  Text('Certifié ISO 9001',
+                      style: TextStyle(color: Colors.white, fontSize: 13)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.local_shipping, color: Colors.white, size: 16),
+                  SizedBox(width: 8),
+                  Text('Livraison Express',
+                      style: TextStyle(color: Colors.white, fontSize: 13)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+        Row(
+          children: [
+            Container(
+              height: 3,
+              width: 60,
+              decoration: BoxDecoration(
+                color: AppTheme.kSecondaryAmber,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Depuis 1992',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.7),
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _loginCard() {
+    final auth = context.watch<AuthProvider>();
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: AppTheme.kSurfaceWhite,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 30,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(AppText.heroLoginTitle,
+                style: AppTheme.headlineSmall.copyWith(fontSize: 20)),
+            const SizedBox(height: 6),
+            Text(AppText.heroLoginSubtitle,
+                style: AppTheme.bodySmall
+                    .copyWith(color: AppTheme.kTextSecondary)),
+            const SizedBox(height: 24),
+            TextFormField(
+              controller: _usernameCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Nom d\'utilisateur',
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+              textInputAction: TextInputAction.next,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Obligatoire' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordCtrl,
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                labelText: 'Mot de passe',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(_obscurePassword
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
+              ),
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _login(),
+              validator: (v) => v == null || v.isEmpty ? 'Obligatoire' : null,
+            ),
+            if (auth.errorMessage != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.kErrorRedLight,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: AppTheme.kErrorRed, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(auth.errorMessage!,
+                          style: const TextStyle(
+                              color: AppTheme.kErrorRed, fontSize: 12)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (MockConfig.useMock) ...[
+              const SizedBox(height: 16),
+              _buildMockUsersHint(),
+            ],
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: auth.isLoading ? null : _login,
+                style: AppTheme.primaryButton,
+                child: auth.isLoading
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Se connecter',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => context.push('/forgot-password'),
+                  child: Text(AppText.forgotPasswordLink,
+                      style: TextStyle(
+                          color: AppTheme.kPrimaryTeal, fontSize: 12)),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/signup'),
+                  child: Text(AppText.signupLink,
+                      style: TextStyle(
+                          color: AppTheme.kPrimaryTeal, fontSize: 12)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMockUsersHint() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.people_outline, size: 14, color: AppTheme.kPrimaryBurgundyLight),
+            const SizedBox(width: 6),
+            Text('Comptes de démonstration',
+                style: AppTheme.labelSmall.copyWith(color: AppTheme.kTextSecondary)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...MockConfig.mockUsers.map((user) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Material(
+            color: AppTheme.kPrimaryBurgundy.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                _usernameCtrl.text = user.username;
+                _passwordCtrl.text = user.password;
               },
-              elevation: 4,
-              backgroundColor: AppTheme.blueStrongHighlight,
-              child: const Icon(Icons.arrow_upward, color: Colors.white),
-            )
-          : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: _roleColor(user.role),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(user.username,
+                        style: AppTheme.bodySmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.kTextPrimary)),
+                    const SizedBox(width: 6),
+                    Text(_roleShortLabel(user.role),
+                        style: AppTheme.bodySmall
+                            .copyWith(color: AppTheme.kTextHint, fontSize: 11)),
+                    const Spacer(),
+                    Text('••••••',
+                        style: AppTheme.bodySmall
+                            .copyWith(color: AppTheme.kTextHint, fontSize: 11)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Color _roleColor(String role) {
+    switch (role) {
+      case 'ROLE_PDG': return AppTheme.kPrimaryBurgundy;
+      case 'ROLE_RESPONSABLE_VENTE': return AppTheme.kSecondaryTan;
+      case 'ROLE_RESPONSABLE_ACHAT': return AppTheme.kPrimaryBurgundyLight;
+      case 'ROLE_RESPONSABLE_PRODUCTION': return AppTheme.kWarningAmber;
+      case 'ROLE_MAGASINIER': return AppTheme.kSuccessGreen;
+      case 'ROLE_RH': return const Color(0xFF8B5CF6);
+      default: return AppTheme.kTextHint;
+    }
+  }
+
+  String _roleShortLabel(String role) {
+    switch (role) {
+      case 'ROLE_PDG': return 'Gérant';
+      case 'ROLE_RESPONSABLE_VENTE': return 'Ventes';
+      case 'ROLE_RESPONSABLE_ACHAT': return 'Achats';
+      case 'ROLE_RESPONSABLE_PRODUCTION': return 'Production';
+      case 'ROLE_MAGASINIER': return 'Magasin';
+      case 'ROLE_RH': return 'RH';
+      default: return role;
+    }
+  }
+
+  void _scrollTo(double offset) {
+    _scrollCtrl.animateTo(offset,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  Widget _buildProductsSection() {
+    return Container(
+      color: AppTheme.kBackgroundOffWhite,
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+      child: Column(
+        children: [
+          Text(AppText.productsTitle,
+              style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
+          const SizedBox(height: 8),
+          Text(AppText.productsSubtitle,
+              textAlign: TextAlign.center,
+              style:
+                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+          const SizedBox(height: 40),
+          LayoutBuilder(
+            builder: (ctx, constraints) {
+              final isWide = constraints.maxWidth > 700;
+              return Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                children: [
+                  _productCard(
+                    title: AppText.productSacs,
+                    desc: AppText.productSacsDesc,
+                    icon: Icons.inventory_2_rounded,
+                    color: AppTheme.kPrimaryTeal,
+                    imagePath: 'assets/images/product_sacs.jpg',
+                  ),
+                  _productCard(
+                    title: AppText.productFilm,
+                    desc: AppText.productFilmDesc,
+                    icon: Icons.wrap_text_rounded,
+                    color: AppTheme.kSecondaryAmber,
+                    imagePath: 'assets/images/product_film.jpg',
+                  ),
+                  _productCard(
+                    title: AppText.productSangles,
+                    desc: AppText.productSanglesDesc,
+                    icon: Icons.link_rounded,
+                    color: AppTheme.kCtaOrange,
+                    imagePath: 'assets/images/product_sangles.jpg',
+                  ),
+                  _productCard(
+                    title: AppText.productPoubelle,
+                    desc: AppText.productPoubelleDesc,
+                    icon: Icons.cleaning_services_rounded,
+                    color: AppTheme.kPrimaryTealDark,
+                    imagePath: 'assets/images/product_poubelle.jpg',
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _productCard({
+    required String title,
+    required String desc,
+    required IconData icon,
+    required Color color,
+    required String imagePath,
+  }) {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        color: AppTheme.kSurfaceWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: AppTheme.shadowMd,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: color, size: 18),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(title,
+                          style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(desc,
+                    style: AppTheme.bodySmall
+                        .copyWith(color: AppTheme.kTextSecondary)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPourquoiSection() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.kPrimaryTealDark,
+            AppTheme.kPrimaryTeal,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+      child: Column(
+        children: [
+          Text(AppText.pourquoiTitle,
+              style: AppTheme.headlineLarge
+                  .copyWith(fontSize: 28, color: Colors.white)),
+          const SizedBox(height: 8),
+          Text(
+            'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 40),
+          LayoutBuilder(
+            builder: (ctx, constraints) {
+              final isWide = constraints.maxWidth > 700;
+              return Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                alignment: WrapAlignment.center,
+                children: [
+                  _pourquoiCard(
+                    icon: Icons.verified_rounded,
+                    title: AppText.pourquoiQuality,
+                    desc: AppText.pourquoiQualityDesc,
+                  ),
+                  _pourquoiCard(
+                    icon: Icons.flash_on_rounded,
+                    title: AppText.pourquoiDelivery,
+                    desc: AppText.pourquoiDeliveryDesc,
+                  ),
+                  _pourquoiCard(
+                    icon: Icons.auto_awesome_rounded,
+                    title: AppText.pourquoiExpertise,
+                    desc: AppText.pourquoiExpertiseDesc,
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pourquoiCard({
+    required IconData icon,
+    required String title,
+    required String desc,
+  }) {
+    return Container(
+      width: 300,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.white, size: 28),
+          ),
+          const SizedBox(height: 16),
+          Text(title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17)),
+          const SizedBox(height: 8),
+          Text(desc,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 13,
+                height: 1.5,
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModulesSection() {
+    return Container(
+      color: AppTheme.kBackgroundOffWhite,
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+      child: Column(
+        children: [
+          Text(AppText.modulesTitle,
+              style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
+          const SizedBox(height: 8),
+          Text(AppText.modulesSubtitle,
+              textAlign: TextAlign.center,
+              style:
+                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+          const SizedBox(height: 40),
+          LayoutBuilder(
+            builder: (ctx, constraints) {
+              final isWide = constraints.maxWidth > 700;
+              return Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: [
+                  _moduleCard(
+                    icon: Icons.dashboard_rounded,
+                    title: 'Tableau de bord',
+                    desc: 'Indicateurs en temps réel',
+                    color: AppTheme.kPrimaryTeal,
+                  ),
+                  _moduleCard(
+                    icon: Icons.shopping_cart_rounded,
+                    title: 'Gestion des ventes',
+                    desc: 'Commandes, factures, clients',
+                    color: AppTheme.kSecondaryAmber,
+                  ),
+                  _moduleCard(
+                    icon: Icons.local_shipping_rounded,
+                    title: 'Gestion des achats',
+                    desc: 'Approvisionnement, fournisseurs',
+                    color: AppTheme.kCtaOrange,
+                  ),
+                  _moduleCard(
+                    icon: Icons.precision_manufacturing_rounded,
+                    title: 'Production',
+                    desc: 'OF, BOM, suivi atelier',
+                    color: AppTheme.kPrimaryTealDark,
+                  ),
+                  _moduleCard(
+                    icon: Icons.warehouse_rounded,
+                    title: 'Gestion de stock',
+                    desc: 'Mouvements, alertes, inventaire',
+                    color: AppTheme.kSuccessGreen,
+                  ),
+                  _moduleCard(
+                    icon: Icons.inventory_2_rounded,
+                    title: 'Articles & Produits',
+                    desc: 'MP, PSF, PF, nomenclatures',
+                    color: AppTheme.kSecondaryAmber,
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _moduleCard({
+    required IconData icon,
+    required String title,
+    required String desc,
+    required Color color,
+  }) {
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.kSurfaceWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: AppTheme.shadowSm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 14),
+          Text(title,
+              style: AppTheme.titleSmall
+                  .copyWith(fontSize: 15, color: AppTheme.kTextPrimary)),
+          const SizedBox(height: 4),
+          Text(desc,
+              style:
+                  AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF131B2E), Color(0xFF1A2338)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.factory_rounded,
+                    color: Colors.white, size: 24),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'RayhanERP',
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            AppText.footerTagline,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '© ${DateTime.now().year} ${AppText.footerCopyright}',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.4),
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            AppText.footerRights,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.3),
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-//_____________________________________________________________________________
-
-// Container(
-//                         decoration: const BoxDecoration(
-//                           gradient: LinearGradient(
-//                             begin: Alignment.topLeft,
-//                             end: Alignment.bottomRight,
-//                             colors: [
-//                               Color(0xFF0F172A), // slate-900
-//                               Color(0xFF0D9488), // teal-600
-//                             ],
-//                             stops: [0.0, 1.0],
-//                           ),
-//                         ),
-//                         padding: const EdgeInsets.symmetric(
-//                             horizontal: AppTheme.sp24, vertical: AppTheme.sp20),
-//                         child: Column(
-//                           children: [
-//                             const Text(
-//                               'Featured Items',
-//                               style: TextStyle(
-//                                 fontSize: 22,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                             const SizedBox(height: 16),
-//                             SizedBox(
-//                               height: 260,
-//                               child: PageView.builder(
-//                                 controller: _pageController,
-//                                 itemCount: carouselItems.length,
-//                                 itemBuilder: (context, index) {
-//                                   final item = carouselItems[index];
-//                                   return CarouselCard(
-//                                     imageUrl: item['imageUrl'] as String,
-//                                     heading: item['heading'] as String,
-//                                     description: item['description'] as String,
-//                                   );
-//                                 },
-//                               ),
-//                             ),
-//                             const SizedBox(height: 12),
-//                             // Carousel Indicators
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: List.generate(
-//                                 carouselItems.length,
-//                                 (index) => AnimatedContainer(
-//                                   duration: const Duration(milliseconds: 300),
-//                                   width: index == _carouselIndex ? 24 : 8,
-//                                   height: 8,
-//                                   margin:
-//                                       const EdgeInsets.symmetric(horizontal: 4),
-//                                   decoration: BoxDecoration(
-//                                     borderRadius: BorderRadius.circular(4),
-//                                     color: index == _carouselIndex
-//                                         ? Colors.blue
-//                                         : Colors.grey.shade300,
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-  // const SizedBox(height: 32), //   const BrandPanel(),
-  // const SizedBox(height: 32),
-  // // Parallax Sections
-  // ParallaxSection(
-  //   title: AppText.head1,
-  //   offset: _scrollOffset * 0.5,
-  //   color: Colors.orange,
-  //   text: AppText.para1,
-  // ),
-  // const SizedBox(height: 32),
-  // ParallaxSection(
-  //   title: AppText.head2,
-  //   offset: _scrollOffset * 0.4,
-  //   color: Colors.purple,
-  //   text: AppText.para2,
-  // ),
-  // const SizedBox(height: 32),
-  // ParallaxSection(
-  //   title: AppText.head3,
-  //   offset: _scrollOffset * 0.3,
-  //   color: Colors.teal,
-  //   text: AppText.para3,
-  // ),
-  // const SizedBox(height: 32),
-  // ParallaxSection(
-  //   title: AppText.head4,
-  //   offset: _scrollOffset * 0.2,
-  //   color: Colors.orange,
-  //   text: AppText.para4,
-  // ),
-  // const SizedBox(height: 32),
-  // ParallaxSection(
-  //   title: AppText.head5,
-  //   offset: _scrollOffset * 0.1,
-  //   color: Colors.purple,
-  //   text: AppText.para5,
-  // ),
-  // const SizedBox(height: 32),
-  // Container(
-  //   decoration: const BoxDecoration(
-  //     gradient: LinearGradient(
-  //       begin: Alignment.topLeft,
-  //       end: Alignment.bottomRight,
-  //       colors: [
-  //         AppTheme.blueStrongHighlight, // slate-900
-  //         Colors.black, // teal-600
-  //       ],
-  //       stops: [0.0, 1.0],
-  //     ),
-  //   ),
-  //   padding: const EdgeInsets.symmetric(
-  //       horizontal: AppTheme.sp24, vertical: AppTheme.sp20),
-  //   child: Column(
-  //     children: [
-  //       Row(
-  //         children: [
-  //           const Column(
-  //             children: [
-  //               Text(
-  //                 'La performance industrielle à portée de main.',
-  //                 style: TextStyle(
-  //                   color: AppTheme.blueLightest,
-  //                   fontSize: 32,
-  //                   fontWeight: FontWeight.w800,
-  //                   height: 1.2,
-  //                 ),
-  //               ),
-  //               SizedBox(height: AppTheme.sp12),
-  //               Text(
-  //                 'Gérez vos ventes, votre production, vos stocks et '
-  //                 'vos achats depuis une interface unifiée et temps réel.',
-  //                 style: TextStyle(
-  //                   color: Colors.white70,
-  //                   fontSize: 14,
-  //                   height: 1.6,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           const Spacer(),
-  //           Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             mainAxisAlignment: MainAxisAlignment.start,
-  //             children: [
-  //               const SizedBox(width: AppTheme.sp8),
-
-  //               // Feature list
-  //               ...[
-  //                 (
-  //                   Icons.speed_rounded,
-  //                   'Tableau de bord en temps réel'
-  //                 ),
-  //                 (
-  //                   Icons.precision_manufacturing_rounded,
-  //                   'Suivi production OEE'
-  //                 ),
-  //                 (
-  //                   Icons.inventory_2_rounded,
-  //                   'Gestion stocks & silos'
-  //                 ),
-  //                 (
-  //                   Icons.shopping_cart_rounded,
-  //                   'Commandes & facturation'
-  //                 ),
-  //               ].map(
-  //                 (item) => Padding(
-  //                   padding: const EdgeInsets.only(
-  //                       bottom: AppTheme.sp12),
-  //                   child: Row(
-  //                     children: [
-  //                       Container(
-  //                         width: 28,
-  //                         height: 28,
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.white
-  //                               .withValues(alpha: 0.12),
-  //                           borderRadius:
-  //                               BorderRadius.circular(6),
-  //                         ),
-  //                         child: Icon(item.$1,
-  //                             size: 15,
-  //                             color: Colors.black),
-  //                       ),
-  //                       const SizedBox(width: 10),
-  //                       Text(
-  //                         item.$2,
-  //                         style: const TextStyle(
-  //                           color: Colors.white,
-  //                           fontSize: 13,
-  //                           fontWeight: FontWeight.w500,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           )
-  //         ],
-  //       ),
-
-  //       // Footer
-  //       Text(
-  //         '© ${DateTime.now().year} RayhanERP — v1.0.0',
-  //         style: const TextStyle(
-  //             color: Colors.white38, fontSize: 11),
-  //       ),
-  //     ],
-  //   ),
-  // ),
-
-//______________________________________________________________________________
-// body: Center(
-//   child: SingleChildScrollView(
-//     padding: const EdgeInsets.all(24),
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         const BoxShadowLogo(),
-//         Text(
-//           'Système de Gestion Intégré',
-//           style: theme.textTheme.bodyMedium?.copyWith(
-//             color: Colors.grey[600],
-//           ),
-//         ),
-//         const SizedBox(height: 40),
-
-//         // Carte de connexion
-//         Container(
-//           constraints: const BoxConstraints(maxWidth: 420),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(16),
-//             boxShadow: [
-//               BoxShadow(
-//                 color: Colors.black.withValues(alpha: 0.08),
-//                 blurRadius: 24,
-//                 offset: const Offset(0, 4),
-//               ),
-//             ],
-//           ),
-//           padding: const EdgeInsets.all(32),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.stretch,
-//               children: [
-//                 Text(
-//                   'Connexion',
-//                   style: theme.textTheme.titleLarge?.copyWith(
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 Text(
-//                   'Entrez vos identifiants pour accéder au système',
-//                   style: theme.textTheme.bodySmall?.copyWith(
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//                 const SizedBox(height: 28),
-
-//                 // Champ nom d'utilisateur
-//                 TextFormField(
-//                   controller: _usernameController,
-//                   decoration: InputDecoration(
-//                     labelText: 'Nom d\'utilisateur',
-//                     prefixIcon: const Icon(Icons.person_outline),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     filled: true,
-//                     fillColor: const Color(0xFFF8F9FA),
-//                   ),
-//                   textInputAction: TextInputAction.next,
-//                   validator: (v) => (v == null || v.trim().isEmpty)
-//                       ? 'Champ obligatoire'
-//                       : null,
-//                 ),
-//                 const SizedBox(height: 16),
-
-//                 // Champ mot de passe
-//                 TextFormField(
-//                   controller: _passwordController,
-//                   obscureText: _obscurePassword,
-//                   decoration: InputDecoration(
-//                     labelText: 'Mot de passe',
-//                     prefixIcon: const Icon(Icons.lock_outline),
-//                     suffixIcon: IconButton(
-//                       icon: Icon(_obscurePassword
-//                           ? Icons.visibility_off_outlined
-//                           : Icons.visibility_outlined),
-//                       onPressed: () => setState(
-//                           () => _obscurePassword = !_obscurePassword),
-//                     ),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     filled: true,
-//                     fillColor: const Color(0xFFF8F9FA),
-//                   ),
-//                   textInputAction: TextInputAction.done,
-//                   onFieldSubmitted: (_) => _submit(),
-//                   validator: (v) => (v == null || v.isEmpty)
-//                       ? 'Champ obligatoire'
-//                       : null,
-//                 ),
-//                 const SizedBox(height: 12),
-
-//                 // Message d'erreur
-//                 if (auth.errorMessage != null)
-//                   Container(
-//                     padding: const EdgeInsets.all(12),
-//                     decoration: BoxDecoration(
-//                       color: Colors.red[50],
-//                       borderRadius: BorderRadius.circular(8),
-//                       border: Border.all(color: Colors.red[200]!),
-//                     ),
-//                     child: Row(
-//                       children: [
-//                         Icon(Icons.error_outline,
-//                             color: Colors.red[700], size: 18),
-//                         const SizedBox(width: 8),
-//                         Expanded(
-//                           child: Text(
-//                             auth.errorMessage!,
-//                             style: TextStyle(
-//                                 color: Colors.red[700], fontSize: 13),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-
-//                 const SizedBox(height: 24),
-
-//                 // Bouton connexion
-//                 SizedBox(
-//                   height: 50,
-//                   child: ElevatedButton(
-//                     onPressed: auth.isLoading ? null : _submit,
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: theme.colorScheme.primary,
-//                       foregroundColor: Colors.white,
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(10),
-//                       ),
-//                       elevation: 2,
-//                     ),
-//                     child: auth.isLoading
-//                         ? const SizedBox(
-//                             width: 22,
-//                             height: 22,
-//                             child: CircularProgressIndicator(
-//                               strokeWidth: 2,
-//                               color: Colors.white,
-//                             ),
-//                           )
-//                         : const Text(
-//                             'Se connecter',
-//                             style: TextStyle(
-//                               fontSize: 16,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-
-//         const SizedBox(height: 32),
-//         Text(
-//           '© 2026 SUARL Rayhan — Tataouine, Tunisie',
-//           style: TextStyle(color: Colors.grey[500], fontSize: 12),
-//         ),
-//       ],
-//     ),
-//   ),
-// ),
-

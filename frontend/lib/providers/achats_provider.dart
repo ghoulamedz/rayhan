@@ -3,6 +3,8 @@ import '../models/purchase_order.dart';
 import '../models/fournisseur.dart';
 import '../services/purchase_order_service.dart';
 import '../services/fournisseur_service.dart';
+import '../mock/mock_services.dart';
+import '../mock/mock_config.dart';
 
 class AchatsProvider extends ChangeNotifier {
   List<PurchaseOrder> _orders = [];
@@ -20,12 +22,21 @@ class AchatsProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final results = await Future.wait([
-        PurchaseOrderService.fetchAll(),
-        FournisseurService.fetchAll(),
-      ]);
-      _orders = results[0] as List<PurchaseOrder>;
-      _fournisseurs = results[1] as List<Fournisseur>;
+      if (MockConfig.useMock) {
+        final results = await Future.wait([
+          MockPurchaseOrderService.fetchAll(),
+          MockFournisseurService.fetchAll(),
+        ]);
+        _orders = results[0] as List<PurchaseOrder>;
+        _fournisseurs = results[1] as List<Fournisseur>;
+      } else {
+        final results = await Future.wait([
+          PurchaseOrderService.fetchAll(),
+          FournisseurService.fetchAll(),
+        ]);
+        _orders = results[0] as List<PurchaseOrder>;
+        _fournisseurs = results[1] as List<Fournisseur>;
+      }
     } catch (_) {
       _error = 'Impossible de charger les commandes achats.';
     } finally {
@@ -36,7 +47,12 @@ class AchatsProvider extends ChangeNotifier {
 
   Future<String?> createOrder(PurchaseOrder order) async {
     try {
-      final created = await PurchaseOrderService.create(order);
+      final PurchaseOrder created;
+      if (MockConfig.useMock) {
+        created = await MockPurchaseOrderService.create(order);
+      } else {
+        created = await PurchaseOrderService.create(order);
+      }
       _orders.insert(0, created);
       notifyListeners();
       return null;
@@ -55,7 +71,11 @@ class AchatsProvider extends ChangeNotifier {
           'quantiteRecue': l.quantiteCommandee,
         }).toList(),
       };
-      await PurchaseOrderService.receive(orderId, payload);
+      if (MockConfig.useMock) {
+        await MockPurchaseOrderService.receive(orderId, payload);
+      } else {
+        await PurchaseOrderService.receive(orderId, payload);
+      }
       await load();
       return null;
     } catch (_) {

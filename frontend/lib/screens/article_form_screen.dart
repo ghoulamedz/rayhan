@@ -1,8 +1,9 @@
+//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../models/article.dart';
 import '../providers/article_provider.dart';
+import '../constants/app_theme.dart';
 
 class ArticleFormScreen extends StatefulWidget {
   final Article? article;
@@ -32,12 +33,12 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
     _refCtrl = TextEditingController(text: a?.reference ?? '');
     _desCtrl = TextEditingController(text: a?.designation ?? '');
     _uniteCtrl = TextEditingController(text: a?.uniteMesure ?? '');
-    _prixCtrl = TextEditingController(
-        text: a != null ? a.prixUnitaire.toString() : '');
-    _stockMinCtrl = TextEditingController(
-        text: a != null ? a.stockMinimum.toString() : '');
-    _stockActuelCtrl = TextEditingController(
-        text: a != null ? a.stockActuel.toString() : '0');
+    _prixCtrl =
+        TextEditingController(text: a != null ? a.prixUnitaire.toString() : '');
+    _stockMinCtrl =
+        TextEditingController(text: a != null ? a.stockMinimum.toString() : '');
+    _stockActuelCtrl =
+        TextEditingController(text: a != null ? a.stockActuel.toString() : '0');
     _type = a?.type ?? 'MP';
   }
 
@@ -61,7 +62,8 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
       reference: _refCtrl.text.trim(),
       designation: _desCtrl.text.trim(),
       type: _type,
-      uniteMesure: _uniteCtrl.text.trim().isEmpty ? null : _uniteCtrl.text.trim(),
+      uniteMesure:
+          _uniteCtrl.text.trim().isEmpty ? null : _uniteCtrl.text.trim(),
       prixUnitaire: double.tryParse(_prixCtrl.text) ?? 0,
       stockMinimum: double.tryParse(_stockMinCtrl.text) ?? 0,
       stockActuel: double.tryParse(_stockActuelCtrl.text) ?? 0,
@@ -78,12 +80,13 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(_isEdit ? 'Article modifié' : 'Article créé'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppTheme.kSuccessGreen,
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Erreur — vérifiez les champs (référence déjà utilisée ?)'),
-          backgroundColor: Colors.red,
+          content: Text(
+              'Erreur — vérifiez les champs (référence déjà utilisée ?)'),
+          backgroundColor: AppTheme.kErrorRed,
         ));
       }
     }
@@ -92,12 +95,9 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.kBackgroundOffWhite,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(_isEdit ? 'Modifier l\'article' : 'Nouvel article',
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(_isEdit ? "Modifier l'article" : 'Nouvel article'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -114,27 +114,31 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                     controller: _refCtrl,
                     hint: 'Ex: MP-001',
                     enabled: !_isEdit,
-                    validator: (v) => v == null || v.trim().isEmpty
-                        ? 'Obligatoire'
-                        : null,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Obligatoire' : null,
                   ),
                   const SizedBox(height: 12),
                   _Field(
                     label: 'Désignation',
                     controller: _desCtrl,
                     hint: 'Ex: Granulés PEHD',
-                    validator: (v) => v == null || v.trim().isEmpty
-                        ? 'Obligatoire'
-                        : null,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Obligatoire' : null,
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _type,
-                    decoration: _inputDeco('Type d\'article'),
+                    decoration: const InputDecoration(labelText: "Type d'article"),
                     items: const [
-                      DropdownMenuItem(value: 'MP', child: Text('Matière Première (MP)')),
-                      DropdownMenuItem(value: 'PSF', child: Text('Produit Semi-Fini (PSF)')),
-                      DropdownMenuItem(value: 'PF', child: Text('Produit Fini (PF)')),
+                      DropdownMenuItem(
+                          value: 'MP',
+                          child: Text('Matière Première (MP)')),
+                      DropdownMenuItem(
+                          value: 'PSF',
+                          child: Text('Produit Semi-Fini (PSF)')),
+                      DropdownMenuItem(
+                          value: 'PF',
+                          child: Text('Produit Fini (PF)')),
                     ],
                     onChanged: (v) => setState(() => _type = v!),
                   ),
@@ -197,12 +201,7 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                 height: 52,
                 child: ElevatedButton(
                   onPressed: _saving ? null : _save,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
+                  style: AppTheme.primaryButton,
                   child: _saving
                       ? const SizedBox(
                           width: 22,
@@ -210,7 +209,9 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
                       : Text(
-                          _isEdit ? 'Enregistrer les modifications' : 'Créer l\'article',
+                          _isEdit
+                              ? 'Enregistrer les modifications'
+                              : "Créer l'article",
                           style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600),
                         ),
@@ -233,25 +234,15 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2)),
-        ],
-      ),
+      decoration: AppTheme.cardDecorationMd,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: const TextStyle(
+              style: AppTheme.bodySmall.copyWith(
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: Color(0xFF6B7280))),
+                  color: AppTheme.kTextSecondary)),
           const SizedBox(height: 12),
           ...children,
         ],
@@ -283,17 +274,19 @@ class _Field extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       keyboardType: keyboardType,
-      decoration: _inputDeco(label).copyWith(hintText: hint),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        filled: true,
+        fillColor: AppTheme.kInputFill,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      ),
       validator: validator,
     );
   }
 }
-
-InputDecoration _inputDeco(String label) => InputDecoration(
-      labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      filled: true,
-      fillColor: const Color(0xFFF8F9FA),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-    );

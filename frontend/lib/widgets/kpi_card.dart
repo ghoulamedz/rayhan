@@ -1,4 +1,6 @@
+//UNUSED
 import 'package:flutter/material.dart';
+import '../constants/app_theme.dart';
 
 class KpiCard extends StatelessWidget {
   final String title;
@@ -24,11 +26,11 @@ class KpiCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.kSurfaceWhite,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -44,39 +46,32 @@ class KpiCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 22),
                 ),
                 if (onTap != null)
-                  Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[400]),
+                  Icon(Icons.arrow_forward_ios,
+                      size: 14, color: AppTheme.kTextHint),
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: color)),
             const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
-              ),
-            ),
+            Text(title,
+                style: AppTheme.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.kTextPrimary)),
             if (subtitle != null) ...[
               const SizedBox(height: 4),
-              Text(
-                subtitle!,
-                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-              ),
+              Text(subtitle!,
+                  style: AppTheme.bodySmall
+                      .copyWith(color: AppTheme.kTextSecondary)),
             ],
           ],
         ),

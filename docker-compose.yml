@@ -2,7 +2,9 @@ version: '3.8'
 
 # ==========================================
 # Docker Compose — Rayhan ERP
-# Backend Spring Boot + MySQL
+# 
+# Full stack (default): docker compose up -d --build
+# Frontend only (mock): docker compose -f docker-compose.yml up -d frontend
 # ==========================================
 
 services:
@@ -52,6 +54,9 @@ services:
       - "3013:80"
     networks:
       - rayhan-net
+    # To use mock data: set USE_MOCK=true and run frontend standalone
+    # environment:
+    #   USE_MOCK: "true"
 
 volumes:
   mysql_data:

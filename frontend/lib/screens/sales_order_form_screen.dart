@@ -1,3 +1,4 @@
+//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import '../providers/article_provider.dart';
 import '../models/client.dart';
 import '../models/article.dart';
 import '../models/sales_order.dart';
+import '../constants/app_theme.dart';
 
 class SalesOrderFormScreen extends StatefulWidget {
   const SalesOrderFormScreen({super.key});
@@ -126,7 +128,7 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.kBackgroundOffWhite,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -174,7 +176,7 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F9FA),
+                    color: AppTheme.kInputFill,
                     border: Border.all(color: Colors.grey[400]!),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -314,7 +316,7 @@ class _LigneWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F7FA),
+        color: AppTheme.kBackgroundOffWhite,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),
@@ -434,7 +436,7 @@ class _SectionCard extends StatelessWidget {
               style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
-                  color: Color(0xFF6B7280))),
+                  color: AppTheme.kTextSecondary)),
           const SizedBox(height: 10),
           child,
         ],
@@ -456,7 +458,7 @@ class _TotalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = white ? Colors.white : const Color(0xFF374151);
+    final color = white ? AppTheme.kSurfaceWhite : AppTheme.kTextPrimary;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -481,6 +483,6 @@ InputDecoration _deco(String label) => InputDecoration(
       labelText: label,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
-      fillColor: const Color(0xFFF8F9FA),
+      fillColor: AppTheme.kInputFill,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );

@@ -1,3 +1,4 @@
+//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import '../providers/article_provider.dart';
 import '../models/article.dart';
 import '../models/production_order.dart';
 import '../services/production_service.dart';
+import '../constants/app_theme.dart';
 
 class ProductionFormScreen extends StatefulWidget {
   const ProductionFormScreen({super.key});
@@ -107,7 +109,7 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
     final qte = double.tryParse(_qteCtrl.text) ?? 0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.kBackgroundOffWhite,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -178,7 +180,7 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: ok
-                                        ? const Color(0xFF374151)
+                                        ? AppTheme.kTextPrimary
                                         : Colors.orange),
                               ),
                               Text('Stock: ${stock.toStringAsFixed(2)}',
@@ -250,7 +252,7 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8F9FA),
+                        color: AppTheme.kInputFill,
                         border: Border.all(color: Colors.grey[400]!),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -282,8 +284,8 @@ class _ProductionFormScreenState extends State<ProductionFormScreen> {
               child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppTheme.kPrimaryTeal,
+                  foregroundColor: AppTheme.kSurfaceWhite,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
@@ -331,7 +333,7 @@ class _Card extends StatelessWidget {
                 style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
-                    color: Color(0xFF6B7280))),
+                     color: AppTheme.kTextSecondary)),
             const SizedBox(height: 10),
             child,
           ],
@@ -343,6 +345,6 @@ InputDecoration _deco(String label) => InputDecoration(
       labelText: label,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
-      fillColor: const Color(0xFFF8F9FA),
+      fillColor: AppTheme.kInputFill,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );

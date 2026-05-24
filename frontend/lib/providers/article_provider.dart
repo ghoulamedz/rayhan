@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
+import '../mock/mock_services.dart';
+import '../mock/mock_config.dart';
 
 class ArticleProvider extends ChangeNotifier {
   List<Article> _articles = [];
@@ -39,7 +41,11 @@ class ArticleProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _articles = await ArticleService.fetchAll();
+      if (MockConfig.useMock) {
+        _articles = await MockArticleService.fetchAll();
+      } else {
+        _articles = await ArticleService.fetchAll();
+      }
     } catch (_) {
       _error = 'Impossible de charger les articles.';
     } finally {
@@ -50,7 +56,12 @@ class ArticleProvider extends ChangeNotifier {
 
   Future<bool> create(Article article) async {
     try {
-      final created = await ArticleService.create(article);
+      final Article created;
+      if (MockConfig.useMock) {
+        created = await MockArticleService.create(article);
+      } else {
+        created = await ArticleService.create(article);
+      }
       _articles.add(created);
       notifyListeners();
       return true;
@@ -61,7 +72,12 @@ class ArticleProvider extends ChangeNotifier {
 
   Future<bool> update(int id, Article article) async {
     try {
-      final updated = await ArticleService.update(id, article);
+      final Article updated;
+      if (MockConfig.useMock) {
+        updated = await MockArticleService.update(id, article);
+      } else {
+        updated = await ArticleService.update(id, article);
+      }
       final idx = _articles.indexWhere((a) => a.id == id);
       if (idx != -1) _articles[idx] = updated;
       notifyListeners();
@@ -73,7 +89,11 @@ class ArticleProvider extends ChangeNotifier {
 
   Future<bool> delete(int id) async {
     try {
-      await ArticleService.delete(id);
+      if (MockConfig.useMock) {
+        await MockArticleService.delete(id);
+      } else {
+        await ArticleService.delete(id);
+      }
       _articles.removeWhere((a) => a.id == id);
       notifyListeners();
       return true;

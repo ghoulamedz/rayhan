@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/dashboard_kpi.dart';
 import '../services/dashboard_service.dart';
+import '../mock/mock_services.dart';
+import '../mock/mock_config.dart';
 
 class DashboardProvider extends ChangeNotifier {
   DashboardKpi? _kpi;
@@ -16,7 +18,11 @@ class DashboardProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _kpi = await DashboardService.fetchKpis();
+      if (MockConfig.useMock) {
+        _kpi = await MockDashboardService.fetchKpis();
+      } else {
+        _kpi = await DashboardService.fetchKpis();
+      }
     } catch (_) {
       _error = 'Impossible de charger les données. Vérifiez la connexion.';
     } finally {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../mock/mock_services.dart';
+import '../mock/mock_config.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
@@ -20,13 +22,22 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await AuthService.login(username, password);
+      final Map<String, dynamic> data;
+      if (MockConfig.useMock) {
+        data = await MockAuthService.login(username, password);
+      } else {
+        data = await AuthService.login(username, password);
+      }
       final token = data['token'] as String;
       final roles = data['roles'] as List<dynamic>;
       final user = data['username'] as String;
       final role = roles.isNotEmpty ? roles.first as String : 'Visiteur';
 
-      await AuthService.saveToken(token, role);
+      if (MockConfig.useMock) {
+        await MockAuthService.saveToken(token, role);
+      } else {
+        await AuthService.saveToken(token, role);
+      }
       _isAuthenticated = true;
       _role = role;
       _user = user;
@@ -42,16 +53,25 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await AuthService.logout();
+    if (MockConfig.useMock) {
+      await MockAuthService.logout();
+    } else {
+      await AuthService.logout();
+    }
     _isAuthenticated = false;
     _role = null;
     notifyListeners();
   }
 
   Future<void> checkAuth() async {
-    final token = await AuthService.getToken();
-    _isAuthenticated = token != null;
-    _role = await AuthService.getRole();
+    if (MockConfig.useMock) {
+      _isAuthenticated = true;
+      _role = await MockAuthService.getRole();
+    } else {
+      final token = await AuthService.getToken();
+      _isAuthenticated = token != null;
+      _role = await AuthService.getRole();
+    }
     notifyListeners();
   }
 }

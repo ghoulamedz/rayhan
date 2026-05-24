@@ -1,3 +1,4 @@
+//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import '../providers/article_provider.dart';
 import '../models/fournisseur.dart';
 import '../models/article.dart';
 import '../models/purchase_order.dart';
+import '../constants/app_theme.dart';
 
 class PurchaseOrderFormScreen extends StatefulWidget {
   const PurchaseOrderFormScreen({super.key});
@@ -113,7 +115,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.kBackgroundOffWhite,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -158,7 +160,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F9FA),
+                    color: AppTheme.kInputFill,
                     border: Border.all(color: Colors.grey[400]!),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -221,7 +223,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6),
+                  color: AppTheme.kPrimaryTeal,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -244,7 +246,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
               child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B5CF6),
+                  backgroundColor: AppTheme.kPrimaryTeal,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -289,7 +291,7 @@ class _LigneWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F7FA),
+        color: AppTheme.kBackgroundOffWhite,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),
@@ -404,7 +406,7 @@ class _SectionCard extends StatelessWidget {
                 style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
-                    color: Color(0xFF6B7280))),
+                    color: AppTheme.kTextSecondary)),
             const SizedBox(height: 10),
             child,
           ],
@@ -441,6 +443,6 @@ InputDecoration _deco(String label) => InputDecoration(
       labelText: label,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
-      fillColor: const Color(0xFFF8F9FA),
+      fillColor: AppTheme.kInputFill,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );

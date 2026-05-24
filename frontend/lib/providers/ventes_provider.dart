@@ -3,6 +3,8 @@ import '../models/sales_order.dart';
 import '../models/client.dart';
 import '../services/sales_order_service.dart';
 import '../services/client_service.dart';
+import '../mock/mock_services.dart';
+import '../mock/mock_config.dart';
 
 class VentesProvider extends ChangeNotifier {
   List<SalesOrder> _orders = [];
@@ -20,12 +22,21 @@ class VentesProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final results = await Future.wait([
-        SalesOrderService.fetchAll(),
-        ClientService.fetchAll(),
-      ]);
-      _orders = results[0] as List<SalesOrder>;
-      _clients = results[1] as List<Client>;
+      if (MockConfig.useMock) {
+        final results = await Future.wait([
+          MockSalesOrderService.fetchAll(),
+          MockClientService.fetchAll(),
+        ]);
+        _orders = results[0] as List<SalesOrder>;
+        _clients = results[1] as List<Client>;
+      } else {
+        final results = await Future.wait([
+          SalesOrderService.fetchAll(),
+          ClientService.fetchAll(),
+        ]);
+        _orders = results[0] as List<SalesOrder>;
+        _clients = results[1] as List<Client>;
+      }
     } catch (_) {
       _error = 'Impossible de charger les commandes.';
     } finally {
@@ -36,7 +47,12 @@ class VentesProvider extends ChangeNotifier {
 
   Future<String?> createOrder(SalesOrder order) async {
     try {
-      final created = await SalesOrderService.create(order);
+      final SalesOrder created;
+      if (MockConfig.useMock) {
+        created = await MockSalesOrderService.create(order);
+      } else {
+        created = await SalesOrderService.create(order);
+      }
       _orders.insert(0, created);
       notifyListeners();
       return null;
@@ -57,7 +73,11 @@ class VentesProvider extends ChangeNotifier {
           'quantiteLivree': l.quantiteCommandee,
         }).toList(),
       };
-      await SalesOrderService.deliver(orderId, payload);
+      if (MockConfig.useMock) {
+        await MockSalesOrderService.deliver(orderId, payload);
+      } else {
+        await SalesOrderService.deliver(orderId, payload);
+      }
       await load();
       return null;
     } catch (e) {

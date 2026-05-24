@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import '../providers/achats_provider.dart';
 import '../models/purchase_order.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/brand_app_bar.dart';
+import '../constants/app_theme.dart';
 import 'purchase_order_form_screen.dart';
 import 'purchase_order_detail_screen.dart';
 
@@ -29,26 +30,21 @@ class _AchatsScreenState extends State<AchatsScreen> {
     final provider = context.watch<AchatsProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Commandes Achats',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            if (!provider.isLoading)
-              Text('${provider.orders.length} commande(s)',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
+        child: BrandAppBar(
+          title: 'Commandes Achats',
+          subtitle: !provider.isLoading
+              ? '${provider.orders.length} commande(s)'
+              : null,
+          currentRoute: '/achats',
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              onPressed: () => context.read<AchatsProvider>().load(),
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_outlined),
-            onPressed: () => context.read<AchatsProvider>().load(),
-          ),
-        ],
       ),
       drawer: const AppDrawer(currentRoute: '/achats'),
       floatingActionButton: FloatingActionButton.extended(
@@ -57,7 +53,9 @@ class _AchatsScreenState extends State<AchatsScreen> {
         icon: const Icon(Icons.add),
         label: const Text('Nouvelle commande'),
       ),
-      body: _buildBody(provider),
+      body: AppTheme.glassBackground(
+        child: _buildBody(provider),
+      ),
     );
   }
 
@@ -68,12 +66,15 @@ class _AchatsScreenState extends State<AchatsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+            Icon(Icons.error_outline, size: 48, color: AppTheme.kTextHint),
             const SizedBox(height: 12),
-            Text(provider.error!),
+            Text(provider.error!,
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.read<AchatsProvider>().load(),
+              style: AppTheme.primaryButton,
               child: const Text('Réessayer'),
             ),
           ],
@@ -85,10 +86,12 @@ class _AchatsScreenState extends State<AchatsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.local_shipping_outlined, size: 64, color: Colors.grey[300]),
+            Icon(Icons.local_shipping_outlined,
+                size: 64, color: AppTheme.kBorderLight),
             const SizedBox(height: 16),
             Text('Aucune commande achat',
-                style: TextStyle(color: Colors.grey[500], fontSize: 16)),
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
           ],
         ),
       );
@@ -116,45 +119,59 @@ class _OrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(context,
           MaterialPageRoute(builder: (_) => PurchaseOrderDetailScreen(order: order))),
-      child: Container(
+      child: AppTheme.withGlass(
+        radius: 12,
+        blur: 16,
+        opacity: 0.7,
         margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: IntrinsicHeight(
+          child: Row(
             children: [
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
               Row(
                 children: [
                   Expanded(
                     child: Text(order.reference ?? '—',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        style: AppTheme.titleSmall.copyWith(fontSize: 15)),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(order.statutLabel,
-                        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            color: color,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.business_outlined, size: 14, color: Colors.grey),
+                  const Icon(Icons.business_outlined,
+                      size: 14, color: AppTheme.kTextSecondary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(order.fournisseur?.raisonSociale ?? '—',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 13)),
+                        style: AppTheme.bodySmall.copyWith(fontSize: 13)),
                   ),
                 ],
               ),
@@ -164,26 +181,34 @@ class _OrderCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_outlined, size: 13, color: Colors.grey),
+                      const Icon(Icons.calendar_today_outlined,
+                          size: 13, color: AppTheme.kTextSecondary),
                       const SizedBox(width: 4),
                       Text(order.dateCommande,
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                          style: AppTheme.bodySmall
+                              .copyWith(color: AppTheme.kTextSecondary)),
                     ],
                   ),
                   Text(fmt.format(order.totalTTC),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF8B5CF6))),
+                      style: AppTheme.titleSmall.copyWith(
+                          color: AppTheme.kPrimaryBurgundy)),
                 ],
               ),
               if (order.lignes.isNotEmpty) ...[
                 const SizedBox(height: 6),
                 Text('${order.lignes.length} ligne(s)',
-                    style: TextStyle(color: Colors.grey[500], fontSize: 11)),
+                    style: AppTheme.bodySmall
+                        .copyWith(color: AppTheme.kTextSecondary)),
               ],
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      ],
+    ),
+  ),
+  ),
     );
   }
 }
+
