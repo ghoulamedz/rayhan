@@ -7,3 +7,4 @@
 
 export 'mock_data.dart';
 export 'mock_config.dart';
+// Trigger GitHub Actions frontend deploy
