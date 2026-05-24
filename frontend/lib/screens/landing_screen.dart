@@ -425,61 +425,90 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   Widget _buildMockUsersHint() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: _showMockUsersDialog,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppTheme.kBorderLight),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.people_outline, size: 16, color: AppTheme.kPrimaryBurgundyLight),
+              const SizedBox(width: 8),
+              Text('Compte de démonstration',
+                  style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.kTextSecondary, fontWeight: FontWeight.w500)),
+              const Spacer(),
+              Icon(Icons.chevron_right, size: 16, color: AppTheme.kTextHint),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showMockUsersDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+        title: Row(
           children: [
-            Icon(Icons.people_outline, size: 14, color: AppTheme.kPrimaryBurgundyLight),
-            const SizedBox(width: 6),
+            Icon(Icons.people_outline, size: 20, color: AppTheme.kPrimaryBurgundy),
+            const SizedBox(width: 8),
             Text('Comptes de démonstration',
-                style: AppTheme.labelSmall.copyWith(color: AppTheme.kTextSecondary)),
+                style: AppTheme.titleSmall),
           ],
         ),
-        const SizedBox(height: 8),
-        ...MockConfig.mockUsers.map((user) => Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Material(
-            color: AppTheme.kPrimaryBurgundy.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(8),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              onTap: () {
-                _usernameCtrl.text = user.username;
-                _passwordCtrl.text = user.password;
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: _roleColor(user.role),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(user.username,
-                        style: AppTheme.bodySmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.kTextPrimary)),
-                    const SizedBox(width: 6),
-                    Text(_roleShortLabel(user.role),
-                        style: AppTheme.bodySmall
-                            .copyWith(color: AppTheme.kTextHint, fontSize: 11)),
-                    const Spacer(),
-                    Text('••••••',
-                        style: AppTheme.bodySmall
-                            .copyWith(color: AppTheme.kTextHint, fontSize: 11)),
-                  ],
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: MockConfig.mockUsers.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (_, i) {
+              final user = MockConfig.mockUsers[i];
+              return ListTile(
+                dense: true,
+                leading: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _roleColor(user.role),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-            ),
+                title: Text(user.username,
+                    style: AppTheme.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600)),
+                subtitle: Text(_roleShortLabel(user.role),
+                    style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
+                trailing: Text('••••••',
+                    style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextHint)),
+                onTap: () {
+                  _usernameCtrl.text = user.username;
+                  _passwordCtrl.text = user.password;
+                  Navigator.pop(ctx);
+                },
+              );
+            },
           ),
-        )),
-      ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Fermer',
+                style: TextStyle(color: AppTheme.kPrimaryBurgundy)),
+          ),
+        ],
+      ),
     );
   }
 
