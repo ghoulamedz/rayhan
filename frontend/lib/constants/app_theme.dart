@@ -4,22 +4,21 @@ import 'package:rayhan_erp/constants/custom_page_transition.dart';
 
 abstract final class AppTheme {
   // ── Color Palette ──────────────────────────────────────────────
-  // Primary: deep burgundy
-  static const Color kPrimaryBurgundy = Color(0xFF810B38);
-  static const Color kPrimaryBurgundyLight = Color(0xFFA84B6E);
-  static const Color kPrimaryBurgundyDark = Color(0xFF541A1A);
+  // Palette: https://colorhunt.co/palette/d92243f69d39e0c375fff5e5
+  static const Color kPrimaryRed = Color(0xFFD92243);
+  static const Color kPrimaryOrange = Color(0xFFF69D39);
+  static const Color kPrimaryRedDark = Color(0xFFC41E3A);
 
   // Background / surface
-  static const Color kSecondaryCream = Color(0xFFF1E2D1);
-  static const Color kSecondaryTan = Color(0xFFDCC3AA);
-  static const Color kBackgroundWarm = Color(0xFFF8F0E8);
-  static const Color kSurfaceGlass = Color(0xCCF1E2D1);
+  static const Color kBackgroundCream = Color(0xFFFFF5E5);
+  static const Color kSecondaryGold = Color(0xFFE0C375);
+  static const Color kSurfaceGlass = Color(0xBFFFF5E5);
   static const Color kSurfaceWhite = Color(0xFFFFFFFF);
 
   // Text
-  static const Color kTextPrimary = Color(0xFF541A1A);
-  static const Color kTextSecondary = Color(0xFF8B6F5E);
-  static const Color kTextHint = Color(0xFFB8A08E);
+  static const Color kTextPrimary = Color(0xFF2D1B1B);
+  static const Color kTextSecondary = Color(0xFF8B7355);
+  static const Color kTextHint = Color(0xFFBFA88A);
 
   // Input / borders
   static const Color kInputFill = Color(0xFFF5EDE6);
@@ -38,30 +37,35 @@ abstract final class AppTheme {
   static const Color kBlack = Color(0xFF000000);
   static const Color kDividerColor = Color(0xFFE8D9CD);
 
-  // ── Glassmorphism helpers ──────────────────────────────────────
+  // ── Glassmorphism helpers (glossy) ─────────────────────────────
   static BoxDecoration glassCard({
     Color? tint,
-    double blur = 20,
+    double blur = 24,
     double radius = 16,
-    double opacity = 0.75,
+    double opacity = 0.55,
   }) {
     return BoxDecoration(
-      color: (tint ?? kSecondaryCream).withValues(alpha: opacity),
+      color: (tint ?? kBackgroundCream).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: kWhite.withValues(alpha: 0.3),
-        width: 1,
+        color: kWhite.withValues(alpha: 0.45),
+        width: 1.2,
       ),
       boxShadow: [
         BoxShadow(
-          color: kBlack.withValues(alpha: 0.06),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
+          color: kBlack.withValues(alpha: 0.08),
+          blurRadius: 28,
+          offset: const Offset(0, 10),
         ),
         BoxShadow(
-          color: kBlack.withValues(alpha: 0.03),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
+          color: kBlack.withValues(alpha: 0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+        ),
+        BoxShadow(
+          color: kWhite.withValues(alpha: 0.3),
+          blurRadius: 2,
+          offset: const Offset(0, 1),
         ),
       ],
     );
@@ -70,9 +74,9 @@ abstract final class AppTheme {
   static Widget withGlass({
     required Widget child,
     Color? tint,
-    double blur = 20,
+    double blur = 24,
     double radius = 16,
-    double opacity = 0.75,
+    double opacity = 0.55,
     EdgeInsets? margin,
   }) {
     return ClipRRect(
@@ -87,36 +91,62 @@ abstract final class AppTheme {
             opacity: opacity,
             blur: blur,
           ),
-          child: child,
+          child: Stack(
+            children: [
+              child,
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          kWhite.withValues(alpha: 0.15),
+                          kWhite.withValues(alpha: 0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   // ── Deprecated aliases (backwards compat) ──────────────────────
-  @Deprecated('Use kPrimaryBurgundy instead') static const Color kPrimaryTeal = kPrimaryBurgundy;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color kPrimaryTealLight = kPrimaryBurgundyLight;
-  @Deprecated('Use kPrimaryBurgundyDark instead') static const Color kPrimaryTealDark = kPrimaryBurgundyDark;
-  @Deprecated('Use kSecondaryTan instead') static const Color kSecondaryAmber = kSecondaryTan;
-  @Deprecated('Use kWarningAmberLight instead') static const Color kSecondaryAmberLight = kWarningAmberLight;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color kCtaOrange = kPrimaryBurgundyLight;
-  @Deprecated('Use kWarningAmberLight instead') static const Color kCtaOrangeLight = kWarningAmberLight;
+  @Deprecated('Use kPrimaryRed instead') static const Color kPrimaryBurgundy = kPrimaryRed;
+  @Deprecated('Use kPrimaryOrange instead') static const Color kPrimaryBurgundyLight = kPrimaryOrange;
+  @Deprecated('Use kPrimaryRedDark instead') static const Color kPrimaryBurgundyDark = kPrimaryRedDark;
+  @Deprecated('Use kBackgroundCream instead') static const Color kSecondaryCream = kBackgroundCream;
+  @Deprecated('Use kSecondaryGold instead') static const Color kSecondaryTan = kSecondaryGold;
+  @Deprecated('Use kBackgroundCream instead') static const Color kBackgroundWarm = kBackgroundCream;
   @Deprecated('Use kBackgroundWarm instead') static const Color kBackgroundOffWhite = kBackgroundWarm;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color blueLightTinted = kPrimaryBurgundyLight;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color blueLightest = kPrimaryBurgundyLight;
+  @Deprecated('Use kPrimaryRed instead') static const Color kPrimaryTeal = kPrimaryRed;
+  @Deprecated('Use kPrimaryOrange instead') static const Color kPrimaryTealLight = kPrimaryOrange;
+  @Deprecated('Use kPrimaryRedDark instead') static const Color kPrimaryTealDark = kPrimaryRedDark;
+  @Deprecated('Use kSecondaryGold instead') static const Color kSecondaryAmber = kSecondaryGold;
+  @Deprecated('Use kWarningAmberLight instead') static const Color kSecondaryAmberLight = kWarningAmberLight;
+  @Deprecated('Use kPrimaryOrange instead') static const Color kCtaOrange = kPrimaryOrange;
+  @Deprecated('Use kWarningAmberLight instead') static const Color kCtaOrangeLight = kWarningAmberLight;
+  @Deprecated('Use kPrimaryOrange instead') static const Color blueLightTinted = kPrimaryOrange;
+  @Deprecated('Use kPrimaryOrange instead') static const Color blueLightest = kPrimaryOrange;
   @Deprecated('Use kTextPrimary instead') static const Color blueStrongHighlight = kTextPrimary;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color greenLight = kPrimaryBurgundyLight;
+  @Deprecated('Use kPrimaryOrange instead') static const Color greenLight = kPrimaryOrange;
   @Deprecated('Use kSurfaceWhite instead') static const Color whiteSurface = kSurfaceWhite;
   @Deprecated('Use kSuccessGreenLight instead') static const Color whiteSurface2 = kSuccessGreenLight;
-  @Deprecated('Use kPrimaryBurgundyLight instead') static const Color whiteTintedorGreyAddAlpha02 = kPrimaryBurgundyLight;
-  @Deprecated('Use kPrimaryBurgundyDark instead') static const Color greenStrong = kPrimaryBurgundyDark;
+  @Deprecated('Use kPrimaryOrange instead') static const Color whiteTintedorGreyAddAlpha02 = kPrimaryOrange;
+  @Deprecated('Use kPrimaryRedDark instead') static const Color greenStrong = kPrimaryRedDark;
   @Deprecated('Use kErrorRed instead') static const Color red = kErrorRed;
   @Deprecated('Use kWarningAmber instead') static const Color yellow = kWarningAmber;
   @Deprecated('Use kSuccessGreen instead') static const Color greenBright = kSuccessGreen;
-  @Deprecated('Use kPrimaryBurgundy instead') static const Color greenMatte = kPrimaryBurgundy;
+  @Deprecated('Use kPrimaryRed instead') static const Color greenMatte = kPrimaryRed;
   @Deprecated('Use kTextSecondary instead') static const Color grey = kTextSecondary;
   @Deprecated('Use kTextHint instead') static const Color greyLight = kTextHint;
-  @Deprecated('Use kPrimaryBurgundy instead') static const Color blueLight = kPrimaryBurgundy;
+  @Deprecated('Use kPrimaryRed instead') static const Color blueLight = kPrimaryRed;
 
   // ── Spacing ────────────────────────────────────────────────────
   static const double sp4 = 4.0;
@@ -132,25 +162,25 @@ abstract final class AppTheme {
 
   // ── Gradients ──────────────────────────────────────────────────
   static const kPrimaryGradient = LinearGradient(
-    colors: [kPrimaryBurgundy, kPrimaryBurgundyDark],
+    colors: [kPrimaryRed, kPrimaryRedDark],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kAccentGradient = LinearGradient(
-    colors: [kSecondaryTan, kPrimaryBurgundyLight],
+    colors: [kSecondaryGold, kPrimaryOrange],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kCtaGradient = LinearGradient(
-    colors: [kPrimaryBurgundyLight, kPrimaryBurgundy],
+    colors: [kPrimaryOrange, kPrimaryRed],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kWarmGradient = LinearGradient(
-    colors: [kSecondaryCream, kBackgroundWarm],
+    colors: [kBackgroundCream, kSecondaryGold],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -192,7 +222,7 @@ abstract final class AppTheme {
 
   // ── Decorations ────────────────────────────────────────────────
   static BoxDecoration get cardDecoration => glassCard();
-  static BoxDecoration get cardDecorationMd => glassCard(blur: 24, opacity: 0.8);
+  static BoxDecoration get cardDecorationMd => glassCard(blur: 28, opacity: 0.6);
 
   static BoxDecoration get inputDecoration => BoxDecoration(
         color: kInputFill,
@@ -201,7 +231,7 @@ abstract final class AppTheme {
 
   // ── Button styles ──────────────────────────────────────────────
   static ButtonStyle get primaryButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryBurgundy,
+        backgroundColor: kPrimaryRed,
         foregroundColor: kWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -210,7 +240,7 @@ abstract final class AppTheme {
       );
 
   static ButtonStyle get accentButton => ElevatedButton.styleFrom(
-        backgroundColor: kSecondaryTan,
+        backgroundColor: kSecondaryGold,
         foregroundColor: kTextPrimary,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -219,7 +249,7 @@ abstract final class AppTheme {
       );
 
   static ButtonStyle get ctaButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryBurgundyLight,
+        backgroundColor: kPrimaryOrange,
         foregroundColor: kWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -235,9 +265,9 @@ abstract final class AppTheme {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            kBackgroundWarm,
-            kSecondaryCream,
-            kSecondaryTan.withValues(alpha: 0.5),
+            kBackgroundCream,
+            kSecondaryGold.withValues(alpha: 0.4),
+            kBackgroundCream,
           ],
         ),
       ),
@@ -388,17 +418,17 @@ abstract final class AppTheme {
       useMaterial3: true,
       fontFamily: 'Inter',
       colorScheme: ColorScheme.light(
-        primary: kPrimaryBurgundy,
-        secondary: kSecondaryTan,
-        tertiary: kPrimaryBurgundyLight,
-        surface: kBackgroundWarm,
+        primary: kPrimaryRed,
+        secondary: kSecondaryGold,
+        tertiary: kPrimaryOrange,
+        surface: kBackgroundCream,
         error: kErrorRed,
         onPrimary: kWhite,
         onSecondary: kTextPrimary,
         onSurface: kTextPrimary,
         onError: kWhite,
       ),
-      scaffoldBackgroundColor: kBackgroundWarm,
+      scaffoldBackgroundColor: kBackgroundCream,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: kSurfaceGlass,
@@ -428,7 +458,7 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: kPrimaryBurgundy, width: 1.5),
+          borderSide: BorderSide(color: kPrimaryRed, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -442,19 +472,19 @@ abstract final class AppTheme {
         style: primaryButton,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: kPrimaryBurgundy,
+        backgroundColor: kPrimaryRed,
         foregroundColor: kWhite,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       chipTheme: ChipThemeData(
-        selectedColor: kPrimaryBurgundyLight.withValues(alpha: 0.2),
-        checkmarkColor: kPrimaryBurgundy,
+        selectedColor: kPrimaryOrange.withValues(alpha: 0.2),
+        checkmarkColor: kPrimaryRed,
         labelStyle: TextStyle(fontSize: 12, color: kTextPrimary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       dividerTheme: DividerThemeData(color: kBorderLight, thickness: 1),
       drawerTheme: DrawerThemeData(
-        backgroundColor: kSecondaryCream,
+        backgroundColor: kBackgroundCream,
         shape: const RoundedRectangleBorder(),
       ),
       bottomSheetTheme: BottomSheetThemeData(
@@ -481,23 +511,23 @@ abstract final class AppTheme {
       useMaterial3: true,
       fontFamily: 'Inter',
       colorScheme: ColorScheme.dark(
-        primary: kPrimaryBurgundyLight,
-        secondary: kSecondaryTan,
-        tertiary: kPrimaryBurgundy,
+        primary: kPrimaryOrange,
+        secondary: kSecondaryGold,
+        tertiary: kPrimaryRed,
         surface: const Color(0xFF2D1B1B),
         error: kErrorRed,
         onPrimary: kWhite,
         onSecondary: kWhite,
-        onSurface: kSecondaryCream,
+        onSurface: kBackgroundCream,
       ),
       scaffoldBackgroundColor: const Color(0xFF1A0F0F),
       textTheme: textTheme.apply(
-        bodyColor: kSecondaryCream,
-        displayColor: kSecondaryCream,
+        bodyColor: kBackgroundCream,
+        displayColor: kBackgroundCream,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: const Color(0xFF2D1B1B),
-        foregroundColor: kSecondaryCream,
+        foregroundColor: kBackgroundCream,
         elevation: 0,
       ),
       cardTheme: CardThemeData(
@@ -516,7 +546,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(style: primaryButton),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: kPrimaryBurgundyLight,
+        backgroundColor: kPrimaryOrange,
         foregroundColor: kWhite,
       ),
       dividerTheme: DividerThemeData(color: kWhite.withValues(alpha: 0.12), thickness: 1),
