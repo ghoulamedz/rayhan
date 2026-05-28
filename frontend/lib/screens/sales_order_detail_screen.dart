@@ -1,4 +1,3 @@
-//UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +5,7 @@ import '../models/sales_order.dart';
 import '../providers/ventes_provider.dart';
 import '../constants/app_theme.dart';
 import '../widgets/professional_dialogs.dart';
+import '../services/pdf_service.dart';
 
 class SalesOrderDetailScreen extends StatelessWidget {
   final SalesOrder order;
@@ -13,18 +13,24 @@ class SalesOrderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt =
-        NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+    final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
     final statusColor = Color(order.statutColor);
-
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundOffWhite,
+      backgroundColor: AppTheme.kBackgroundCream,
       appBar: AppBar(
         title: Text(order.reference ?? '—'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: 'Exporter en PDF',
+            onPressed: () async {
+              final bytes = await PdfService.generateSalesInvoice(order);
+              PdfService.downloadPdf(bytes, 'FAC_${order.reference ?? "N/A"}.pdf');
+            },
+          ),
           if (order.peutLivrer)
             Padding(
-              padding: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.only(right: 4),
               child: ElevatedButton.icon(
                 onPressed: () => _confirmDeliver(context),
                 icon: const Icon(Icons.local_shipping_outlined, size: 18),
@@ -32,8 +38,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.kSuccessGreen,
                   foregroundColor: AppTheme.kSurfaceWhite,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),
@@ -54,10 +59,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
                 Icon(Icons.circle, color: statusColor, size: 10),
                 const SizedBox(width: 8),
                 Text(order.statutLabel,
-                    style: TextStyle(
-                        color: statusColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)),
+                    style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 14)),
               ],
             ),
           ),
@@ -83,11 +85,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
                 _totalRow(label: 'Total HT', value: fmt.format(order.totalHT)),
                 _totalRow(label: 'TVA (19%)', value: fmt.format(order.totalTVA)),
                 const Divider(color: AppTheme.kBorderLight),
-                _totalRow(
-                    label: 'Total TTC',
-                    value: fmt.format(order.totalTTC),
-                    bold: true,
-                    color: AppTheme.kSuccessGreen),
+                _totalRow(label: 'Total TTC', value: fmt.format(order.totalTTC), bold: true, color: AppTheme.kSuccessGreen),
               ],
             ),
           ),
@@ -101,8 +99,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
     AppDialogs.showConfirm(
       context: context,
       title: 'Confirmer la livraison ?',
-      message:
-          'Livrer toutes les lignes de la commande ${order.reference} ?\n\nLe stock sera mis à jour automatiquement.',
+      message: 'Livrer toutes les lignes de la commande ${order.reference} ?\n\nLe stock sera mis à jour automatiquement.',
       confirmLabel: 'Livrer',
       icon: Icons.local_shipping_outlined,
       accentColor: AppTheme.kSuccessGreen,
@@ -138,16 +135,8 @@ Widget _infoRow({required String label, required String value}) => Padding(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 130,
-            child: Text(label,
-                style: AppTheme.bodySmall
-                    .copyWith(color: AppTheme.kTextSecondary)),
-          ),
-          Expanded(
-            child: Text(value,
-                style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w500)),
-          ),
+          SizedBox(width: 130, child: Text(label, style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary))),
+          Expanded(child: Text(value, style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w500))),
         ],
       ),
     );
@@ -170,45 +159,32 @@ class _LigneCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(ligne.article?.designation ?? '—',
-                style: AppTheme.bodyMedium
-                    .copyWith(fontWeight: FontWeight.w600)),
+                style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${ligne.quantiteCommandee} ${ligne.article?.uniteMesure ?? ''} × ${fmt.format(ligne.prixUnitaireHT)}',
-                  style: AppTheme.bodySmall
-                      .copyWith(color: AppTheme.kTextSecondary),
-                ),
+                Text('${ligne.quantiteCommandee} ${ligne.article?.uniteMesure ?? ''} × ${fmt.format(ligne.prixUnitaireHT)}',
+                    style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
                 Text(fmt.format(ligne.montantTTC ?? ligne.montantTTCCalc),
-                    style: AppTheme.titleSmall
-                        .copyWith(color: AppTheme.kSuccessGreen)),
+                    style: AppTheme.titleSmall.copyWith(color: AppTheme.kSuccessGreen)),
               ],
             ),
             if (ligne.quantiteLivree > 0)
               Text('Livré : ${ligne.quantiteLivree}',
-                  style: AppTheme.bodySmall
-                      .copyWith(color: AppTheme.kSuccessGreen)),
+                  style: AppTheme.bodySmall.copyWith(color: AppTheme.kSuccessGreen)),
           ],
         ),
       );
 }
 
-Widget _totalRow({
-  required String label,
-  required String value,
-  bool bold = false,
-  Color? color,
-}) =>
+Widget _totalRow({required String label, required String value, bool bold = false, Color? color}) =>
     Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: AppTheme.bodySmall
-                  .copyWith(color: AppTheme.kTextSecondary)),
+          Text(label, style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
           Text(value,
               style: TextStyle(
                   fontWeight: bold ? FontWeight.bold : FontWeight.normal,

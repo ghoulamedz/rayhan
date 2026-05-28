@@ -5,9 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../providers/dashboard_provider.dart';
+import '../providers/article_provider.dart';
+import '../providers/ventes_provider.dart';
+import '../providers/achats_provider.dart';
+import '../providers/production_provider.dart';
 import '../models/dashboard_kpi.dart';
+import '../models/suggestion.dart';
 import '../constants/app_theme.dart';
-import '../widgets/gradient_card.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
 import '../mock/mock_data.dart';
@@ -24,7 +28,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DashboardProvider>().load();
+      final dash = context.read<DashboardProvider>();
+      dash.load();
+      context.read<ArticleProvider>().load();
+      context.read<VentesProvider>().load();
+      context.read<AchatsProvider>().load();
+      context.read<ProductionProvider>().load();
+    });
+  }
+
+  void _refreshAll() {
+    final dash = context.read<DashboardProvider>();
+    dash.load();
+    context.read<ArticleProvider>().load().then((_) {
+      dash.loadSuggestions(
+        articles: context.read<ArticleProvider>().articles,
+        salesOrders: context.read<VentesProvider>().orders,
+        purchaseOrders: context.read<AchatsProvider>().orders,
+        productionOrders: context.read<ProductionProvider>().orders,
+      );
     });
   }
 
@@ -45,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             IconButton(
               icon: const Icon(Icons.refresh_outlined),
               tooltip: 'Actualiser',
-              onPressed: () => context.read<DashboardProvider>().load(),
+              onPressed: _refreshAll,
             ),
             const SizedBox(width: 8),
           ],
@@ -92,7 +114,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (kpi == null) return const Center(child: CircularProgressIndicator());
 
     return RefreshIndicator(
-      onRefresh: () => context.read<DashboardProvider>().load(),
+      onRefresh: () async { _refreshAll(); },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
@@ -108,6 +130,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildActivityFeed(),
             const SizedBox(height: 20),
             _buildStockAlert(kpi),
+            const SizedBox(height: 20),
+            _buildSuggestions(provider),
             const SizedBox(height: 32),
           ],
         ),
@@ -933,6 +957,114 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               );
             }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestions(DashboardProvider provider) {
+    if (provider.suggestions.isEmpty && !provider.suggestionsLoading) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Text('Suggestions', style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+              const Spacer(),
+              if (provider.suggestionsLoading)
+                const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+              if (!provider.suggestionsLoading && provider.suggestions.isNotEmpty)
+                GestureDetector(
+                  onTap: () => _refreshAll(),
+                  child: Text('Actualiser', style: AppTheme.bodySmall.copyWith(color: AppTheme.kPrimaryRed)),
+                ),
+            ],
+          ),
+        ),
+        ...provider.suggestions.map((s) => _suggestionCard(s, provider)),
+      ],
+    );
+  }
+
+  Widget _suggestionCard(Suggestion s, DashboardProvider provider) {
+    final color = switch (s.type) {
+      'warning' => AppTheme.kErrorRed,
+      'success' => AppTheme.kSuccessGreen,
+      _ => AppTheme.kPrimaryRed,
+    };
+    final icon = switch (s.type) {
+      'warning' => Icons.warning_amber_rounded,
+      'success' => Icons.check_circle_rounded,
+      _ => Icons.lightbulb_outline_rounded,
+    };
+    return AppTheme.withGlass(
+      radius: 12,
+      blur: 12,
+      opacity: 0.65,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36, height: 36,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: color, size: 18),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s.title,
+                              style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600, fontSize: 13)),
+                          if (s.description.isNotEmpty)
+                            Text(s.description,
+                                maxLines: 2, overflow: TextOverflow.ellipsis,
+                                style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary, fontSize: 11)),
+                          if (s.impact.isNotEmpty)
+                            Text('Impact: ${s.impact}',
+                                style: AppTheme.bodySmall.copyWith(color: color, fontSize: 10)),
+                        ],
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: Icon(Icons.more_vert, color: AppTheme.kTextHint, size: 18),
+                      onSelected: (val) {
+                        if (val == 'dismiss') provider.markSuggestionRead(s.id);
+                      },
+                      itemBuilder: (_) => [
+                        const PopupMenuItem(value: 'dismiss', child: Row(
+                          children: [Icon(Icons.close, size: 18), SizedBox(width: 8), Text('Ignorer')],
+                        )),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

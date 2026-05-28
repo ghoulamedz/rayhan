@@ -82,6 +82,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Boot Actuator — healthchecks pour Docker -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Swagger UI — documentation interactive de l'API -->
         <dependency>
             <groupId>org.springdoc</groupId>

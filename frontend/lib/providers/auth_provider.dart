@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../mock/mock_services.dart';
-import '../mock/mock_config.dart';
 
 class AuthProvider extends ChangeNotifier {
+  final AuthService authService;
+
+  AuthProvider({required this.authService});
+
   bool _isAuthenticated = false;
   String? _role;
   String? _user;
@@ -22,22 +24,13 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final Map<String, dynamic> data;
-      if (MockConfig.useMock) {
-        data = await MockAuthService.login(username, password);
-      } else {
-        data = await AuthService.login(username, password);
-      }
+      final Map<String, dynamic> data = await authService.login(username, password);
       final token = data['token'] as String;
       final roles = data['roles'] as List<dynamic>;
       final user = data['username'] as String;
       final role = roles.isNotEmpty ? roles.first as String : 'Visiteur';
 
-      if (MockConfig.useMock) {
-        await MockAuthService.saveToken(token, role);
-      } else {
-        await AuthService.saveToken(token, role);
-      }
+      await authService.saveToken(token, role);
       _isAuthenticated = true;
       _role = role;
       _user = user;
@@ -53,25 +46,16 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    if (MockConfig.useMock) {
-      await MockAuthService.logout();
-    } else {
-      await AuthService.logout();
-    }
+    await authService.logout();
     _isAuthenticated = false;
     _role = null;
     notifyListeners();
   }
 
   Future<void> checkAuth() async {
-    if (MockConfig.useMock) {
-      _isAuthenticated = true;
-      _role = await MockAuthService.getRole();
-    } else {
-      final token = await AuthService.getToken();
-      _isAuthenticated = token != null;
-      _role = await AuthService.getRole();
-    }
+    final token = await authService.getToken();
+    _isAuthenticated = token != null;
+    _role = await authService.getRole();
     notifyListeners();
   }
 }

@@ -1,7 +1,6 @@
 version: '3.8'
 
-# Production Docker Compose — uses pre-built images from GHCR.
-# Pull backend from registry instead of building locally.
+# Production Docker Compose — pulls pre-built images from GHCR.
 # Usage:
 #   docker compose -f docker-compose.prod.yml up -d
 
@@ -27,7 +26,7 @@ services:
       retries: 5
 
   backend:
-    image: ghcr.io/${GITHUB_REPOSITORY:-anomalyco/rayhan}-backend:latest
+    image: ghcr.io/${GITHUB_REPOSITORY:-ghoulamedz/rayhan}-backend:latest
     container_name: rayhan-backend
     restart: unless-stopped
     depends_on:
@@ -43,15 +42,29 @@ services:
       - "8090:8080"
     networks:
       - rayhan-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   frontend:
-    build: ./frontend
+    image: ghcr.io/${GITHUB_REPOSITORY:-ghoulamedz/rayhan}-frontend:latest
     container_name: rayhan-frontend
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     ports:
       - "3013:80"
     networks:
       - rayhan-net
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
 volumes:
   mysql_data:

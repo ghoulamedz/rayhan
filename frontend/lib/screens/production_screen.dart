@@ -6,7 +6,6 @@ import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
 import '../widgets/professional_dialogs.dart';
 import '../constants/app_theme.dart';
-import 'production_form_screen.dart';
 import 'production_detail_screen.dart';
 
 class ProductionScreen extends StatefulWidget {
@@ -64,7 +63,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
       drawer: const AppDrawer(currentRoute: '/production'),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const ProductionFormScreen())),
+            context, MaterialPageRoute(builder: (_) => const Placeholder())),
         icon: const Icon(Icons.add),
         label: const Text('Nouvel OF'),
       ),

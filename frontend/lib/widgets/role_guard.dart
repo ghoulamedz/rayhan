@@ -9,11 +9,13 @@ class RoleGuard {
     '/achats': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
     '/production': ['ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/stock': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION'],
+    '/rapports': ['ROLE_PDG'],
   };
 
   static bool hasAccess(String? role, String route) {
     if (role == 'ROLE_PDG') return true;
-    final allowed = routeRoles[route];
+    final baseRoute = '/' + route.split('/').where((s) => s.isNotEmpty).first;
+    final allowed = routeRoles[route] ?? routeRoles[baseRoute];
     if (allowed == null) return true;
     if (role == null) return false;
     return allowed.contains(role);

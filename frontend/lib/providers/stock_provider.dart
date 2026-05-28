@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/stock_movement.dart';
 import '../services/stock_service.dart';
-import '../mock/mock_services.dart';
-import '../mock/mock_config.dart';
 
 class StockProvider extends ChangeNotifier {
+  final StockService stockService;
+
+  StockProvider({required this.stockService});
+
   final Map<int, List<StockMovement>> _historiques = {};
   bool _isLoading = false;
   String? _error;
@@ -19,11 +21,7 @@ class StockProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      if (MockConfig.useMock) {
-        _historiques[articleId] = await MockStockService.getHistorique(articleId);
-      } else {
-        _historiques[articleId] = await StockService.getHistorique(articleId);
-      }
+      _historiques[articleId] = await stockService.getHistorique(articleId);
     } catch (_) {
       _error = 'Impossible de charger l\'historique.';
     } finally {
@@ -39,22 +37,12 @@ class StockProvider extends ChangeNotifier {
     required String motif,
   }) async {
     try {
-      final StockMovement mouvement;
-      if (MockConfig.useMock) {
-        mouvement = await MockStockService.adjust(
-          articleId: articleId,
-          quantite: quantite,
-          type: type,
-          motif: motif,
-        );
-      } else {
-        mouvement = await StockService.adjust(
-          articleId: articleId,
-          quantite: quantite,
-          type: type,
-          motif: motif,
-        );
-      }
+      final mouvement = await stockService.adjust(
+        articleId: articleId,
+        quantite: quantite,
+        type: type,
+        motif: motif,
+      );
       _historiques[articleId] = [mouvement, ...(_historiques[articleId] ?? [])];
       notifyListeners();
       return null;

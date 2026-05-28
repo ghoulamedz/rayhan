@@ -3,10 +3,16 @@ import '../models/purchase_order.dart';
 import '../models/fournisseur.dart';
 import '../services/purchase_order_service.dart';
 import '../services/fournisseur_service.dart';
-import '../mock/mock_services.dart';
-import '../mock/mock_config.dart';
 
 class AchatsProvider extends ChangeNotifier {
+  final PurchaseOrderService purchaseOrderService;
+  final FournisseurService fournisseurService;
+
+  AchatsProvider({
+    required this.purchaseOrderService,
+    required this.fournisseurService,
+  });
+
   List<PurchaseOrder> _orders = [];
   List<Fournisseur> _fournisseurs = [];
   bool _isLoading = false;
@@ -22,21 +28,12 @@ class AchatsProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      if (MockConfig.useMock) {
-        final results = await Future.wait([
-          MockPurchaseOrderService.fetchAll(),
-          MockFournisseurService.fetchAll(),
-        ]);
-        _orders = results[0] as List<PurchaseOrder>;
-        _fournisseurs = results[1] as List<Fournisseur>;
-      } else {
-        final results = await Future.wait([
-          PurchaseOrderService.fetchAll(),
-          FournisseurService.fetchAll(),
-        ]);
-        _orders = results[0] as List<PurchaseOrder>;
-        _fournisseurs = results[1] as List<Fournisseur>;
-      }
+      final results = await Future.wait([
+        purchaseOrderService.fetchAll(),
+        fournisseurService.fetchAll(),
+      ]);
+      _orders = results[0] as List<PurchaseOrder>;
+      _fournisseurs = results[1] as List<Fournisseur>;
     } catch (_) {
       _error = 'Impossible de charger les commandes achats.';
     } finally {
@@ -47,12 +44,7 @@ class AchatsProvider extends ChangeNotifier {
 
   Future<String?> createOrder(PurchaseOrder order) async {
     try {
-      final PurchaseOrder created;
-      if (MockConfig.useMock) {
-        created = await MockPurchaseOrderService.create(order);
-      } else {
-        created = await PurchaseOrderService.create(order);
-      }
+      final created = await purchaseOrderService.create(order);
       _orders.insert(0, created);
       notifyListeners();
       return null;
@@ -71,11 +63,7 @@ class AchatsProvider extends ChangeNotifier {
           'quantiteRecue': l.quantiteCommandee,
         }).toList(),
       };
-      if (MockConfig.useMock) {
-        await MockPurchaseOrderService.receive(orderId, payload);
-      } else {
-        await PurchaseOrderService.receive(orderId, payload);
-      }
+      await purchaseOrderService.receive(orderId, payload);
       await load();
       return null;
     } catch (_) {

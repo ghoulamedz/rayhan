@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/production_order.dart';
 import '../services/production_service.dart';
-import '../mock/mock_services.dart';
-import '../mock/mock_config.dart';
 
 class ProductionProvider extends ChangeNotifier {
+  final ProductionService productionService;
+
+  ProductionProvider({required this.productionService});
+
   List<ProductionOrder> _orders = [];
   bool _isLoading = false;
   String? _error;
@@ -13,7 +15,6 @@ class ProductionProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  // Statistiques rapides
   int get ofPlanifies => _orders.where((o) => o.statut == 'PLANIFIE').length;
   int get ofEnCours => _orders.where((o) => o.statut == 'LANCE' || o.statut == 'EN_COURS').length;
   int get ofTermines => _orders.where((o) => o.statut == 'TERMINE').length;
@@ -23,11 +24,7 @@ class ProductionProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      if (MockConfig.useMock) {
-        _orders = await MockProductionService.fetchAll();
-      } else {
-        _orders = await ProductionService.fetchAll();
-      }
+      _orders = await productionService.fetchAll();
     } catch (_) {
       _error = 'Impossible de charger les ordres de fabrication.';
     } finally {
@@ -42,20 +39,11 @@ class ProductionProvider extends ChangeNotifier {
     required String datePlanifiee,
   }) async {
     try {
-      final ProductionOrder of;
-      if (MockConfig.useMock) {
-        of = await MockProductionService.plan(
-          produitFiniId: produitFiniId,
-          quantite: quantite,
-          datePlanifiee: datePlanifiee,
-        );
-      } else {
-        of = await ProductionService.plan(
-          produitFiniId: produitFiniId,
-          quantite: quantite,
-          datePlanifiee: datePlanifiee,
-        );
-      }
+      final of = await productionService.plan(
+        produitFiniId: produitFiniId,
+        quantite: quantite,
+        datePlanifiee: datePlanifiee,
+      );
       _orders.insert(0, of);
       notifyListeners();
       return null;
@@ -69,12 +57,7 @@ class ProductionProvider extends ChangeNotifier {
 
   Future<String?> launch(int id) async {
     try {
-      final ProductionOrder updated;
-      if (MockConfig.useMock) {
-        updated = await MockProductionService.launch(id);
-      } else {
-        updated = await ProductionService.launch(id);
-      }
+      final updated = await productionService.launch(id);
       _replaceOrder(updated);
       return null;
     } catch (_) {
@@ -84,12 +67,7 @@ class ProductionProvider extends ChangeNotifier {
 
   Future<String?> complete(int id, double quantiteRealisee) async {
     try {
-      final ProductionOrder updated;
-      if (MockConfig.useMock) {
-        updated = await MockProductionService.complete(id, quantiteRealisee);
-      } else {
-        updated = await ProductionService.complete(id, quantiteRealisee);
-      }
+      final updated = await productionService.complete(id, quantiteRealisee);
       _replaceOrder(updated);
       return null;
     } catch (_) {

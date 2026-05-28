@@ -7,22 +7,23 @@ import '../models/purchase_order.dart';
 import '../models/fournisseur.dart';
 import '../models/production_order.dart';
 import '../models/stock_movement.dart';
+import '../services/auth_service.dart';
+import '../services/article_service.dart';
+import '../services/dashboard_service.dart';
+import '../services/client_service.dart';
+import '../services/fournisseur_service.dart';
+import '../services/sales_order_service.dart';
+import '../services/purchase_order_service.dart';
+import '../services/production_service.dart';
+import '../services/stock_service.dart';
 import 'mock_data.dart';
 import 'mock_config.dart';
 
-class MockDashboardService {
-  static Future<DashboardKpi> fetchKpis() async {
-    await MockData.delay();
-    return MockData.dashboardKpi;
-  }
-}
+class MockAuthService implements AuthService {
+  MockUser? _currentUser;
 
-class MockAuthService {
-  static MockUser? _currentUser;
-
-  static MockUser? get currentUser => _currentUser;
-
-  static Future<Map<String, dynamic>> login(String username, String password) async {
+  @override
+  Future<Map<String, dynamic>> login(String username, String password) async {
     await MockData.delay();
     final user = MockConfig.findUser(username, password);
     if (user != null) {
@@ -41,25 +42,30 @@ class MockAuthService {
     throw Exception('Identifiants incorrects');
   }
 
-  static Future<void> saveToken(String token, String role) async {}
+  @override
+  Future<void> saveToken(String token, String role) async {}
 
-  static Future<String?> getToken() async {
+  @override
+  Future<String?> getToken() async {
     if (_currentUser != null) return '${MockConfig.mockTokenPrefix}${_currentUser!.role}';
     return null;
   }
 
-  static Future<String?> getRole() async => _currentUser?.role;
+  @override
+  Future<String?> getRole() async => _currentUser?.role;
 
-  static Future<void> logout() async {
+  @override
+  Future<void> logout() async {
     _currentUser = null;
   }
 }
 
-class MockArticleService {
-  static List<Article> _articles = [];
-  static int _nextId = 100;
+class MockArticleService implements ArticleService {
+  List<Article> _articles = [];
+  int _nextId = 100;
 
-  static Future<List<Article>> fetchAll() async {
+  @override
+  Future<List<Article>> fetchAll() async {
     await MockData.delay();
     if (_articles.isEmpty) {
       _articles = MockData.articles.map((m) => Article(
@@ -77,7 +83,14 @@ class MockArticleService {
     return List.unmodifiable(_articles);
   }
 
-  static Future<Article> create(Article article) async {
+  @override
+  Future<List<Article>> fetchByType(String type) async {
+    await MockData.delay();
+    return _articles.where((a) => a.type == type).toList();
+  }
+
+  @override
+  Future<Article> create(Article article) async {
     await MockData.delay();
     final created = Article(
       id: _nextId++,
@@ -93,7 +106,8 @@ class MockArticleService {
     return created;
   }
 
-  static Future<Article> update(int id, Article article) async {
+  @override
+  Future<Article> update(int id, Article article) async {
     await MockData.delay();
     final idx = _articles.indexWhere((a) => a.id == id);
     if (idx == -1) throw Exception('Article non trouvé');
@@ -111,53 +125,78 @@ class MockArticleService {
     return updated;
   }
 
-  static Future<void> delete(int id) async {
+  @override
+  Future<void> delete(int id) async {
     await MockData.delay();
     _articles.removeWhere((a) => a.id == id);
   }
 }
 
-class MockClientService {
-  static final List<Client> _clients = [
+class MockDashboardService implements DashboardService {
+  @override
+  Future<DashboardKpi> fetchKpis() async {
+    await MockData.delay();
+    return MockData.dashboardKpi;
+  }
+}
+
+class MockClientService implements ClientService {
+  final List<Client> _clients = [
     Client(id: 1, raisonSociale: 'SOTUPLAST S.A.', matriculeFiscal: '123456789', adresse: 'Route de la Marsa'),
     Client(id: 2, raisonSociale: 'PLASTITUNISIE', matriculeFiscal: '987654321', adresse: 'Z.I. Charguia II'),
     Client(id: 3, raisonSociale: 'EMBALLAGES MODERNES', matriculeFiscal: '456123789', adresse: 'Megrine'),
     Client(id: 4, raisonSociale: 'AGRO-PACK S.A.R.L.', matriculeFiscal: '789456123', adresse: 'Technopole El Ghazala'),
   ];
 
-  static Future<List<Client>> fetchAll() async {
+  @override
+  Future<List<Client>> fetchAll() async {
     await MockData.delay();
     return List.unmodifiable(_clients);
   }
+
+  @override
+  Future<Client> create(Client client) async {
+    await MockData.delay();
+    return client;
+  }
 }
 
-class MockFournisseurService {
-  static final List<Fournisseur> _fournisseurs = [
+class MockFournisseurService implements FournisseurService {
+  final List<Fournisseur> _fournisseurs = [
     Fournisseur(id: 1, raisonSociale: 'POLYMERGY TUNISIE', matriculeFiscal: '111222333', adresse: 'Z.I. Ben Arous'),
     Fournisseur(id: 2, raisonSociale: 'CHIMIPLAST S.A.', matriculeFiscal: '444555666', adresse: 'Sfax'),
     Fournisseur(id: 3, raisonSociale: 'EUROPLAST GmbH', matriculeFiscal: '777888999', adresse: 'Hambourg, Allemagne'),
   ];
 
-  static Future<List<Fournisseur>> fetchAll() async {
+  @override
+  Future<List<Fournisseur>> fetchAll() async {
     await MockData.delay();
     return List.unmodifiable(_fournisseurs);
   }
+
+  @override
+  Future<Fournisseur> create(Fournisseur f) async {
+    await MockData.delay();
+    return f;
+  }
 }
 
-class MockSalesOrderService {
-  static int _idCounter = 100;
+class MockSalesOrderService implements SalesOrderService {
+  final List<String> _clientNames = [
+    'SOTUPLAST S.A.', 'PLASTITUNISIE', 'EMBALLAGES MODERNES', 'AGRO-PACK S.A.R.L.',
+  ];
 
-  static Future<List<SalesOrder>> fetchAll() async {
+  int _idCounter = 100;
+
+  @override
+  Future<List<SalesOrder>> fetchAll() async {
     await MockData.delay();
     return MockData.salesOrders.map((m) {
-      final client = MockClientService._clients.firstWhere(
-        (c) => c.raisonSociale == m['client'],
-        orElse: () => MockClientService._clients.first,
-      );
+      final clientName = m['client'] as String;
       return SalesOrder(
         id: _idCounter++,
         reference: m['reference'] as String,
-        client: client,
+        client: Client(id: 0, raisonSociale: clientName),
         dateCommande: '2024-05-${m['date']?.toString().substring(0, 2) ?? '15'}',
         statut: _statusFromLabel(m['statutLabel'] as String),
         totalTTC: m['totalTTC'] as double,
@@ -170,16 +209,18 @@ class MockSalesOrderService {
     }).toList();
   }
 
-  static Future<SalesOrder> create(SalesOrder order) async {
+  @override
+  Future<SalesOrder> create(SalesOrder order) async {
     await MockData.delay();
     return order;
   }
 
-  static Future<void> deliver(int orderId, Map<String, dynamic> payload) async {
+  @override
+  Future<void> deliver(int orderId, Map<String, dynamic> payload) async {
     await MockData.delay();
   }
 
-  static String _statusFromLabel(String label) {
+  String _statusFromLabel(String label) {
     switch (label) {
       case 'En cours': return 'EN_PREPARATION';
       case 'Livrée': return 'COMPLETEMENT_LIVREE';
@@ -189,20 +230,22 @@ class MockSalesOrderService {
   }
 }
 
-class MockPurchaseOrderService {
-  static int _idCounter = 100;
+class MockPurchaseOrderService implements PurchaseOrderService {
+  final List<String> _fournisseurNames = [
+    'POLYMERGY TUNISIE', 'CHIMIPLAST S.A.', 'EUROPLAST GmbH',
+  ];
 
-  static Future<List<PurchaseOrder>> fetchAll() async {
+  int _idCounter = 100;
+
+  @override
+  Future<List<PurchaseOrder>> fetchAll() async {
     await MockData.delay();
     return MockData.purchaseOrders.map((m) {
-      final fournisseur = MockFournisseurService._fournisseurs.firstWhere(
-        (f) => f.raisonSociale == m['fournisseur'],
-        orElse: () => MockFournisseurService._fournisseurs.first,
-      );
+      final fournisseurName = m['fournisseur'] as String;
       return PurchaseOrder(
         id: _idCounter++,
         reference: m['reference'] as String,
-        fournisseur: fournisseur,
+        fournisseur: Fournisseur(id: 0, raisonSociale: fournisseurName),
         dateCommande: '2024-05-${m['date']?.toString().substring(0, 2) ?? '10'}',
         statut: _statusFromLabel(m['statutLabel'] as String),
         totalTTC: m['totalTTC'] as double,
@@ -215,16 +258,18 @@ class MockPurchaseOrderService {
     }).toList();
   }
 
-  static Future<PurchaseOrder> create(PurchaseOrder order) async {
+  @override
+  Future<PurchaseOrder> create(PurchaseOrder order) async {
     await MockData.delay();
     return order;
   }
 
-  static Future<void> receive(int orderId, Map<String, dynamic> payload) async {
+  @override
+  Future<void> receive(int orderId, Map<String, dynamic> payload) async {
     await MockData.delay();
   }
 
-  static String _statusFromLabel(String label) {
+  String _statusFromLabel(String label) {
     switch (label) {
       case 'Reçue': return 'COMPLETEMENT_RECUE';
       case 'En cours': return 'CONFIRMEE';
@@ -234,10 +279,11 @@ class MockPurchaseOrderService {
   }
 }
 
-class MockProductionService {
-  static int _idCounter = 100;
+class MockProductionService implements ProductionService {
+  int _idCounter = 100;
 
-  static Future<List<ProductionOrder>> fetchAll() async {
+  @override
+  Future<List<ProductionOrder>> fetchAll() async {
     await MockData.delay();
     return MockData.productionOrders.map((m) => ProductionOrder(
       id: _idCounter++,
@@ -249,7 +295,14 @@ class MockProductionService {
     )).toList();
   }
 
-  static Future<ProductionOrder> plan({
+  @override
+  Future<List<BomLine>> getBom(int produitFiniId) async {
+    await MockData.delay();
+    return [];
+  }
+
+  @override
+  Future<ProductionOrder> plan({
     required int produitFiniId,
     required double quantite,
     required String datePlanifiee,
@@ -265,7 +318,8 @@ class MockProductionService {
     );
   }
 
-  static Future<ProductionOrder> launch(int id) async {
+  @override
+  Future<ProductionOrder> launch(int id) async {
     await MockData.delay();
     return ProductionOrder(
       id: id,
@@ -277,7 +331,8 @@ class MockProductionService {
     );
   }
 
-  static Future<ProductionOrder> complete(int id, double quantiteRealisee) async {
+  @override
+  Future<ProductionOrder> complete(int id, double quantiteRealisee) async {
     await MockData.delay();
     return ProductionOrder(
       id: id,
@@ -289,7 +344,7 @@ class MockProductionService {
     );
   }
 
-  static String _statusFromLabel(String label) {
+  String _statusFromLabel(String label) {
     switch (label) {
       case 'Lancé': return 'LANCE';
       case 'Planifié': return 'PLANIFIE';
@@ -300,10 +355,11 @@ class MockProductionService {
   }
 }
 
-class MockStockService {
-  static int _idCounter = 200;
+class MockStockService implements StockService {
+  int _idCounter = 200;
 
-  static Future<List<StockMovement>> getHistorique(int articleId) async {
+  @override
+  Future<List<StockMovement>> getHistorique(int articleId) async {
     await MockData.delay();
     return List.generate(5, (i) => StockMovement(
       id: _idCounter++,
@@ -314,7 +370,8 @@ class MockStockService {
     ));
   }
 
-  static Future<StockMovement> adjust({
+  @override
+  Future<StockMovement> adjust({
     required int articleId,
     required double quantite,
     required String type,

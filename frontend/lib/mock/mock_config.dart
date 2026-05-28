@@ -5,7 +5,10 @@
 // ─────────────────────────────────────────────────────────────────
 
 class MockConfig {
-  static const bool useMock = true;
+  static const bool useMock = bool.fromEnvironment(
+    'USE_MOCK',
+    defaultValue: true,
+  );
 
   // Simulated network delay in milliseconds
   static const int delayMs = 600;

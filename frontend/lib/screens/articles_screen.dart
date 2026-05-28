@@ -8,6 +8,7 @@ import '../widgets/brand_app_bar.dart';
 import '../widgets/professional_dialogs.dart';
 import '../constants/app_theme.dart';
 import 'article_form_screen.dart';
+import 'article_detail_screen.dart';
 
 class ArticlesScreen extends StatefulWidget {
   const ArticlesScreen({super.key});
@@ -244,7 +245,12 @@ class _ArticleCard extends StatelessWidget {
     final priceFmt =
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
-    return AppTheme.withGlass(
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => ArticleDetailScreen(article: article)),
+      ),
+      child: AppTheme.withGlass(
       radius: 12,
       blur: 16,
       opacity: 0.7,
@@ -358,7 +364,8 @@ class _ArticleCard extends StatelessWidget {
             ],
           ),
         ),
-    );
+      ),
+     );
   }
 
   void _onAction(BuildContext context, String action) {

@@ -69,6 +69,8 @@ class AppDrawer extends StatelessWidget {
                 _item(context, Icons.precision_manufacturing_rounded,
                     'Production', '/production', role),
                 _item(context, Icons.warehouse_rounded, 'Stock', '/stock', role),
+                if (role == 'ROLE_PDG')
+                  _item(context, Icons.assessment_rounded, 'Rapports', '/rapports', role),
               ],
             ),
           ),

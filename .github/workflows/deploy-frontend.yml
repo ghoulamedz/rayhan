@@ -2,14 +2,26 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [main, master, gh-pages]
+    branches: [main, master]
     paths:
       - 'frontend/**'
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
-  build-and-deploy:
+  deploy-pages:
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,18 +31,55 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Build Web
         run: |
           cd frontend
           flutter pub get
-          flutter build web --release
+          flutter build web --release --base-href /rayhan/
+          cp build/web/index.html build/web/404.html
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./frontend/build/web
-          publish_branch: gh-pages
-          force_orphan: true
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
+          path: ./frontend/build/web
+
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  push-docker-image:
+    name: Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
+          tags: |
+            type=sha,prefix={{date 'YYYYMMDD'}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -18,12 +18,7 @@ public class ProductionOrderService {
     @Autowired private BomLineRepository bomLineRepository;
     @Autowired private ArticleRepository articleRepository;
     @Autowired private StockService stockService;
-
-    private static int seqOF = 1;
-
-    private String generateRefOF() {
-        return "OF-" + LocalDate.now().getYear() + "-" + String.format("%03d", seqOF++);
-    }
+    @Autowired private SequenceService sequenceService;
 
     /**
      * Planifie un ordre de fabrication après vérification des matières premières.
@@ -52,7 +47,7 @@ public class ProductionOrderService {
         }
 
         ProductionOrder of = new ProductionOrder();
-        of.setReference(generateRefOF());
+        of.setReference(sequenceService.generateRef("OF"));
         of.setProduitFini(produitFini);
         of.setQuantitePlanifiee(quantite);
         of.setDatePlanifiee(datePlanifiee);

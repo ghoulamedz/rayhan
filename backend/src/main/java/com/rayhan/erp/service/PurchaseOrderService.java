@@ -18,21 +18,11 @@ public class PurchaseOrderService {
     @Autowired private GoodsReceiptRepository goodsReceiptRepository;
     @Autowired private ArticleRepository articleRepository;
     @Autowired private StockService stockService;
-
-    private static int seqBC = 1;
-    private static int seqBR = 1;
-
-    private String generateRefBC() {
-        return "BC-" + LocalDate.now().getYear() + "-" + String.format("%03d", seqBC++);
-    }
-
-    private String generateRefBR() {
-        return "BR-" + LocalDate.now().getYear() + "-" + String.format("%03d", seqBR++);
-    }
+    @Autowired private SequenceService sequenceService;
 
     @Transactional
     public PurchaseOrder createPurchaseOrder(PurchaseOrder order) {
-        order.setReference(generateRefBC());
+        order.setReference(sequenceService.generateRef("BC"));
         order.setStatut(PurchaseOrder.StatutCommande.CONFIRMEE);
 
         BigDecimal totalHT = BigDecimal.ZERO;
@@ -59,7 +49,7 @@ public class PurchaseOrderService {
         PurchaseOrder order = purchaseOrderRepository.findById(purchaseOrderId)
             .orElseThrow(() -> new RuntimeException("Commande introuvable : " + purchaseOrderId));
 
-        reception.setReference(generateRefBR());
+        reception.setReference(sequenceService.generateRef("BR"));
         reception.setPurchaseOrder(order);
         reception.setCreePar(user);
 

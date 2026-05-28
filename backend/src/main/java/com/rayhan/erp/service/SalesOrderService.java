@@ -17,17 +17,7 @@ public class SalesOrderService {
     @Autowired private DeliveryNoteRepository deliveryNoteRepository;
     @Autowired private ArticleRepository articleRepository;
     @Autowired private StockService stockService;
-
-    private static int seqCC = 1;
-    private static int seqBL = 1;
-
-    private String generateRefCC() {
-        return "CC-" + LocalDate.now().getYear() + "-" + String.format("%03d", seqCC++);
-    }
-
-    private String generateRefBL() {
-        return "BL-" + LocalDate.now().getYear() + "-" + String.format("%03d", seqBL++);
-    }
+    @Autowired private SequenceService sequenceService;
 
     @Transactional
     public SalesOrder createSalesOrder(SalesOrder order) {
@@ -41,7 +31,7 @@ public class SalesOrderService {
             }
         }
 
-        order.setReference(generateRefCC());
+        order.setReference(sequenceService.generateRef("CC"));
         order.setStatut(SalesOrder.StatutCommande.CONFIRMEE);
 
         BigDecimal totalHT = BigDecimal.ZERO;
@@ -67,7 +57,7 @@ public class SalesOrderService {
         SalesOrder order = salesOrderRepository.findById(salesOrderId)
             .orElseThrow(() -> new RuntimeException("Commande introuvable : " + salesOrderId));
 
-        bonLivraison.setReference(generateRefBL());
+        bonLivraison.setReference(sequenceService.generateRef("BL"));
         bonLivraison.setSalesOrder(order);
         bonLivraison.setCreePar(user);
 

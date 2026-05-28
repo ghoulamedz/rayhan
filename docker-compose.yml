@@ -45,15 +45,29 @@ services:
       - "8090:8080"
     networks:
       - rayhan-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   frontend:
     build: ./frontend
     container_name: rayhan-frontend
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     ports:
       - "3013:80"
     networks:
       - rayhan-net
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     # To use mock data: set USE_MOCK=true and run frontend standalone
     # environment:
     #   USE_MOCK: "true"

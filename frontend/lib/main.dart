@@ -4,6 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/services/auth_service.dart';
+import 'package:rayhan_erp/services/article_service.dart';
+import 'package:rayhan_erp/services/dashboard_service.dart';
+import 'package:rayhan_erp/services/client_service.dart';
+import 'package:rayhan_erp/services/fournisseur_service.dart';
+import 'package:rayhan_erp/services/sales_order_service.dart';
+import 'package:rayhan_erp/services/purchase_order_service.dart';
+import 'package:rayhan_erp/services/production_service.dart';
+import 'package:rayhan_erp/services/stock_service.dart';
+import 'package:rayhan_erp/mock/mock_services.dart';
+import 'package:rayhan_erp/mock/mock_config.dart';
 import 'package:rayhan_erp/providers/auth_provider.dart';
 import 'package:rayhan_erp/providers/dashboard_provider.dart';
 import 'package:rayhan_erp/providers/article_provider.dart';
@@ -20,6 +31,7 @@ import 'package:rayhan_erp/screens/production_screen.dart';
 import 'package:rayhan_erp/screens/stock_screen.dart';
 import 'package:rayhan_erp/screens/signup_screen.dart';
 import 'package:rayhan_erp/screens/forgot_password_screen.dart';
+import 'package:rayhan_erp/screens/rapports_screen.dart';
 import 'package:rayhan_erp/widgets/role_guard.dart';
 
 void main() async {
@@ -27,19 +39,36 @@ void main() async {
   await initializeDateFormatting('fr_FR');
   await initializeDateFormatting('fr_TN');
 
-  final auth = AuthProvider();
+  final useMock = MockConfig.useMock;
+
+  final AuthService authService = useMock ? MockAuthService() : RealAuthService();
+  final auth = AuthProvider(authService: authService);
   await auth.checkAuth();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: auth),
-        ChangeNotifierProvider(create: (_) => DashboardProvider()),
-        ChangeNotifierProvider(create: (_) => ArticleProvider()),
-        ChangeNotifierProvider(create: (_) => VentesProvider()),
-        ChangeNotifierProvider(create: (_) => AchatsProvider()),
-        ChangeNotifierProvider(create: (_) => ProductionProvider()),
-        ChangeNotifierProvider(create: (_) => StockProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider(
+          dashboardService: useMock ? MockDashboardService() : RealDashboardService(),
+        )),
+        ChangeNotifierProvider(create: (_) => ArticleProvider(
+          articleService: useMock ? MockArticleService() : RealArticleService(),
+        )),
+        ChangeNotifierProvider(create: (_) => VentesProvider(
+          salesOrderService: useMock ? MockSalesOrderService() : RealSalesOrderService(),
+          clientService: useMock ? MockClientService() : RealClientService(),
+        )),
+        ChangeNotifierProvider(create: (_) => AchatsProvider(
+          purchaseOrderService: useMock ? MockPurchaseOrderService() : RealPurchaseOrderService(),
+          fournisseurService: useMock ? MockFournisseurService() : RealFournisseurService(),
+        )),
+        ChangeNotifierProvider(create: (_) => ProductionProvider(
+          productionService: useMock ? MockProductionService() : RealProductionService(),
+        )),
+        ChangeNotifierProvider(create: (_) => StockProvider(
+          stockService: useMock ? MockStockService() : RealStockService(),
+        )),
       ],
       child: const RayhanApp(),
     ),
@@ -97,6 +126,7 @@ class _RayhanAppState extends State<RayhanApp> {
               path: '/production',
               builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
+          GoRoute(path: '/rapports', builder: (_, __) => const RapportsScreen()),
           GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
           GoRoute(
               path: '/forgot-password',
@@ -122,7 +152,7 @@ class _RayhanAppState extends State<RayhanApp> {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
       routerConfig: _router!,
-      scrollBehavior: const _WebScrollBehavior(),
+      //scrollBehavior: const _WebScrollBehavior(),
     );
   }
 }

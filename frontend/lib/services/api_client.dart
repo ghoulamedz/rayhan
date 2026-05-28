@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  static const String baseUrl = 'http://127.0.0.1:8080/api';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://127.0.0.1:8080/api',
+  );
 
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
