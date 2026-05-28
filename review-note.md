@@ -777,3 +777,95 @@ Créer `ServiceFactory` pour consolider les ternaires mock/real. Créer `Clients
 - [ ] `FournisseursScreen` utilise `FournisseursProvider` au lieu de `FournisseurService` direct
 - [ ] `VentesProvider.getClients()` supprimé (remplacé par `ClientsProvider`)
 - [ ] `flutter analyze` zéro erreur
+
+---
+
+## PRD 10 : Correctifs — Logo carré blanc & Export PDF silencieux
+
+> **Date** : 29 May 2026
+> **Source** : Signalement utilisateur
+> **Tests** : Aucun — hors scope pour ce cycle
+
+---
+
+### PRD 10.1 : Logo icône s'affiche en carré blanc
+
+#### Problem Statement
+`rayhan_icon.png` (1024×1024) est un PNG RGB sans canal alpha. Toutes les `Image.asset(…, color: Colors.white)` appliquent `BlendMode.srcIn` par défaut, qui colore chaque pixel en blanc → l'image entière devient un carré blanc opaque, quel que soit le fond.
+
+#### Solution
+Supprimer le paramètre `color:` de tous les `Image.asset()` qui chargent `rayhan_icon.png`. L'image s'affiche dans ses couleurs d'origine. C'est une correction purement code, sans outil graphique.
+
+#### User Stories
+1. En tant qu'utilisateur, je veux voir l'icône Rayhan dans l'appbar, le drawer et le footer, pas un carré blanc.
+
+#### Implementation Decisions
+- 4 endroits à modifier :
+  - `brand_app_bar.dart:80` — supprimer `color: AppTheme.kWhite`
+  - `app_drawer.dart:42` — supprimer `color: AppTheme.kWhite`
+  - `landing_screen.dart:140` — supprimer `color: Color.lerp(Colors.white, AppTheme.kWhite, easedRatio)`
+  - `landing_screen.dart:901` — supprimer `color: Colors.white`
+- Vérification : `flutter analyze` zéro erreur, inspection visuelle de l'icône
+- Note : si l'image a un fond blanc solide sans transparence, il faudra la recadrer/convertir en PNG alpha (hors scope de ce PRD)
+
+#### Out of Scope
+- Convertir le PNG en RGBA avec transparence — à faire séparément si le rendu sans `color` ne convient pas
+
+---
+
+### PRD 10.2 : Export PDF ne fait rien
+
+#### Problem Statement
+Tous les boutons d'export PDF (rapports, écrans détail commandes/stock/production) ne produisent aucun effet. Cause : `PdfService.init()` / `loadPdfAssets()` n'est jamais appelée. Les variables `late final` des polices (`_interFont`, etc.) ne sont jamais initialisées → `LateInitializationError` au moment de générer le PDF.
+
+#### Solution
+Ajouter `await PdfService.init();` dans `main.dart` après `WidgetsFlutterBinding.ensureInitialized()`.
+
+#### User Stories
+1. En tant qu'utilisateur, je veux cliquer sur "Exporter en PDF" et télécharger un fichier, pas voir rien se passer.
+
+#### Implementation Decisions
+- `PdfService.init()` est une méthode `static Future<void>` qui appelle `loadPdfAssets()` (chargement des polices Inter/Manrope + logo PNG)
+- L'appel se fait dans `main()` de `main.dart`, juste après `WidgetsFlutterBinding.ensureInitialized()` et avant `Intl.defaultLocale`
+- Vérification : `flutter analyze` zéro erreur, test manuel de chaque bouton PDF (7 emplacements)
+- Note : `loadPdfAssets()` a déjà un fallback pour le logo (affiche "R" si pas chargé), mais pas pour les polices — elles sont essentielles
+
+#### Out of Scope
+- Migration vers un système d'export PDF sans `dart:html` (pour compatibilité mobile) — pour une version ultérieure
+
+---
+
+## Issues
+
+---
+
+## Issue 19 : Corriger l'affichage du logo (carré blanc)
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Supprimer le paramètre `color:` de tous les `Image.asset('assets/images/rayhan_icon.png', …)` dans le code frontend.
+
+### Acceptance criteria
+- [ ] `brand_app_bar.dart` : `color: AppTheme.kWhite` supprimé de l'`Image.asset(rayhan_icon.png)`
+- [ ] `app_drawer.dart` : `color: AppTheme.kWhite` supprimé de l'`Image.asset(rayhan_icon.png)`
+- [ ] `landing_screen.dart` : `color: Color.lerp(…)` supprimé de l'`Image.asset(rayhan_icon.png)` (appbar)
+- [ ] `landing_screen.dart` : `color: Colors.white` supprimé de l'`Image.asset(rayhan_icon.png)` (footer)
+- [ ] `flutter analyze` zéro erreur
+- [ ] Vérification visuelle : l'icône n'est plus un carré blanc
+
+---
+
+## Issue 20 : Initialiser PdfService au démarrage
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Ajouter `await PdfService.init();` dans `main()` de `main.dart` après `WidgetsFlutterBinding.ensureInitialized()`.
+
+### Acceptance criteria
+- [ ] `main.dart` appelle `await PdfService.init();`
+- [ ] `flutter analyze` zéro erreur
+- [ ] Les 7 boutons PDF (rapports, écrans détail) produisent un téléchargement
