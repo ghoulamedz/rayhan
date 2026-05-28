@@ -578,6 +578,7 @@ Extraire 4 widgets : `KpiGrid`, `ChartSection`, `ActivityFeed`, `SuggestionCard`
 - Supprimer les appels à `MockData.revenueByMonth()` et `MockData.ordersByDay()` dans `DashboardScreen`
 - `DashboardScreen` orchestre les 4 widgets et passe les données
 - `SuggestionService` reste inchangé (déjà injecté dans `DashboardProvider`)
+- **Correction stock d'alerte** : remplacer `stockActuel <= 0` par `stockActuel < stockMinimum` dans le KPI dashboard ET dans `ArticleRepository.findByStockActuelLessThanEqualAndActifTrue` (ou créer une nouvelle derived query `findByStockActuelLessThanStockMinimumAndActifTrue`). Voir `CONTEXT.md` pour la définition du terme.
 
 #### Out of Scope
 - Ajouter de nouveaux types de graphiques (camembert, histogramme) — pour une version ultérieure
@@ -598,7 +599,9 @@ Introduire des classes de base abstraites `OrderModel<TLine>`, `ReceiptModel<TLi
 2. En tant que développeur, je veux modifier la gestion des totaux TVA une seule fois, pas dans deux pipelines parallèles.
 3. En tant que développeur, je veux pouvoir tester la logique d'arrondi des totaux dans une classe de base, pas dans deux implémentations jumelles.
 
-#### Implementation Decisions
+#### Implémentation Decisions (validated in grill session — see ADR 0001)
+
+**Stratégie d'héritage** : `@MappedSuperclass` (pas `SINGLE_TABLE`, pas `JOINED`). Voir `docs/adr/0001-mappedsuperclass-for-order-pipeline.md`.
 
 **Côté backend (Java)** :
 - Créer `OrderBase` (abstract, `@MappedSuperclass`) avec les champs communs : `reference`, `dateCommande`, `notes`, `creePar`, `totalHT`, `totalTVA`, `totalTTC`, `statut`, `@OneToMany List<OrderLineBase> lines`
@@ -617,8 +620,10 @@ Introduire des classes de base abstraites `OrderModel<TLine>`, `ReceiptModel<TLi
 - Même refactoring pour `abstract class ReceiptModel<TLine extends ReceiptLineModel>`
 - Créer `abstract class OrderService<T>` : `fetchAll()`, `create()`, `getById()` — les méthodes spécifiques (`deliver`, `receive`) restent dans les implémentations concrètes
 
-**Correction bug lié** :
-- La TVA au niveau ligne (`tauxTVA`) est déjà stockée par ligne. Le calcul du `totalTVA` de la commande doit sommer les TVA des lignes, pas appliquer 19% forfaitaire. Cette correction est intégrée dans le refactoring.
+**Bugs intégrés dans le refactoring** :
+- **TVA** : le calcul du `totalTVA` de la commande doit sommer les TVA des lignes (champ `tauxTVA` déjà stocké par ligne), pas appliquer 19% forfaitaire.
+- **Livraison partielle** : `createDeliveryNote()` / `createGoodsReceipt()` doit set `PARTIELLEMENT_LIVREE` / `PARTIELLEMENT_RECUE` quand `quantiteLivree < quantiteCommandee`, au lieu de toujours mettre `COMPLETEMENT_*`.
+- **Stock d'alerte KPI** : le dashboard utilise actuellement `stockActuel <= 0` au lieu de `stockActuel < stockMinimum`. Corrigé dans le cadre du découplage du dashboard (PRD 9.4 / Issue 16).
 
 #### Out of Scope
 - Refactorer les écrans de liste (VentesScreen, AchatsScreen) — ils partagent déjà un pattern similaire mais l'abstraction des écrans est prématurée sans troisième type de document
@@ -724,6 +729,8 @@ Extraire 4 widgets du dashboard monolithique. Router les données des graphiques
 - [ ] `KpiGrid`, `ChartSection`, `ActivityFeed`, `SuggestionCard` existent dans `widgets/dashboard/`
 - [ ] `DashboardScreen` passe les données du provider aux widgets (n'appelle plus `MockData.revenueByMonth()`)
 - [ ] `DashboardProvider` expose revenueByMonth et ordersByDay
+- [ ] KPI stock alerte utilise `stockActuel < stockMinimum` au lieu de `stockActuel <= 0`
+- [ ] `ArticleRepository` a une derived query `findByStockActuelLessThanStockMinimumAndActifTrue` (ou équivalent)
 - [ ] `flutter analyze` zéro erreur
 - [ ] `flutter build web --release` réussit
 
@@ -741,6 +748,8 @@ Introduire `OrderBase`/`OrderLineBase` (`@MappedSuperclass`) côté backend et `
 - [ ] Backend : `OrderBase`, `OrderLineBase`, `DeliveryNoteBase`, `ReceiptLineBase` créés en `@MappedSuperclass`
 - [ ] Backend : `SalesOrder extends OrderBase`, `PurchaseOrder extends OrderBase` (même pour les lignes et reçus)
 - [ ] Backend : `SalesOrderService.createSalesOrder()` calcule le totalTVA comme somme des TVA lignes (pas 19% forfaitaire)
+- [ ] Backend : `createDeliveryNote()` met `PARTIELLEMENT_LIVREE` si `quantiteLivree < quantiteCommandee` (au lieu de toujours `COMPLETEMENT_LIVREE`)
+- [ ] Backend : `createGoodsReceipt()` met `PARTIELLEMENT_RECUE` si `quantiteRecue < quantiteCommandee` (au lieu de toujours `COMPLETEMENT_RECUE`)
 - [ ] Frontend : `OrderModel<TLine>`, `OrderLineModel` abstraits créés
 - [ ] Frontend : `SalesOrderModel extends OrderModel<SalesOrderLineModel>`
 - [ ] Frontend : `PurchaseOrderModel extends OrderModel<PurchaseOrderLineModel>`
