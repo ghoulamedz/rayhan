@@ -35,7 +35,12 @@ class AppDrawer extends StatelessWidget {
                     color: AppTheme.kWhite.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.person, color: AppTheme.kWhite, size: 28),
+                  child: Image.asset(
+                    'assets/images/rayhan_icon.png',
+                    width: 28,
+                    height: 28,
+                    color: AppTheme.kWhite,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -64,8 +69,12 @@ class AppDrawer extends StatelessWidget {
                     '/articles', role),
                 _item(context, Icons.shopping_cart_rounded, 'Ventes',
                     '/ventes', role),
+                _item(context, Icons.people_outline_rounded, 'Clients',
+                    '/clients', role),
                 _item(context, Icons.local_shipping_rounded, 'Achats',
                     '/achats', role),
+                _item(context, Icons.business_outlined, 'Fournisseurs',
+                    '/fournisseurs', role),
                 _item(context, Icons.precision_manufacturing_rounded,
                     'Production', '/production', role),
                 _item(context, Icons.warehouse_rounded, 'Stock', '/stock', role),
@@ -131,8 +140,8 @@ class AppDrawer extends StatelessWidget {
         return 'Responsable Production';
       case 'ROLE_MAGASINIER':
         return 'Magasinier';
-      case 'ROLE_RH':
-        return 'Responsable RH';
+      case 'ROLE_CLIENT':
+        return 'Client';
       default:
         return role?.replaceAll('ROLE_', '') ?? 'VISITEUR';
     }

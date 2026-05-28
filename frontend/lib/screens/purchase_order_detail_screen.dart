@@ -36,7 +36,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.inventory_outlined, size: 18),
                 label: const Text('Réceptionner'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.kPrimaryRed,
+                  backgroundColor: AppTheme.kPrimaryTeal,
                   foregroundColor: AppTheme.kSurfaceWhite,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
@@ -108,7 +108,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
       message: 'Réceptionner toutes les lignes de ${order.reference} ?\n\nLe stock sera incrémenté automatiquement.',
       confirmLabel: 'Réceptionner',
       icon: Icons.inventory_outlined,
-      accentColor: AppTheme.kPrimaryRed,
+      accentColor: AppTheme.kPrimaryTeal,
     ).then((confirmed) {
       if (confirmed == true) {
         context.read<AchatsProvider>().receive(order.id!, order.lignes).then((err) {
@@ -167,7 +167,7 @@ class _LigneCard extends StatelessWidget {
                 Text('${ligne.quantiteCommandee} ${ligne.article?.uniteMesure ?? ''} × ${fmt.format(ligne.prixUnitaireHT)}',
                     style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
                 Text(fmt.format(ligne.montantTTC ?? ligne.montantTTCCalc),
-                    style: AppTheme.titleSmall.copyWith(color: AppTheme.kPrimaryRed)),
+                    style: AppTheme.titleSmall.copyWith(color: AppTheme.kPrimaryTeal)),
               ],
             ),
             if (ligne.quantiteRecue > 0)

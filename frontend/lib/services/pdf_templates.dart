@@ -1,6 +1,35 @@
+import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter/services.dart' show rootBundle;
 import '../constants/app_theme.dart';
+
+// Font data cache - loaded once
+late final pw.Font _interFont;
+late final pw.Font _interBoldFont;
+late final pw.Font _manropeBoldFont;
+late final Uint8List _logoBytes;
+bool pdfFontsLoaded = false;
+bool _logoLoaded = false;
+
+Future<void> loadPdfAssets() async {
+  if (!pdfFontsLoaded) {
+    final inter = await rootBundle.load('assets/fonts/Inter.ttf');
+    final manropeBold = await rootBundle.load('assets/fonts/Manrope-Bold.ttf');
+    _interFont = pw.Font.ttf(inter);
+    _interBoldFont = pw.Font.ttf(inter);
+    _manropeBoldFont = pw.Font.ttf(manropeBold);
+    pdfFontsLoaded = true;
+  }
+  if (!_logoLoaded) {
+    final logo = await rootBundle.load('assets/images/rayhan_icon.png');
+    _logoBytes = logo.buffer.asUint8List();
+    _logoLoaded = true;
+  }
+}
+
+pw.Font pdfFont({bool bold = false}) => bold ? _interBoldFont : _interFont;
+pw.Font pdfHeadingFont() => _manropeBoldFont;
 
 class PdfBrandedHeader {
   static pw.Widget build({
@@ -17,17 +46,19 @@ class PdfBrandedHeader {
               width: 50,
               height: 50,
               decoration: pw.BoxDecoration(
-                color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
-                borderRadius: pw.BorderRadius.circular(8),
+                color: PdfColor.fromInt(AppTheme.kPrimaryTeal.value),
+                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
               ),
-              child: pw.Center(
-                child: pw.Text('R',
-                    style: pw.TextStyle(
-                      fontSize: 24,
-                      fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.white,
-                    )),
-              ),
+              child: _logoLoaded
+                  ? pw.Image(pw.MemoryImage(_logoBytes), width: 50, height: 50, fit: pw.BoxFit.cover)
+                  : pw.Center(
+                      child: pw.Text('R',
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            font: pdfHeadingFont(),
+                            color: PdfColors.white,
+                          )),
+                    ),
             ),
             pw.SizedBox(width: 12),
             pw.Expanded(
@@ -37,15 +68,15 @@ class PdfBrandedHeader {
                   pw.Text('Rayhan ERP',
                       style: pw.TextStyle(
                         fontSize: 18,
-                        fontWeight: pw.FontWeight.bold,
-                        color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
+                        font: pdfHeadingFont(),
+                        color: PdfColor.fromInt(AppTheme.kPrimaryNavy.value),
                       )),
-                  pw.Text('SUARL Rayhan — Plasturgie',
-                      style: pw.TextStyle(fontSize: 9, color: PdfColors.grey)),
+                  pw.Text('SUARL Rayhan - Plasturgie',
+                      style: pw.TextStyle(fontSize: 9, font: pdfFont(), color: PdfColors.grey)),
                   pw.Text('ICE: 123456789 / MF: 0000000',
-                      style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
-                  pw.Text('Adresse: Z.I. Charguia — Tunis',
-                      style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
+                      style: pw.TextStyle(fontSize: 8, font: pdfFont(), color: PdfColors.grey)),
+                  pw.Text('Adresse: Z.I. Charguia - Tunis',
+                      style: pw.TextStyle(fontSize: 8, font: pdfFont(), color: PdfColors.grey)),
                 ],
               ),
             ),
@@ -65,23 +96,25 @@ class PdfBrandedHeader {
                 children: [
                   pw.Text(title,
                       style: pw.TextStyle(
-                          fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                          fontSize: 16,
+                          font: pdfHeadingFont(),
+                          fontWeight: pw.FontWeight.bold)),
                   if (subtitle != null)
                     pw.Text(subtitle,
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+                        style: pw.TextStyle(fontSize: 10, font: pdfFont(), color: PdfColors.grey)),
                 ],
               ),
             ),
             pw.Container(
               padding: pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: pw.BoxDecoration(
-                color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
+                color: PdfColor.fromInt(AppTheme.kPrimaryTeal.value),
                 borderRadius: pw.BorderRadius.circular(4),
               ),
               child: pw.Text(reference,
                   style: pw.TextStyle(
                       fontSize: 11,
-                      fontWeight: pw.FontWeight.bold,
+                      font: pdfFont(bold: true),
                       color: PdfColors.white)),
             ),
           ],
@@ -109,7 +142,7 @@ class PdfLineItemTable {
         pw.TableRow(
           decoration: pw.BoxDecoration(
             color: PdfColor.fromInt(
-                AppTheme.kPrimaryRed.withValues(alpha: 0.08).value),
+                AppTheme.kPrimaryTeal.withValues(alpha: 0.08).value),
           ),
           children: columns
               .map((h) => pw.Padding(
@@ -117,7 +150,7 @@ class PdfLineItemTable {
                     child: pw.Text(h,
                         style: pw.TextStyle(
                             fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
+                            font: pdfFont(bold: true),
                             color: PdfColor.fromInt(
                                 AppTheme.kTextPrimary.value))),
                   ))
@@ -132,7 +165,7 @@ class PdfLineItemTable {
                     pw.Padding(
                       padding: pw.EdgeInsets.symmetric(horizontal: 6, vertical: 5),
                       child: pw.Text(cell,
-                          style: pw.TextStyle(fontSize: 9),
+                          style: pw.TextStyle(fontSize: 9, font: pdfFont()),
                           textAlign: i == 0
                               ? pw.TextAlign.left
                               : pw.TextAlign.right),
@@ -181,7 +214,7 @@ class PdfTotalsBox {
               pw.SizedBox(height: 3),
               _row('Total TTC', totalTTC,
                   bold: true,
-                  color: PdfColor.fromInt(AppTheme.kPrimaryRed.value)),
+                  color: PdfColor.fromInt(AppTheme.kCtaOrange.value)),
             ],
           ),
         ),
@@ -197,12 +230,12 @@ class PdfTotalsBox {
         pw.Text(label,
             style: pw.TextStyle(
                 fontSize: 10,
-                fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal,
+                font: pdfFont(bold: bold),
                 color: color)),
         pw.Text(amount.toStringAsFixed(3),
             style: pw.TextStyle(
                 fontSize: 10,
-                fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal,
+                font: pdfFont(bold: bold),
                 color: color)),
       ],
     );
@@ -220,9 +253,9 @@ class PdfFooter {
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
             pw.Text('Généré par Rayhan ERP',
-                style: pw.TextStyle(fontSize: 7, color: PdfColors.grey)),
+                style: pw.TextStyle(fontSize: 7, font: pdfFont(), color: PdfColors.grey)),
             pw.Text('Page {page_num} / {page_count}',
-                style: pw.TextStyle(fontSize: 7, color: PdfColors.grey)),
+                style: pw.TextStyle(fontSize: 7, font: pdfFont(), color: PdfColors.grey)),
           ],
         ),
       ],

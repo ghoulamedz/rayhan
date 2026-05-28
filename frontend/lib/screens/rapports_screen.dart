@@ -56,8 +56,8 @@ class _RapportsScreenState extends State<RapportsScreen>
               color: AppTheme.kSurfaceWhite,
               child: TabBar(
                 controller: _tabController,
-                indicatorColor: AppTheme.kPrimaryRed,
-                labelColor: AppTheme.kPrimaryRed,
+                indicatorColor: AppTheme.kPrimaryTeal,
+                labelColor: AppTheme.kPrimaryTeal,
                 unselectedLabelColor: AppTheme.kTextSecondary,
                 tabs: const [
                   Tab(text: 'General', icon: Icon(Icons.dashboard_outlined, size: 18)),
@@ -103,14 +103,14 @@ class _GeneralReport extends StatelessWidget {
       ]),
       const SizedBox(height: 8),
       Row(children: [
-        Expanded(child: _kpiBox('OF en cours', '${dash.kpi?.production.ofEnCours ?? 0}', Icons.precision_manufacturing, AppTheme.kPrimaryOrange)),
+        Expanded(child: _kpiBox('OF en cours', '${dash.kpi?.production.ofEnCours ?? 0}', Icons.precision_manufacturing, AppTheme.kCtaOrange)),
         const SizedBox(width: 8),
-        Expanded(child: _kpiBox('Commandes en attente', '${dash.kpi?.ventes.commandesEnCours ?? 0}', Icons.receipt_long, AppTheme.kPrimaryRed)),
+        Expanded(child: _kpiBox('Commandes en attente', '${dash.kpi?.ventes.commandesEnCours ?? 0}', Icons.receipt_long, AppTheme.kPrimaryTeal)),
       ]),
       const SizedBox(height: 24),
       Text('Actions rapides', style: AppTheme.titleSmall.copyWith(fontSize: 16)),
       const SizedBox(height: 12),
-      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter le catalogue articles', AppTheme.kPrimaryRed, () async {
+      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter le catalogue articles', AppTheme.kPrimaryTeal, () async {
         final bytes = await PdfService.generateArticleCatalog(
           context.read<ArticleProvider>().articles, 'TOUS',
         );
@@ -129,7 +129,7 @@ class _VentesReport extends StatelessWidget {
     final total = provider.orders.fold<double>(0, (sum, o) => sum + o.totalTTC);
     return ListView(padding: const EdgeInsets.all(16), children: [
       Row(children: [
-        Expanded(child: _kpiBox('Commandes', '${provider.orders.length}', Icons.receipt_long, AppTheme.kPrimaryRed)),
+        Expanded(child: _kpiBox('Commandes', '${provider.orders.length}', Icons.receipt_long, AppTheme.kPrimaryTeal)),
         const SizedBox(width: 8),
         Expanded(child: _kpiBox('Total TTC', fmt.format(total), Icons.account_balance, AppTheme.kSuccessGreen)),
       ]),
@@ -144,7 +144,7 @@ class _VentesReport extends StatelessWidget {
         ),
       )),
       const SizedBox(height: 16),
-      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter les ventes en PDF', AppTheme.kPrimaryRed, () async {
+      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter les ventes en PDF', AppTheme.kPrimaryTeal, () async {
         for (final o in provider.orders.take(5)) {
           final bytes = await PdfService.generateSalesInvoice(o);
           PdfService.downloadPdf(bytes, 'FAC_${o.reference ?? "N/A"}.pdf');
@@ -163,9 +163,9 @@ class _AchatsReport extends StatelessWidget {
     final total = provider.orders.fold<double>(0, (sum, o) => sum + o.totalTTC);
     return ListView(padding: const EdgeInsets.all(16), children: [
       Row(children: [
-        Expanded(child: _kpiBox('Commandes', '${provider.orders.length}', Icons.receipt_long, AppTheme.kPrimaryOrange)),
+        Expanded(child: _kpiBox('Commandes', '${provider.orders.length}', Icons.receipt_long, AppTheme.kCtaOrange)),
         const SizedBox(width: 8),
-        Expanded(child: _kpiBox('Total TTC', fmt.format(total), Icons.account_balance, AppTheme.kPrimaryRed)),
+        Expanded(child: _kpiBox('Total TTC', fmt.format(total), Icons.account_balance, AppTheme.kPrimaryTeal)),
       ]),
       const SizedBox(height: 16),
       ...provider.orders.map((o) => AppTheme.withGlass(
@@ -174,11 +174,11 @@ class _AchatsReport extends StatelessWidget {
         child: ListTile(
           title: Text(o.reference ?? '—', style: AppTheme.titleSmall.copyWith(fontSize: 13)),
           subtitle: Text(o.fournisseur?.raisonSociale ?? '—', style: AppTheme.bodySmall),
-          trailing: Text(fmt.format(o.totalTTC), style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.kPrimaryRed, fontSize: 13)),
+          trailing: Text(fmt.format(o.totalTTC), style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.kPrimaryTeal, fontSize: 13)),
         ),
       )),
       const SizedBox(height: 16),
-      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter les achats en PDF', AppTheme.kPrimaryOrange, () async {
+      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter les achats en PDF', AppTheme.kCtaOrange, () async {
         for (final o in provider.orders.take(5)) {
           final bytes = await PdfService.generatePurchaseReceipt(o);
           PdfService.downloadPdf(bytes, 'BR_${o.reference ?? "N/A"}.pdf');
@@ -196,7 +196,7 @@ class _StockReport extends StatelessWidget {
     final alertes = provider.articles.where((a) => a.enAlerte).toList();
     return ListView(padding: const EdgeInsets.all(16), children: [
       Row(children: [
-        Expanded(child: _kpiBox('Articles', '${provider.articles.length}', Icons.inventory_2, AppTheme.kPrimaryRed)),
+        Expanded(child: _kpiBox('Articles', '${provider.articles.length}', Icons.inventory_2, AppTheme.kPrimaryTeal)),
         const SizedBox(width: 8),
         Expanded(child: _kpiBox('Alertes', '${alertes.length}', Icons.warning_amber, AppTheme.kErrorRed)),
       ]),
@@ -222,7 +222,7 @@ class _StockReport extends StatelessWidget {
         )),
       ],
       const SizedBox(height: 16),
-      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter le catalogue articles', AppTheme.kPrimaryRed, () async {
+      _actionCard(context, Icons.picture_as_pdf_outlined, 'Exporter le catalogue articles', AppTheme.kPrimaryTeal, () async {
         final bytes = await PdfService.generateArticleCatalog(provider.articles, 'TOUS');
         PdfService.downloadPdf(bytes, 'CATALOGUE_ARTICLES.pdf');
       }),

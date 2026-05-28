@@ -4,25 +4,26 @@ import 'package:rayhan_erp/constants/custom_page_transition.dart';
 
 abstract final class AppTheme {
   // ── Color Palette ──────────────────────────────────────────────
-  // Palette: https://colorhunt.co/palette/d92243f69d39e0c375fff5e5
-  static const Color kPrimaryRed = Color(0xFFD92243);
-  static const Color kPrimaryOrange = Color(0xFFF69D39);
-  static const Color kPrimaryRedDark = Color(0xFFC41E3A);
+  // Palette: https://colorhunt.co/palette/f5f5f576abae303841ff5722
+  static const Color kPrimaryTeal = Color(0xFF76ABAE);
+  static const Color kPrimaryTealDark = Color(0xFF5A8F92);
+  static const Color kPrimaryNavy = Color(0xFF303841);
+  static const Color kCtaOrange = Color(0xFFFF5722);
 
   // Background / surface
-  static const Color kBackgroundCream = Color(0xFFFFF5E5);
-  static const Color kSecondaryGold = Color(0xFFE0C375);
-  static const Color kSurfaceGlass = Color(0xBFFFF5E5);
+  static const Color kBackgroundLight = Color(0xFFF5F5F5);
+  static const Color kSurfaceGlass = Color(0xB3F5F5F5);
   static const Color kSurfaceWhite = Color(0xFFFFFFFF);
+  static const Color kCardBg = Color(0xFFFFFFFF);
 
   // Text
-  static const Color kTextPrimary = Color(0xFF2D1B1B);
-  static const Color kTextSecondary = Color(0xFF8B7355);
-  static const Color kTextHint = Color(0xFFBFA88A);
+  static const Color kTextPrimary = Color(0xFF303841);
+  static const Color kTextSecondary = Color(0xFF6B7280);
+  static const Color kTextHint = Color(0xFF9CA3AF);
 
   // Input / borders
-  static const Color kInputFill = Color(0xFFF5EDE6);
-  static const Color kBorderLight = Color(0xFFE8D9CD);
+  static const Color kInputFill = Color(0xFFEEEEEE);
+  static const Color kBorderLight = Color(0xFFE5E7EB);
 
   // Status colors
   static const Color kSuccessGreen = Color(0xFF4CAF50);
@@ -35,7 +36,7 @@ abstract final class AppTheme {
   // Neutrals
   static const Color kWhite = Color(0xFFFFFFFF);
   static const Color kBlack = Color(0xFF000000);
-  static const Color kDividerColor = Color(0xFFE8D9CD);
+  static const Color kDividerColor = Color(0xFFE5E7EB);
 
   // ── Glassmorphism helpers (glossy) ─────────────────────────────
   static BoxDecoration glassCard({
@@ -118,35 +119,34 @@ abstract final class AppTheme {
   }
 
   // ── Deprecated aliases (backwards compat) ──────────────────────
-  @Deprecated('Use kPrimaryRed instead') static const Color kPrimaryBurgundy = kPrimaryRed;
-  @Deprecated('Use kPrimaryOrange instead') static const Color kPrimaryBurgundyLight = kPrimaryOrange;
-  @Deprecated('Use kPrimaryRedDark instead') static const Color kPrimaryBurgundyDark = kPrimaryRedDark;
-  @Deprecated('Use kBackgroundCream instead') static const Color kSecondaryCream = kBackgroundCream;
-  @Deprecated('Use kSecondaryGold instead') static const Color kSecondaryTan = kSecondaryGold;
-  @Deprecated('Use kBackgroundCream instead') static const Color kBackgroundWarm = kBackgroundCream;
-  @Deprecated('Use kBackgroundWarm instead') static const Color kBackgroundOffWhite = kBackgroundWarm;
-  @Deprecated('Use kPrimaryRed instead') static const Color kPrimaryTeal = kPrimaryRed;
-  @Deprecated('Use kPrimaryOrange instead') static const Color kPrimaryTealLight = kPrimaryOrange;
-  @Deprecated('Use kPrimaryRedDark instead') static const Color kPrimaryTealDark = kPrimaryRedDark;
-  @Deprecated('Use kSecondaryGold instead') static const Color kSecondaryAmber = kSecondaryGold;
+  @Deprecated('Use kPrimaryTeal instead') static const Color kPrimaryBurgundy = kPrimaryTeal;
+  @Deprecated('Use kCtaOrange instead') static const Color kPrimaryBurgundyLight = kCtaOrange;
+  @Deprecated('Use kPrimaryTealDark instead') static const Color kPrimaryBurgundyDark = kPrimaryTealDark;
+  @Deprecated('Use kBackgroundLight instead') static const Color kBackgroundCream = kBackgroundLight;
+  @Deprecated('Use kBackgroundLight instead') static const Color kSecondaryCream = kBackgroundLight;
+  @Deprecated('Use kCtaOrange instead') static const Color kSecondaryGold = kCtaOrange;
+  @Deprecated('Use kCtaOrange instead') static const Color kSecondaryTan = kCtaOrange;
+  @Deprecated('Use kBackgroundLight instead') static const Color kBackgroundWarm = kBackgroundLight;
+  @Deprecated('Use kBackgroundLight instead') static const Color kBackgroundOffWhite = kBackgroundLight;
+  @Deprecated('Use kCtaOrange instead') static const Color kPrimaryTealLight = kCtaOrange;
+  @Deprecated('Use kPrimaryNavy instead') static const Color kSecondaryAmber = kPrimaryNavy;
   @Deprecated('Use kWarningAmberLight instead') static const Color kSecondaryAmberLight = kWarningAmberLight;
-  @Deprecated('Use kPrimaryOrange instead') static const Color kCtaOrange = kPrimaryOrange;
   @Deprecated('Use kWarningAmberLight instead') static const Color kCtaOrangeLight = kWarningAmberLight;
-  @Deprecated('Use kPrimaryOrange instead') static const Color blueLightTinted = kPrimaryOrange;
-  @Deprecated('Use kPrimaryOrange instead') static const Color blueLightest = kPrimaryOrange;
+  @Deprecated('Use kCtaOrange instead') static const Color blueLightTinted = kCtaOrange;
+  @Deprecated('Use kCtaOrange instead') static const Color blueLightest = kCtaOrange;
   @Deprecated('Use kTextPrimary instead') static const Color blueStrongHighlight = kTextPrimary;
-  @Deprecated('Use kPrimaryOrange instead') static const Color greenLight = kPrimaryOrange;
+  @Deprecated('Use kCtaOrange instead') static const Color greenLight = kCtaOrange;
   @Deprecated('Use kSurfaceWhite instead') static const Color whiteSurface = kSurfaceWhite;
   @Deprecated('Use kSuccessGreenLight instead') static const Color whiteSurface2 = kSuccessGreenLight;
-  @Deprecated('Use kPrimaryOrange instead') static const Color whiteTintedorGreyAddAlpha02 = kPrimaryOrange;
-  @Deprecated('Use kPrimaryRedDark instead') static const Color greenStrong = kPrimaryRedDark;
+  @Deprecated('Use kCtaOrange instead') static const Color whiteTintedorGreyAddAlpha02 = kCtaOrange;
+  @Deprecated('Use kPrimaryNavy instead') static const Color greenStrong = kPrimaryNavy;
   @Deprecated('Use kErrorRed instead') static const Color red = kErrorRed;
   @Deprecated('Use kWarningAmber instead') static const Color yellow = kWarningAmber;
   @Deprecated('Use kSuccessGreen instead') static const Color greenBright = kSuccessGreen;
-  @Deprecated('Use kPrimaryRed instead') static const Color greenMatte = kPrimaryRed;
+  @Deprecated('Use kPrimaryTeal instead') static const Color greenMatte = kPrimaryTeal;
   @Deprecated('Use kTextSecondary instead') static const Color grey = kTextSecondary;
   @Deprecated('Use kTextHint instead') static const Color greyLight = kTextHint;
-  @Deprecated('Use kPrimaryRed instead') static const Color blueLight = kPrimaryRed;
+  @Deprecated('Use kPrimaryTeal instead') static const Color blueLight = kPrimaryTeal;
 
   // ── Spacing ────────────────────────────────────────────────────
   static const double sp4 = 4.0;
@@ -162,25 +162,25 @@ abstract final class AppTheme {
 
   // ── Gradients ──────────────────────────────────────────────────
   static const kPrimaryGradient = LinearGradient(
-    colors: [kPrimaryRed, kPrimaryRedDark],
+    colors: [kPrimaryNavy, kPrimaryTeal],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kAccentGradient = LinearGradient(
-    colors: [kSecondaryGold, kPrimaryOrange],
+    colors: [kPrimaryTeal, kCtaOrange],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kCtaGradient = LinearGradient(
-    colors: [kPrimaryOrange, kPrimaryRed],
+    colors: [kCtaOrange, kPrimaryNavy],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const kWarmGradient = LinearGradient(
-    colors: [kBackgroundCream, kSecondaryGold],
+    colors: [kBackgroundLight, kPrimaryTeal],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -231,7 +231,7 @@ abstract final class AppTheme {
 
   // ── Button styles ──────────────────────────────────────────────
   static ButtonStyle get primaryButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryRed,
+        backgroundColor: kPrimaryTeal,
         foregroundColor: kWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -240,8 +240,8 @@ abstract final class AppTheme {
       );
 
   static ButtonStyle get accentButton => ElevatedButton.styleFrom(
-        backgroundColor: kSecondaryGold,
-        foregroundColor: kTextPrimary,
+        backgroundColor: kPrimaryNavy,
+        foregroundColor: kWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 0,
@@ -249,7 +249,7 @@ abstract final class AppTheme {
       );
 
   static ButtonStyle get ctaButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryOrange,
+        backgroundColor: kCtaOrange,
         foregroundColor: kWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -265,9 +265,9 @@ abstract final class AppTheme {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            kBackgroundCream,
-            kSecondaryGold.withValues(alpha: 0.4),
-            kBackgroundCream,
+            kBackgroundLight,
+            kPrimaryTeal.withValues(alpha: 0.08),
+            kBackgroundLight,
           ],
         ),
       ),
@@ -418,17 +418,17 @@ abstract final class AppTheme {
       useMaterial3: true,
       fontFamily: 'Inter',
       colorScheme: ColorScheme.light(
-        primary: kPrimaryRed,
-        secondary: kSecondaryGold,
-        tertiary: kPrimaryOrange,
-        surface: kBackgroundCream,
+        primary: kPrimaryTeal,
+        secondary: kPrimaryNavy,
+        tertiary: kCtaOrange,
+        surface: kBackgroundLight,
         error: kErrorRed,
         onPrimary: kWhite,
-        onSecondary: kTextPrimary,
+        onSecondary: kWhite,
         onSurface: kTextPrimary,
         onError: kWhite,
       ),
-      scaffoldBackgroundColor: kBackgroundCream,
+      scaffoldBackgroundColor: kBackgroundLight,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: kSurfaceGlass,
@@ -458,7 +458,7 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: kPrimaryRed, width: 1.5),
+          borderSide: BorderSide(color: kPrimaryTeal, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -472,19 +472,19 @@ abstract final class AppTheme {
         style: primaryButton,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: kPrimaryRed,
+        backgroundColor: kPrimaryTeal,
         foregroundColor: kWhite,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       chipTheme: ChipThemeData(
-        selectedColor: kPrimaryOrange.withValues(alpha: 0.2),
-        checkmarkColor: kPrimaryRed,
+        selectedColor: kPrimaryTeal.withValues(alpha: 0.15),
+        checkmarkColor: kPrimaryTeal,
         labelStyle: TextStyle(fontSize: 12, color: kTextPrimary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       dividerTheme: DividerThemeData(color: kBorderLight, thickness: 1),
       drawerTheme: DrawerThemeData(
-        backgroundColor: kBackgroundCream,
+        backgroundColor: kBackgroundLight,
         shape: const RoundedRectangleBorder(),
       ),
       bottomSheetTheme: BottomSheetThemeData(
@@ -511,23 +511,23 @@ abstract final class AppTheme {
       useMaterial3: true,
       fontFamily: 'Inter',
       colorScheme: ColorScheme.dark(
-        primary: kPrimaryOrange,
-        secondary: kSecondaryGold,
-        tertiary: kPrimaryRed,
-        surface: const Color(0xFF2D1B1B),
+        primary: kPrimaryTeal,
+        secondary: kCtaOrange,
+        tertiary: kPrimaryNavy,
+        surface: const Color(0xFF1E1E2E),
         error: kErrorRed,
         onPrimary: kWhite,
         onSecondary: kWhite,
-        onSurface: kBackgroundCream,
+        onSurface: kBackgroundLight,
       ),
-      scaffoldBackgroundColor: const Color(0xFF1A0F0F),
+      scaffoldBackgroundColor: const Color(0xFF121218),
       textTheme: textTheme.apply(
         bodyColor: kBackgroundCream,
         displayColor: kBackgroundCream,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF2D1B1B),
-        foregroundColor: kBackgroundCream,
+        backgroundColor: const Color(0xFF1E1E2E),
+        foregroundColor: kBackgroundLight,
         elevation: 0,
       ),
       cardTheme: CardThemeData(
@@ -546,7 +546,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(style: primaryButton),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: kPrimaryOrange,
+        backgroundColor: kCtaOrange,
         foregroundColor: kWhite,
       ),
       dividerTheme: DividerThemeData(color: kWhite.withValues(alpha: 0.12), thickness: 1),

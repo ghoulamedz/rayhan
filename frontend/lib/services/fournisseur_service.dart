@@ -4,6 +4,7 @@ import '../models/fournisseur.dart';
 abstract class FournisseurService {
   Future<List<Fournisseur>> fetchAll();
   Future<Fournisseur> create(Fournisseur f);
+  Future<Fournisseur> update(int id, Fournisseur f);
 }
 
 class RealFournisseurService implements FournisseurService {
@@ -16,6 +17,12 @@ class RealFournisseurService implements FournisseurService {
   @override
   Future<Fournisseur> create(Fournisseur f) async {
     final res = await ApiClient.instance.post('/fournisseurs', data: f.toJson());
+    return Fournisseur.fromJson(res.data);
+  }
+
+  @override
+  Future<Fournisseur> update(int id, Fournisseur f) async {
+    final res = await ApiClient.instance.put('/fournisseurs/$id', data: f.toJson());
     return Fournisseur.fromJson(res.data);
   }
 }

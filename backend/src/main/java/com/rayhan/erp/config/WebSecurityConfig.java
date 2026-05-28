@@ -60,9 +60,6 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
-            "https://rayhan-erp.bolbol.tn",
-            "https://api.bolbol.tn",
-            "https://*.bolbol.tn",
             "http://localhost:*",
             "http://127.0.0.1:*"
         ));

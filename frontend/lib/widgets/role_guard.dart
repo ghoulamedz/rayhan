@@ -3,13 +3,15 @@ import '../constants/app_theme.dart';
 
 class RoleGuard {
   static const Map<String, List<String>> routeRoles = {
-    '/dashboard': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER', 'ROLE_RH'],
-    '/articles': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER'],
+    '/dashboard': ['ROLE_PDG'],
+    '/articles': ['ROLE_PDG', 'ROLE_MAGASINIER', 'ROLE_CLIENT'],
     '/ventes': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/achats': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
     '/production': ['ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/stock': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/rapports': ['ROLE_PDG'],
+    '/clients': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
+    '/fournisseurs': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
   };
 
   static bool hasAccess(String? role, String route) {
@@ -22,9 +24,12 @@ class RoleGuard {
   }
 
   static String getDefaultRoute(String? role) {
-    if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE') return '/dashboard';
-    if (role == 'ROLE_RESPONSABLE_ACHAT' || role == 'ROLE_MAGASINIER') return '/stock';
+    if (role == 'ROLE_PDG') return '/dashboard';
+    if (role == 'ROLE_RESPONSABLE_VENTE') return '/ventes';
+    if (role == 'ROLE_RESPONSABLE_ACHAT') return '/achats';
     if (role == 'ROLE_RESPONSABLE_PRODUCTION') return '/production';
+    if (role == 'ROLE_MAGASINIER') return '/stock';
+    if (role == 'ROLE_CLIENT') return '/articles';
     return '/dashboard';
   }
 }
@@ -44,11 +49,10 @@ class UnauthorizedScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppTheme.kCtaOrangeLight,
-                  shape: BoxShape.circle,
+                  color: AppTheme.kWarningAmberLight,
                 ),
                 child: const Icon(Icons.lock_outline_rounded,
-                    color: AppTheme.kCtaOrange, size: 48),
+                    color: AppTheme.kWarningAmber, size: 48),
               ),
               const SizedBox(height: 24),
               Text('Accès non autorisé',

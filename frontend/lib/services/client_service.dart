@@ -4,6 +4,7 @@ import '../models/client.dart';
 abstract class ClientService {
   Future<List<Client>> fetchAll();
   Future<Client> create(Client client);
+  Future<Client> update(int id, Client client);
 }
 
 class RealClientService implements ClientService {
@@ -16,6 +17,12 @@ class RealClientService implements ClientService {
   @override
   Future<Client> create(Client client) async {
     final res = await ApiClient.instance.post('/clients', data: client.toJson());
+    return Client.fromJson(res.data);
+  }
+
+  @override
+  Future<Client> update(int id, Client client) async {
+    final res = await ApiClient.instance.put('/clients/$id', data: client.toJson());
     return Client.fromJson(res.data);
   }
 }

@@ -32,6 +32,8 @@ import 'package:rayhan_erp/screens/stock_screen.dart';
 import 'package:rayhan_erp/screens/signup_screen.dart';
 import 'package:rayhan_erp/screens/forgot_password_screen.dart';
 import 'package:rayhan_erp/screens/rapports_screen.dart';
+import 'package:rayhan_erp/screens/clients_screen.dart';
+import 'package:rayhan_erp/screens/fournisseurs_screen.dart';
 import 'package:rayhan_erp/widgets/role_guard.dart';
 
 void main() async {
@@ -45,10 +47,17 @@ void main() async {
   final auth = AuthProvider(authService: authService);
   await auth.checkAuth();
 
+  final ClientService clientService = useMock ? MockClientService() : RealClientService();
+  final FournisseurService fournisseurService = useMock ? MockFournisseurService() : RealFournisseurService();
+  final SalesOrderService salesOrderService = useMock ? MockSalesOrderService() : RealSalesOrderService();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: auth),
+        Provider<ClientService>.value(value: clientService),
+        Provider<FournisseurService>.value(value: fournisseurService),
+        Provider<SalesOrderService>.value(value: salesOrderService),
         ChangeNotifierProvider(create: (_) => DashboardProvider(
           dashboardService: useMock ? MockDashboardService() : RealDashboardService(),
         )),
@@ -97,8 +106,6 @@ class _RayhanAppState extends State<RayhanApp> {
           final loggedIn = auth.isAuthenticated;
           final role = auth.role;
           final onLogin = state.matchedLocation == '/login';
-          final onSignup = state.matchedLocation == '/signup';
-          final onForgot = state.matchedLocation == '/forgot-password';
           final publicRoutes = ['/login', '/signup', '/forgot-password'];
 
           if (!loggedIn && !publicRoutes.contains(state.matchedLocation)) {
@@ -126,6 +133,8 @@ class _RayhanAppState extends State<RayhanApp> {
               path: '/production',
               builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
+          GoRoute(path: '/clients', builder: (_, __) => const ClientsScreen()),
+          GoRoute(path: '/fournisseurs', builder: (_, __) => const FournisseursScreen()),
           GoRoute(path: '/rapports', builder: (_, __) => const RapportsScreen()),
           GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
           GoRoute(

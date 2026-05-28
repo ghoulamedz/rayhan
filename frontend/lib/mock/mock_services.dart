@@ -159,6 +159,12 @@ class MockClientService implements ClientService {
     await MockData.delay();
     return client;
   }
+
+  @override
+  Future<Client> update(int id, Client client) async {
+    await MockData.delay();
+    return client;
+  }
 }
 
 class MockFournisseurService implements FournisseurService {
@@ -176,6 +182,12 @@ class MockFournisseurService implements FournisseurService {
 
   @override
   Future<Fournisseur> create(Fournisseur f) async {
+    await MockData.delay();
+    return f;
+  }
+
+  @override
+  Future<Fournisseur> update(int id, Fournisseur f) async {
     await MockData.delay();
     return f;
   }

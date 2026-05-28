@@ -245,7 +245,7 @@ class _SignupScreenState extends State<SignupScreen>
                                     .copyWith(color: AppTheme.kTextSecondary)),
                             TextButton(
                               onPressed: () => context.go('/login'),
-                              child: Text('Se connecter',
+                              child: const Text('Se connecter',
                                   style: TextStyle(
                                       color: AppTheme.kPrimaryTeal,
                                       fontWeight: FontWeight.w600)),

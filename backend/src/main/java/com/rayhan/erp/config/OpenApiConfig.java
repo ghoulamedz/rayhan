@@ -24,7 +24,7 @@ public class OpenApiConfig {
                     "3. Cliquez sur le bouton **Authorize 🔒** en haut à droite\n" +
                     "4. Collez le token et cliquez Authorize\n" +
                     "5. Tous les endpoints sont maintenant accessibles !\n\n" +
-                    "**Identifiants par défaut :** admin / Rayhan2024!")
+                    "**Identifiants par défaut :** admin / 123456")
                 .version("1.0.0")
                 .contact(new Contact()
                     .name("Ali Guennari — PFE SUARL Rayhan")
