@@ -462,3 +462,309 @@ Remplacer `private static int seqCC`, `seqBC`, `seqOF` dans `SalesOrderService` 
 - [ ] `SalesOrderService` lit et incrémente les compteurs via `SequenceRepository`
 - [ ] Les compteurs survivent à un redémarrage du serveur
 - [ ] `mvn clean package -DskipTests` réussit
+
+---
+
+## PRD 9 : Architecture — Concurrency, Dead Code & Consolidation
+
+> **Date** : 29 May 2026
+> **Source** : Architecture review (skills `improve-codebase-architecture`)
+> **Tests** : Aucun — hors scope pour ce cycle
+
+---
+
+### PRD 9.1 : Verrouiller le chemin de déduction de stock
+
+#### Problem Statement
+`StockService.sortieStock()` et `SalesOrderService.createSalesOrder()` vérifient le stock suffisant, puis le déduisent — mais sans aucun verrouillage. Deux requêtes concurrentes peuvent lire le même `stockActuel`, le trouver suffisant, et toutes deux déduire. Résultat : stock négatif. La TOCTOU (time-of-check-time-of-use) est ouverte.
+
+#### Solution
+Ajouter `@Lock(PESSIMISTIC_WRITE)` sur la requête de lecture de l'article dans `StockService`. La vérification et la déduction se font dans la même transaction verrouillée.
+
+#### User Stories
+1. En tant que magasinier, je veux que deux livraisons concurrentes ne puissent pas vendre le même article en double, pour que le stock physique corresponde au stock système.
+2. En tant que responsable production, je veux que le lancement d'OF ne puisse pas consommer des matières déjà allouées à une autre commande.
+
+#### Implementation Decisions
+- Ajouter une méthode `findByIdWithLock(Long id)` dans `ArticleRepository` avec `@Lock(PESSIMISTIC_WRITE)` et `@Query("SELECT a FROM Article a WHERE a.id = :id")`
+- Modifier `StockService.sortieStock()` pour appeler `findByIdWithLock` au lieu de `findById`
+- `StockService.entreeStock()` n'a pas besoin de verrouillage (ajout monotone à une colonne, correct même en concurrence)
+- La transaction doit englober la lecture ET l'écriture — `@Transactional` déjà présent sur la méthode
+- Pas de changement d'interface : les callers (`SalesOrderService`, `PurchaseOrderService`, `ProductionOrderService`) ne changent pas
+
+#### Out of Scope
+- Migration vers un système de réservation (inventaire réservé vs disponible) — trop d'impact métier
+- Optimistic locking avec `@Version` — plus complexe pour un gain discutable ici (les conflits sont rares mais doivent être évités, pas détectés)
+
+---
+
+### PRD 9.2 : Remplacer `synchronized` par incrémentation atomique DB
+
+#### Problem Statement
+`SequenceService.getNextValue()` utilise `synchronized` Java pour la thread-safety, réalisant un cycle read→increment→write non atomique. La méthode `incrementByType()` dans `ReferenceSequenceRepository` est une requête JPQL atomique `UPDATE ... SET lastValue = lastValue + 1` qui effectue l'opération correctement en base — mais elle n'est jamais appelée. `synchronized` ne scale pas horizontalement (multi-instances).
+
+#### Solution
+Remplacer le cycle read→increment→write par l'appel à `referenceSequenceRepository.incrementByType()`. Supprimer `synchronized`. Retourner la nouvelle valeur via l'`@Modifying` query.
+
+#### User Stories
+1. En tant qu'exploitant, je veux que les séquences de documents restent uniques même avec plusieurs instances backend.
+2. En tant que développeur, je veux que le code mort (`incrementByType`) soit soit utilisé, soit supprimé.
+
+#### Implementation Decisions
+- Modifier `referenceSequenceRepository.incrementByType()` pour qu'elle retourne la nouvelle valeur (`@Query("UPDATE ReferenceSequence rs SET rs.lastValue = rs.lastValue + 1 WHERE rs.type = :type")` + `@Modifying(clearAutomatically = true, flushAutomatically = true)`)
+- Pour récupérer la valeur après l'UPDATE, deux options :
+  - Option A : `@Modifying` + re-lecture `findById` (deux requêtes)
+  - Option B : `@Query` avec `RETURNING` (nécessite mysql 8.0.21+ avec `@Query("UPDATE ... RETURNING lastValue")` et `@Modifying`)
+  - **Choisi** : Option A (compatible avec toutes les versions MySQL, plus lisible)
+- `SequenceService.getNextValue(type)` devient non-`synchronized`, sans verrou Java
+- La méthode `initDefaultSequences()` reste synchronisée (appelée une fois au démarrage)
+
+#### Out of Scope
+- Snowflake / UUID v7 — surkill pour ce volume
+- Cache de séquences en mémoire avec allocate-batch pattern (trop complexe)
+
+---
+
+### PRD 9.3 : Supprimer les modules morts
+
+#### Problem Statement
+8 artefacts ne sont jamais utilisés mais encombrent le codebase :
+- `frontend/lib/providers/notifications_provider.dart` — jamais instancié dans `main.dart`
+- `frontend/lib/widgets/kpi_card.dart` — marqué `//UNUSED`
+- `frontend/lib/widgets/animated_counter.dart` — marqué `//UNUSED`
+- `frontend/lib/services/ai_suggestion_service.dart` — stub qui appelle `SuggestionService.generate()` comme fallback
+- `pubspec.yaml` : `cached_network_image`, `flutter_svg`, `shimmer`, `package_info_plus` — importés nulle part
+- `backend/.../model/ProductionOrder.java` : valeur d'enum `EN_COURS` jamais set
+- `backend/.../security/UserDetailsImpl.isEnabled()` : ignore le champ `User.enabled`
+- `backend/.../repository/ReferenceSequenceRepository.incrementByType()` : déjà adressé dans PRD 9.2
+
+#### Solution
+Supprimer les fichiers et packages morts. Chaque suppression peut être vérifiée par compilation.
+
+#### User Stories
+1. En tant que développeur, je veux que `flutter analyze` et `flutter pub outdated` reflètent l'état réel du projet.
+2. En tant que développeur, je veux naviguer dans `lib/providers/` sans tomber sur du code qui n'a aucun effet.
+
+#### Implementation Decisions
+- Supprimer : `notifications_provider.dart`, `kpi_card.dart`, `animated_counter.dart`, `ai_suggestion_service.dart`
+- Supprimer les 4 packages de `pubspec.yaml` : `cached_network_image`, `flutter_svg`, `shimmer`, `package_info_plus`
+- Backend : marquer `EN_COURS` comme `@Deprecated` (ne pas supprimer — pourrait être utilisé par des données en DB)
+- Backend : corriger `UserDetailsImpl.isEnabled()` pour lire `User.enabled` (`user.isEnabled()`)
+- Vérification : `flutter analyze` zéro erreur, `mvn package -DskipTests` succès
+
+#### Out of Scope
+- Refactorer les `//UNUSED` form screens (`SalesOrderFormScreen`, `PurchaseOrderFormScreen`) — traité dans un PRD séparé si pertinent
+
+---
+
+### PRD 9.4 : Découpler le DashboardScreen
+
+#### Problem Statement
+`DashboardScreen` (1 073 lignes) cumule 5 responsabilités : orchestration de providers, rendu de 4 types de graphiques, layout KPI, fil d'activité, et cartes de suggestions. Les graphiques utilisent toujours `MockData.revenueByMonth()` et `MockData.ordersByDay()` — même en prod avec `USE_MOCK=false`. Impossible de tester un widget indépendamment.
+
+#### Solution
+Extraire 4 widgets : `KpiGrid`, `ChartSection`, `ActivityFeed`, `SuggestionCard`. Router les données des graphiques via le provider au lieu de `MockData`.
+
+#### User Stories
+1. En tant qu'utilisateur PDG, je veux voir les vrais chiffres d'affaires dans les graphiques du dashboard, pas des données de démo.
+2. En tant que développeur, je veux pouvoir tester le rendu des graphiques sans charger tout le dashboard.
+
+#### Implementation Decisions
+- Créer `lib/widgets/dashboard/kpi_grid.dart` : grille responsive des 4 KPI cards (chiffre d'affaires, commandes, stock alertes, OF)
+- Créer `lib/widgets/dashboard/chart_section.dart` : conteneur pour `RevenueChart` (line chart) + `OrdersChart` (bar chart), recevant les données en paramètres
+- Créer `lib/widgets/dashboard/activity_feed.dart` : liste d'activités récentes
+- Créer `lib/widgets/dashboard/suggestion_card.dart` : carte de suggestion individuelle
+- `DashboardProvider` expose les données de chart (`revenueByMonth`, `ordersByDay`) chargées depuis `DashboardService.fetchKpis()`
+- Supprimer les appels à `MockData.revenueByMonth()` et `MockData.ordersByDay()` dans `DashboardScreen`
+- `DashboardScreen` orchestre les 4 widgets et passe les données
+- `SuggestionService` reste inchangé (déjà injecté dans `DashboardProvider`)
+
+#### Out of Scope
+- Ajouter de nouveaux types de graphiques (camembert, histogramme) — pour une version ultérieure
+- Chargement paresseux des KPIs (lazy loading) — pas nécessaire à ce stade
+
+---
+
+### PRD 9.5 : Consolider le pipeline de commandes (transversal)
+
+#### Problem Statement
+Les pipelines Sales (ventes) et Purchase (achats) sont des copies structurelles quasi-identiques : 8 fichiers modèle (SalesOrder/PurchaseOrder, SalesOrderLine/PurchaseOrderLine, DeliveryNote/GoodsReceipt, DeliveryNoteLine/GoodsReceiptLine), 2 services, 2 providers, 2 écrans formulaire, 2 écrans détail — ~40% du codebase. La seule différence réelle est les noms, les valeurs d'enum, et `quantiteLivree` vs `quantiteRecue`. Ajouter un nouveau type de document (ex: bon de transfert) nécessite de tout dupliquer.
+
+#### Solution
+Introduire des classes de base abstraites `OrderModel<TLine>`, `ReceiptModel<TLine>` côté modèle, `OrderService<TOrder, TLine>` côté service, et `OrderProvider<TOrder>` côté provider. Les implémentations concrètes (SalesOrder, PurchaseOrder) n'ont que leurs enums et règles spécifiques.
+
+#### User Stories
+1. En tant que développeur, je veux ajouter un nouveau type de document (ex: bon de transfert inter-dépôt) en créant ~50 lignes de code, pas ~800.
+2. En tant que développeur, je veux modifier la gestion des totaux TVA une seule fois, pas dans deux pipelines parallèles.
+3. En tant que développeur, je veux pouvoir tester la logique d'arrondi des totaux dans une classe de base, pas dans deux implémentations jumelles.
+
+#### Implementation Decisions
+
+**Côté backend (Java)** :
+- Créer `OrderBase` (abstract, `@MappedSuperclass`) avec les champs communs : `reference`, `dateCommande`, `notes`, `creePar`, `totalHT`, `totalTVA`, `totalTTC`, `statut`, `@OneToMany List<OrderLineBase> lines`
+- `SalesOrder extends OrderBase` : enum `StatutVente`, relation `@OneToMany List<SalesOrderLine> lines`
+- `PurchaseOrder extends OrderBase` : enum `StatutAchat`, relation `@OneToMany List<PurchaseOrderLine> lines`
+- Créer `OrderLineBase` (`@MappedSuperclass`) : `article`, `quantiteCommandee`, `prixUnitaireHT`, `tauxTVA`, `montantHT`, `montantTTC`
+- `SalesOrderLine extends OrderLineBase` : ajoute `quantiteLivree`
+- `PurchaseOrderLine extends OrderLineBase` : ajoute `quantiteRecue`
+- Même refactoring pour `DeliveryNoteBase` / `GoodsReceiptBase`
+
+**Côté frontend (Dart)** :
+- Créer `abstract class OrderModel<TLine extends OrderLineModel>` : `reference`, `dateCommande`, `totalHT`, `totalTVA`, `totalTTC`, `lines`, `statut`, `statutLabel`, `statutColor`
+- `class SalesOrderModel extends OrderModel<SalesOrderLineModel>` : enum `StatutVente`, mapping statut→label/color
+- `class PurchaseOrderModel extends OrderModel<PurchaseOrderLineModel>` : enum `StatutAchat`, mapping statut→label/color
+- Créer `abstract class OrderLineModel` : `article`, `quantiteCommandee`, `prixUnitaireHT`, `tauxTVA`, `montantHT`, `montantTTC`
+- Même refactoring pour `abstract class ReceiptModel<TLine extends ReceiptLineModel>`
+- Créer `abstract class OrderService<T>` : `fetchAll()`, `create()`, `getById()` — les méthodes spécifiques (`deliver`, `receive`) restent dans les implémentations concrètes
+
+**Correction bug lié** :
+- La TVA au niveau ligne (`tauxTVA`) est déjà stockée par ligne. Le calcul du `totalTVA` de la commande doit sommer les TVA des lignes, pas appliquer 19% forfaitaire. Cette correction est intégrée dans le refactoring.
+
+#### Out of Scope
+- Refactorer les écrans de liste (VentesScreen, AchatsScreen) — ils partagent déjà un pattern similaire mais l'abstraction des écrans est prématurée sans troisième type de document
+- Migration des données existantes en base (Hibernate `ddl-auto=update` gère la migration de schéma avec `@MappedSuperclass`)
+
+---
+
+### PRD 9.6 : Unifier le wiring des services frontend
+
+#### Problem Statement
+`main.dart` contient 9 ternaires `useMock ? MockX() : RealX()` pour instancier les services. `ClientsScreen` et `FournisseursScreen` contournent le Provider et lisent `ClientService` / `FournisseurService` directement via `context.read()`. `VentesProvider` consomme aussi `ClientService`, créant deux chemins d'accès aux données.
+
+#### Solution
+Introduire un `ServiceFactory` qui consolide la résolution mock/real en un seul switch. Convertir `ClientsScreen` et `FournisseursScreen` pour passer par un provider dédié.
+
+#### User Stories
+1. En tant que développeur, je veux qu'ajouter un nouveau service nécessite une ligne dans `ServiceFactory`, pas un ternary copié-collé dans `main.dart`.
+2. En tant que développeur, je veux que tous les écrans accèdent aux données via le même pattern (Provider), pas deux chemins différents.
+
+#### Implementation Decisions
+- Créer `lib/services/service_factory.dart` :
+```dart
+class ServiceFactory {
+  static T resolve<T>(T Function() real, T Function() mock) {
+    return MockConfig.useMock ? mock() : real();
+  }
+}
+```
+- `main.dart` : les lignes `useMock ? MockArticleService() : RealArticleService(ApiClient.dio)` deviennent `ServiceFactory.resolve(() => RealArticleService(ApiClient.dio), () => MockArticleService())`
+- Créer `ClientsProvider extends ChangeNotifier` : encapsule `ClientService` (fetchAll, create, update)
+- Créer `FournisseursProvider extends ChangeNotifier` : encapsule `FournisseurService` (fetchAll, create, update)
+- `ClientsScreen` utilise `context.read<ClientsProvider>()` au lieu de `context.read<ClientService>()`
+- `FournisseursScreen` utilise `context.read<FournisseursProvider>()` au lieu de `context.read<FournisseurService>()`
+- `VentesProvider.getClients()` : supprimer — remplacer par `ClientsProvider.fetchAll()`
+
+#### Out of Scope
+- Service locator global — `ServiceFactory` est statique mais la résolution est explicite
+
+---
+
+## Issues
+
+---
+
+## Issue 13 : Verrouiller le chemin de déduction de stock
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Ajouter `@Lock(PESSIMISTIC_WRITE)` sur la lecture de l'article dans `StockService.sortieStock()`. Créer `ArticleRepository.findByIdWithLock(Long id)`. Modifier `StockService` pour utiliser cette méthode. Vérifier que la transaction couvre lecture + écriture.
+
+### Acceptance criteria
+- [ ] `ArticleRepository` expose `findByIdWithLock(Long id)` avec `@Lock(PESSIMISTIC_WRITE)`
+- [ ] `StockService.sortieStock()` utilise `findByIdWithLock` au lieu de `findById`
+- [ ] `mvn clean package -DskipTests` réussit
+
+---
+
+## Issue 14 : Remplacer `synchronized` dans SequenceService
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Remplacer le cycle read→increment→write par un appel à `referenceSequenceRepository.incrementByType()`. Supprimer le mot-clé `synchronized`.
+
+### Acceptance criteria
+- [ ] `ReferenceSequenceRepository` a une méthode `@Modifying @Query` qui fait `UPDATE ... SET lastValue = lastValue + 1 WHERE type = :type`
+- [ ] `SequenceService.getNextValue(type)` utilise l'UPDATE atomique et relit la valeur après
+- [ ] `synchronized` supprimé de `getNextValue`
+- [ ] `mvn clean package -DskipTests` réussit
+
+---
+
+## Issue 15 : Supprimer les modules morts
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Supprimer les fichiers et packages frontend inutilisés. Corriger `UserDetailsImpl.isEnabled()`.
+
+### Acceptance criteria
+- [ ] Fichiers supprimés : `notifications_provider.dart`, `kpi_card.dart`, `animated_counter.dart`, `ai_suggestion_service.dart`
+- [ ] Packages retirés de `pubspec.yaml` : `cached_network_image`, `flutter_svg`, `shimmer`, `package_info_plus`
+- [ ] `flutter pub get` réussit
+- [ ] `flutter analyze` zéro erreur
+- [ ] `UserDetailsImpl.isEnabled()` retourne `user.isEnabled()` (backend)
+- [ ] `mvn clean package -DskipTests` réussit
+
+---
+
+## Issue 16 : Découpler le DashboardScreen
+
+**Type** : AFK
+**Blocked by** : None — can start immediately
+
+### What to build
+Extraire 4 widgets du dashboard monolithique. Router les données des graphiques via le provider.
+
+### Acceptance criteria
+- [ ] `KpiGrid`, `ChartSection`, `ActivityFeed`, `SuggestionCard` existent dans `widgets/dashboard/`
+- [ ] `DashboardScreen` passe les données du provider aux widgets (n'appelle plus `MockData.revenueByMonth()`)
+- [ ] `DashboardProvider` expose revenueByMonth et ordersByDay
+- [ ] `flutter analyze` zéro erreur
+- [ ] `flutter build web --release` réussit
+
+---
+
+## Issue 17 : Consolider le pipeline de commandes
+
+**Type** : **HITL** (refactoring transverse impactant backend + frontend)
+**Blocked by** : Issue 13, Issue 14, Issue 15 (cleanups d'abord)
+
+### What to build
+Introduire `OrderBase`/`OrderLineBase` (`@MappedSuperclass`) côté backend et `OrderModel<TLine>` côté frontend. Faire hériter SalesOrder/PurchaseOrder des bases. Refactorer les services pour utiliser le type générique.
+
+### Acceptance criteria
+- [ ] Backend : `OrderBase`, `OrderLineBase`, `DeliveryNoteBase`, `ReceiptLineBase` créés en `@MappedSuperclass`
+- [ ] Backend : `SalesOrder extends OrderBase`, `PurchaseOrder extends OrderBase` (même pour les lignes et reçus)
+- [ ] Backend : `SalesOrderService.createSalesOrder()` calcule le totalTVA comme somme des TVA lignes (pas 19% forfaitaire)
+- [ ] Frontend : `OrderModel<TLine>`, `OrderLineModel` abstraits créés
+- [ ] Frontend : `SalesOrderModel extends OrderModel<SalesOrderLineModel>`
+- [ ] Frontend : `PurchaseOrderModel extends OrderModel<PurchaseOrderLineModel>`
+- [ ] Frontend : `OrderService<T>` abstrait + implémentations concrètes
+- [ ] `flutter analyze` zéro erreur
+- [ ] `mvn clean package -DskipTests` réussit
+- [ ] Les données existantes en base ne sont pas perdues (Hibernate gère avec `ddl-auto=update`)
+
+---
+
+## Issue 18 : Unifier le wiring des services frontend
+
+**Type** : AFK
+**Blocked by** : Issue 15 (suppression modules morts)
+
+### What to build
+Créer `ServiceFactory` pour consolider les ternaires mock/real. Créer `ClientsProvider` et `FournisseursProvider`. Convertir les écrans clients/fournisseurs.
+
+### Acceptance criteria
+- [ ] `ServiceFactory.resolve<T>(real, mock)` existe
+- [ ] `main.dart` utilise `ServiceFactory` pour tous les services
+- [ ] `ClientsProvider` existe (ChangeNotifier, injecte ClientService)
+- [ ] `FournisseursProvider` existe (ChangeNotifier, injecte FournisseurService)
+- [ ] `ClientsScreen` utilise `ClientsProvider` au lieu de `ClientService` direct
+- [ ] `FournisseursScreen` utilise `FournisseursProvider` au lieu de `FournisseurService` direct
+- [ ] `VentesProvider.getClients()` supprimé (remplacé par `ClientsProvider`)
+- [ ] `flutter analyze` zéro erreur
