@@ -39,7 +39,6 @@ class AppDrawer extends StatelessWidget {
                     'assets/images/rayhan_icon.png',
                     width: 28,
                     height: 28,
-                    color: AppTheme.kWhite,
                   ),
                 ),
                 const SizedBox(height: 12),

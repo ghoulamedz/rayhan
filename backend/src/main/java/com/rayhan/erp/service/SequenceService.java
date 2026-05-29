@@ -25,13 +25,12 @@ public class SequenceService {
         });
     }
 
-    public synchronized long getNextValue(String type) {
-        ReferenceSequence seq = repository.findById(type)
-            .orElseGet(() -> repository.save(new ReferenceSequence(type, 0)));
-        long next = seq.getLastValue() + 1;
-        seq.setLastValue(next);
-        repository.save(seq);
-        return next;
+    @Transactional
+    public long getNextValue(String type) {
+        repository.incrementByType(type);
+        return repository.findById(type)
+            .orElseThrow(() -> new RuntimeException("Sequence not found: " + type))
+            .getLastValue();
     }
 
     public synchronized String generateRef(String prefix) {

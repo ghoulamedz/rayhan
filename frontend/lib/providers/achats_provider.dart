@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import '../models/purchase_order.dart';
-import '../models/fournisseur.dart';
 import '../services/purchase_order_service.dart';
-import '../services/fournisseur_service.dart';
 
 class AchatsProvider extends ChangeNotifier {
   final PurchaseOrderService purchaseOrderService;
-  final FournisseurService fournisseurService;
 
   AchatsProvider({
     required this.purchaseOrderService,
-    required this.fournisseurService,
   });
 
   List<PurchaseOrder> _orders = [];
-  List<Fournisseur> _fournisseurs = [];
   bool _isLoading = false;
   String? _error;
 
   List<PurchaseOrder> get orders => _orders;
-  List<Fournisseur> get fournisseurs => _fournisseurs;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -28,12 +22,7 @@ class AchatsProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final results = await Future.wait([
-        purchaseOrderService.fetchAll(),
-        fournisseurService.fetchAll(),
-      ]);
-      _orders = results[0] as List<PurchaseOrder>;
-      _fournisseurs = results[1] as List<Fournisseur>;
+      _orders = await purchaseOrderService.fetchAll();
     } catch (_) {
       _error = 'Impossible de charger les commandes achats.';
     } finally {

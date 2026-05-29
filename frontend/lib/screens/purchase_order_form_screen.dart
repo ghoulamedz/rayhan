@@ -1,13 +1,11 @@
 //UNUSED
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-
-import '../providers/achats_provider.dart';
 import '../providers/article_provider.dart';
-import '../models/fournisseur.dart';
-import '../models/article.dart';
+import '../providers/achats_provider.dart';
+import '../providers/fournisseurs_provider.dart';
 import '../models/purchase_order.dart';
+import '../models/article.dart';
 import '../constants/app_theme.dart';
 
 class PurchaseOrderFormScreen extends StatefulWidget {
@@ -109,7 +107,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fournisseurs = context.watch<AchatsProvider>().fournisseurs;
+    final fournisseurs = context.watch<FournisseursProvider>().fournisseurs;
     final articles = context.watch<ArticleProvider>().articles;
     final fmt =
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);

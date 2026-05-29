@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import '../models/sales_order.dart';
-import '../models/client.dart';
 import '../services/sales_order_service.dart';
-import '../services/client_service.dart';
 
 class VentesProvider extends ChangeNotifier {
   final SalesOrderService salesOrderService;
-  final ClientService clientService;
 
   VentesProvider({
     required this.salesOrderService,
-    required this.clientService,
   });
 
   List<SalesOrder> _orders = [];
-  List<Client> _clients = [];
   bool _isLoading = false;
   String? _error;
 
   List<SalesOrder> get orders => _orders;
-  List<Client> get clients => _clients;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -28,12 +22,7 @@ class VentesProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final results = await Future.wait([
-        salesOrderService.fetchAll(),
-        clientService.fetchAll(),
-      ]);
-      _orders = results[0] as List<SalesOrder>;
-      _clients = results[1] as List<Client>;
+      _orders = await salesOrderService.fetchAll();
     } catch (_) {
       _error = 'Impossible de charger les commandes.';
     } finally {
