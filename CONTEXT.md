@@ -22,3 +22,14 @@ Un article avec une quantité, un prix, un taux TVA. Les montants HT/TVA/TTC son
 **Bon de livraison (DeliveryNote) / Bon de réception (GoodsReceipt)**
 Document qui exécute partiellement ou totalement une commande. Déduit (vente) ou ajoute (achat) au stock.
 
+## Clients & Comptes
+
+**Client (entité)**
+Entreprise cliente, sous-type de Tiers (JOINED inheritance). Porte les infos commerciales : raison sociale, MF, adresse, type client, plafond crédit, délai paiement, contact représentant.
+
+**Compte client (User avec ROLE_CLIENT)**
+Utilisateur qui peut se connecter à l'ERP pour accéder à son portail client. Lié en 1:1 à un Client. Le username est l'email du client. Créé via l'écran Clients par PDG/Responsable Ventes.
+
+**ROLE_CLIENT**
+Rôle dans le système (enum ERole). Pour l'instant, aucun accès aux écrans — réservé à un futur portail client. Créé automatiquement par DataInitializer.
+

@@ -64,6 +64,9 @@ class AppDrawer extends StatelessWidget {
                     '/articles', role),
                 _item(context, Icons.shopping_cart_rounded, 'Ventes',
                     '/ventes', role),
+                if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE')
+                  _item(context, Icons.people_rounded, 'Clients',
+                      '/clients', role),
                 _item(context, Icons.local_shipping_rounded, 'Achats',
                     '/achats', role),
                 _item(context, Icons.precision_manufacturing_rounded,
@@ -133,6 +136,8 @@ class AppDrawer extends StatelessWidget {
         return 'Magasinier';
       case 'ROLE_RH':
         return 'Responsable RH';
+      case 'ROLE_CLIENT':
+        return 'Client';
       default:
         return role?.replaceAll('ROLE_', '') ?? 'VISITEUR';
     }

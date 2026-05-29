@@ -1,5 +1,6 @@
 package com.rayhan.erp.controller;
 
+import com.rayhan.erp.dto.request.ClientWithUserRequest;
 import com.rayhan.erp.model.Client;
 import com.rayhan.erp.service.ClientService;
 import jakarta.validation.Valid;
@@ -47,5 +48,11 @@ public class ClientController {
     public ResponseEntity<Client> updateClient(@PathVariable Long id, @Valid @RequestBody Client details) {
         Client updated = clientService.updateClient(id, details);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/with-user")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_VENTE')")
+    public Client createClientWithUser(@Valid @RequestBody ClientWithUserRequest request) {
+        return clientService.createClientWithUser(request);
     }
 }

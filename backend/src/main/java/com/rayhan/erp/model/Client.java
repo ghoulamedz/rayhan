@@ -1,5 +1,6 @@
 package com.rayhan.erp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,10 @@ public class Client extends Tiers {
 
     @Column(length = 20)
     private String representantTelephone;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "client")
+    private User user;
 
     public Client(String raisonSociale, String matriculeFiscal, String telephone) {
         super(raisonSociale, matriculeFiscal, telephone);

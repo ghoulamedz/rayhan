@@ -39,6 +39,10 @@ public class User {
 
     private boolean enabled = true;
 
+    @OneToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
                joinColumns = @JoinColumn(name = "user_id"),

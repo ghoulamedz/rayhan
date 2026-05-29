@@ -21,6 +21,7 @@ import 'package:rayhan_erp/providers/article_provider.dart';
 import 'package:rayhan_erp/providers/ventes_provider.dart';
 import 'package:rayhan_erp/providers/achats_provider.dart';
 import 'package:rayhan_erp/providers/production_provider.dart';
+import 'package:rayhan_erp/providers/clients_provider.dart';
 import 'package:rayhan_erp/providers/stock_provider.dart';
 import 'package:rayhan_erp/screens/landing_screen.dart';
 import 'package:rayhan_erp/screens/dashboard_screen.dart';
@@ -32,6 +33,7 @@ import 'package:rayhan_erp/screens/stock_screen.dart';
 import 'package:rayhan_erp/screens/signup_screen.dart';
 import 'package:rayhan_erp/screens/forgot_password_screen.dart';
 import 'package:rayhan_erp/screens/rapports_screen.dart';
+import 'package:rayhan_erp/screens/clients_screen.dart';
 import 'package:rayhan_erp/widgets/role_guard.dart';
 
 void main() async {
@@ -62,6 +64,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AchatsProvider(
           purchaseOrderService: useMock ? MockPurchaseOrderService() : RealPurchaseOrderService(),
           fournisseurService: useMock ? MockFournisseurService() : RealFournisseurService(),
+        )),
+        ChangeNotifierProvider(create: (_) => ClientsProvider(
+          clientService: useMock ? MockClientService() : RealClientService(),
         )),
         ChangeNotifierProvider(create: (_) => ProductionProvider(
           productionService: useMock ? MockProductionService() : RealProductionService(),
@@ -121,6 +126,7 @@ class _RayhanAppState extends State<RayhanApp> {
           GoRoute(
               path: '/articles', builder: (_, __) => const ArticlesScreen()),
           GoRoute(path: '/ventes', builder: (_, __) => const VentesScreen()),
+          GoRoute(path: '/clients', builder: (_, __) => const ClientsScreen()),
           GoRoute(path: '/achats', builder: (_, __) => const AchatsScreen()),
           GoRoute(
               path: '/production',

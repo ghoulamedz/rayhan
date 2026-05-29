@@ -7,6 +7,10 @@ class Client {
   final String? adresse;
   final String? ville;
   final String? typeClient;
+  final double? plafondCredit;
+  final int? delaiPaiement;
+  final String? representantNom;
+  final String? representantTelephone;
   final bool actif;
 
   Client({
@@ -18,6 +22,10 @@ class Client {
     this.adresse,
     this.ville,
     this.typeClient,
+    this.plafondCredit,
+    this.delaiPaiement,
+    this.representantNom,
+    this.representantTelephone,
     this.actif = true,
   });
 
@@ -30,6 +38,10 @@ class Client {
         adresse: json['adresse'],
         ville: json['ville'],
         typeClient: json['typeClient'],
+        plafondCredit: (json['plafondCredit'] as num?)?.toDouble(),
+        delaiPaiement: json['delaiPaiement'],
+        representantNom: json['representantNom'],
+        representantTelephone: json['representantTelephone'],
         actif: json['actif'] ?? true,
       );
 
@@ -42,6 +54,11 @@ class Client {
         if (adresse != null) 'adresse': adresse,
         if (ville != null) 'ville': ville,
         if (typeClient != null) 'typeClient': typeClient,
+        if (plafondCredit != null) 'plafondCredit': plafondCredit,
+        if (delaiPaiement != null) 'delaiPaiement': delaiPaiement,
+        if (representantNom != null) 'representantNom': representantNom,
+        if (representantTelephone != null)
+          'representantTelephone': representantTelephone,
         'actif': actif,
       };
 }

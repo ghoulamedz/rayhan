@@ -142,11 +142,14 @@ class MockDashboardService implements DashboardService {
 
 class MockClientService implements ClientService {
   final List<Client> _clients = [
-    Client(id: 1, raisonSociale: 'SOTUPLAST S.A.', matriculeFiscal: '123456789', adresse: 'Route de la Marsa'),
-    Client(id: 2, raisonSociale: 'PLASTITUNISIE', matriculeFiscal: '987654321', adresse: 'Z.I. Charguia II'),
-    Client(id: 3, raisonSociale: 'EMBALLAGES MODERNES', matriculeFiscal: '456123789', adresse: 'Megrine'),
-    Client(id: 4, raisonSociale: 'AGRO-PACK S.A.R.L.', matriculeFiscal: '789456123', adresse: 'Technopole El Ghazala'),
+    Client(id: 1, raisonSociale: 'SOTUPLAST S.A.', matriculeFiscal: '123456789', adresse: 'Route de la Marsa', email: 'contact@sotuplast.tn', telephone: '71 123 456', ville: 'Tunis', typeClient: 'Industrie', plafondCredit: 50000, delaiPaiement: 30, representantNom: 'Mohamed Ali', representantTelephone: '98 765 432'),
+    Client(id: 2, raisonSociale: 'PLASTITUNISIE', matriculeFiscal: '987654321', adresse: 'Z.I. Charguia II', email: 'info@plastitunisie.tn', telephone: '71 987 654', ville: 'Tunis', typeClient: 'Grossiste', plafondCredit: 30000, delaiPaiement: 45, representantNom: 'Sami Ben', representantTelephone: '99 111 222'),
+    Client(id: 3, raisonSociale: 'EMBALLAGES MODERNES', matriculeFiscal: '456123789', adresse: 'Megrine', email: 'emodernes@planet.tn', telephone: '72 456 789', ville: 'Ben Arous', typeClient: 'Détaillant', plafondCredit: 10000, delaiPaiement: 30, representantNom: 'Karim', representantTelephone: '55 333 444'),
+    Client(id: 4, raisonSociale: 'AGRO-PACK S.A.R.L.', matriculeFiscal: '789456123', adresse: 'Technopole El Ghazala', email: 'contact@agropack.tn', telephone: '70 123 789', ville: 'Ariana', typeClient: 'Industrie', plafondCredit: 75000, delaiPaiement: 60, representantNom: 'Nadia', representantTelephone: '22 555 666'),
+    Client(id: 5, raisonSociale: 'NOUVEAU CLIENT', email: 'nouveau@client.tn', typeClient: 'Grossiste'),
   ];
+
+  int _nextId = 100;
 
   @override
   Future<List<Client>> fetchAll() async {
@@ -155,9 +158,91 @@ class MockClientService implements ClientService {
   }
 
   @override
+  Future<Client> getById(int id) async {
+    await MockData.delay();
+    return _clients.firstWhere((c) => c.id == id);
+  }
+
+  @override
   Future<Client> create(Client client) async {
     await MockData.delay();
-    return client;
+    final created = Client(
+      id: _nextId++,
+      raisonSociale: client.raisonSociale,
+      matriculeFiscal: client.matriculeFiscal,
+      telephone: client.telephone,
+      email: client.email,
+      adresse: client.adresse,
+      ville: client.ville,
+      typeClient: client.typeClient,
+      plafondCredit: client.plafondCredit,
+      delaiPaiement: client.delaiPaiement,
+      representantNom: client.representantNom,
+      representantTelephone: client.representantTelephone,
+      actif: client.actif,
+    );
+    _clients.add(created);
+    return created;
+  }
+
+  @override
+  Future<Client> update(int id, Client client) async {
+    await MockData.delay();
+    final idx = _clients.indexWhere((c) => c.id == id);
+    if (idx == -1) throw Exception('Client non trouvé');
+    final updated = Client(
+      id: id,
+      raisonSociale: client.raisonSociale,
+      matriculeFiscal: client.matriculeFiscal,
+      telephone: client.telephone,
+      email: client.email,
+      adresse: client.adresse,
+      ville: client.ville,
+      typeClient: client.typeClient,
+      plafondCredit: client.plafondCredit,
+      delaiPaiement: client.delaiPaiement,
+      representantNom: client.representantNom,
+      representantTelephone: client.representantTelephone,
+      actif: client.actif,
+    );
+    _clients[idx] = updated;
+    return updated;
+  }
+
+  @override
+  Future<Client> createWithUser({
+    required String raisonSociale,
+    String? matriculeFiscal,
+    String? adresse,
+    String? telephone,
+    String? email,
+    String? ville,
+    String? typeClient,
+    double? plafondCredit,
+    int? delaiPaiement,
+    String? representantNom,
+    String? representantTelephone,
+    required String firstName,
+    required String lastName,
+    required String password,
+  }) async {
+    await MockData.delay();
+    final created = Client(
+      id: _nextId++,
+      raisonSociale: raisonSociale,
+      matriculeFiscal: matriculeFiscal,
+      telephone: telephone,
+      email: email,
+      adresse: adresse,
+      ville: ville,
+      typeClient: typeClient,
+      plafondCredit: plafondCredit,
+      delaiPaiement: delaiPaiement,
+      representantNom: representantNom,
+      representantTelephone: representantTelephone,
+    );
+    _clients.add(created);
+    return created;
   }
 }
 
