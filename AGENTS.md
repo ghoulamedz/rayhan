@@ -68,7 +68,7 @@ cd frontend && flutter run -d chrome
 - **State management**: `Provider` (7 `ChangeNotifierProvider`s)
 - **Routing**: `GoRouter` — JWT-based redirect in `refreshListenable`
 - **HTTP**: `Dio` with `_AuthInterceptor` (reads `jwt_token` from `SharedPreferences`)
-- **API base URL**: hardcoded `http://127.0.0.1:8080/api` in `lib/services/api_client.dart`
+- **API base URL**: configurable via `--dart-define=API_BASE_URL` (default: `http://127.0.0.1:8080/api`) in `lib/services/api_client.dart`
 - **Dev**: `flutter run -d chrome` (Flutter Web), also `flutter build web --release`
 - **Lint**: `flutter analyze` (uses `flutter_lints`)
 
@@ -77,9 +77,9 @@ cd frontend && flutter run -d chrome
 | Directory    | Contents |
 |-------------|----------|
 | `screens/`  | 17 screens (dashboard, articles, ventes, achats, production, stock, forms/detail screens) |
-| `providers/` | 8 providers (auth, dashboard, article, ventes, achats, production, stock, notifications) |
+| `providers/` | 7 providers (auth, dashboard, article, ventes, achats, production, stock) |
 | `services/`  | 10 service classes matching backend controllers |
-| `widgets/`   | Shared widgets (`app_drawer`, `kpi_card`, plus custom/final subdirs) |
+| `widgets/`   | Shared widgets (`app_drawer`, `gradient_card`, `role_guard`, `app_dialogs`) |
 | `constants/` | `app_theme.dart` (colors, typography), `app_text.dart`, `custom_page_transition.dart` |
 
 ### Routing
