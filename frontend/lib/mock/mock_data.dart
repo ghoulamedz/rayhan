@@ -252,7 +252,7 @@ class MockData {
           'icon': Icons.shopping_cart_outlined,
           'text': 'Nouvelle commande vente BC-2024-001',
           'time': 'Il y a 15 min',
-          'color': 0xFF810B38,
+          'color': 0xFF1E104E,
         },
         {
           'icon': Icons.check_circle_outlined,
@@ -270,7 +270,7 @@ class MockData {
           'icon': Icons.local_shipping_outlined,
           'text': 'Réception BA-2024-012 validée',
           'time': 'Il y a 5h',
-          'color': 0xFF810B38,
+          'color': 0xFF1E104E,
         },
         {
           'icon': Icons.precision_manufacturing_outlined,
@@ -282,7 +282,7 @@ class MockData {
           'icon': Icons.article_outlined,
           'text': 'Rapport mensuel de production généré',
           'time': 'Hier',
-          'color': 0xFF541A1A,
+          'color': 0xFF452E5A,
         },
       ];
 }

@@ -4,25 +4,25 @@ import 'package:rayhan_erp/constants/custom_page_transition.dart';
 
 abstract final class AppTheme {
   // ── Color Palette ──────────────────────────────────────────────
-  // Palette: https://colorhunt.co/palette/d92243f69d39e0c375fff5e5
-  static const Color kPrimaryRed = Color(0xFFD92243);
-  static const Color kPrimaryOrange = Color(0xFFF69D39);
-  static const Color kPrimaryRedDark = Color(0xFFC41E3A);
+  // Palette: https://colorhunt.co/palette/1e104e452e5aff653fffc85c
+  static const Color kPrimaryRed = Color(0xFF1E104E);
+  static const Color kPrimaryOrange = Color(0xFFFF653F);
+  static const Color kPrimaryRedDark = Color(0xFF452E5A);
 
   // Background / surface
-  static const Color kBackgroundCream = Color(0xFFFFF5E5);
-  static const Color kSecondaryGold = Color(0xFFE0C375);
-  static const Color kSurfaceGlass = Color(0xBFFFF5E5);
+  static const Color kBackgroundCream = Color(0xFFF5F2FA);
+  static const Color kSecondaryGold = Color(0xFFFFC85C);
+  static const Color kSurfaceGlass = Color(0xBFF5F2FA);
   static const Color kSurfaceWhite = Color(0xFFFFFFFF);
 
   // Text
-  static const Color kTextPrimary = Color(0xFF2D1B1B);
-  static const Color kTextSecondary = Color(0xFF8B7355);
-  static const Color kTextHint = Color(0xFFBFA88A);
+  static const Color kTextPrimary = Color(0xFF1A1A2E);
+  static const Color kTextSecondary = Color(0xFF6B5E7B);
+  static const Color kTextHint = Color(0xFF9E8FB2);
 
   // Input / borders
-  static const Color kInputFill = Color(0xFFF5EDE6);
-  static const Color kBorderLight = Color(0xFFE8D9CD);
+  static const Color kInputFill = Color(0xFFEDE8F0);
+  static const Color kBorderLight = Color(0xFFD4CDE0);
 
   // Status colors
   static const Color kSuccessGreen = Color(0xFF4CAF50);
@@ -35,7 +35,7 @@ abstract final class AppTheme {
   // Neutrals
   static const Color kWhite = Color(0xFFFFFFFF);
   static const Color kBlack = Color(0xFF000000);
-  static const Color kDividerColor = Color(0xFFE8D9CD);
+  static const Color kDividerColor = Color(0xFFD4CDE0);
 
   // ── Glassmorphism helpers (glossy) ─────────────────────────────
   static BoxDecoration glassCard({
@@ -514,30 +514,30 @@ abstract final class AppTheme {
         primary: kPrimaryOrange,
         secondary: kSecondaryGold,
         tertiary: kPrimaryRed,
-        surface: const Color(0xFF2D1B1B),
+        surface: const Color(0xFF1A142E),
         error: kErrorRed,
         onPrimary: kWhite,
         onSecondary: kWhite,
         onSurface: kBackgroundCream,
       ),
-      scaffoldBackgroundColor: const Color(0xFF1A0F0F),
+      scaffoldBackgroundColor: const Color(0xFF0D0A1A),
       textTheme: textTheme.apply(
         bodyColor: kBackgroundCream,
         displayColor: kBackgroundCream,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF2D1B1B),
+        backgroundColor: const Color(0xFF1A142E),
         foregroundColor: kBackgroundCream,
         elevation: 0,
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF2D1B1B),
+        color: const Color(0xFF1A142E),
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF3D2525),
+        fillColor: const Color(0xFF2A2340),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

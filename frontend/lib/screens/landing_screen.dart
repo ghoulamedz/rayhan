@@ -157,9 +157,9 @@ class _LandingScreenState extends State<LandingScreen>
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.kPrimaryTealDark,
-            AppTheme.kPrimaryTeal,
-            Color(0xFF0A8F7E)
+            AppTheme.kPrimaryRedDark,
+            AppTheme.kPrimaryRed,
+            AppTheme.kPrimaryOrange,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -593,7 +593,7 @@ class _LandingScreenState extends State<LandingScreen>
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF131B2E), Color(0xFF1A2338)],
+          colors: [Color(0xFF0D0A1A), Color(0xFF1A142E)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

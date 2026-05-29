@@ -66,9 +66,9 @@ class _SignupScreenState extends State<SignupScreen>
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppTheme.kPrimaryTealDark,
-              AppTheme.kPrimaryTeal,
-              Color(0xFF0A8F7E)
+              AppTheme.kPrimaryRedDark,
+              AppTheme.kPrimaryRed,
+              AppTheme.kPrimaryOrange,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
