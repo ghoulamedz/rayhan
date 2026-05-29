@@ -293,8 +293,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return AppTheme.kWarningAmber;
       case 'ROLE_MAGASINIER':
         return AppTheme.kSuccessGreen;
-      case 'ROLE_RH':
-        return const Color(0xFF8B5CF6);
       default:
         return AppTheme.kTextHint;
     }
@@ -312,8 +310,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return 'Production';
       case 'ROLE_MAGASINIER':
         return 'Magasin';
-      case 'ROLE_RH':
-        return 'RH';
       default:
         return role;
     }

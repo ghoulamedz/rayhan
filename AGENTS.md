@@ -38,7 +38,7 @@ cd frontend && flutter run -d chrome
 - **Swagger UI**: `http://localhost:8090/swagger-ui.html`
 - **Auth**: JWT in `Authorization: Bearer <token>` header
 - **Default admin**: `admin` / `123456` (creates on first boot via `DataInitializer`)
-- **Roles**: `ROLE_PDG`, `ROLE_RESPONSABLE_VENTE`, `ROLE_RESPONSABLE_ACHAT`, `ROLE_RESPONSABLE_PRODUCTION`, `ROLE_MAGASINIER`, `ROLE_RH`
+- **Roles**: `ROLE_PDG`, `ROLE_RESPONSABLE_VENTE`, `ROLE_RESPONSABLE_ACHAT`, `ROLE_RESPONSABLE_PRODUCTION`, `ROLE_MAGASINIER`
 - **JPA DDL**: `spring.jpa.hibernate.ddl-auto=update` (Hibernate manages schema)
 - **Layered structure**: `controller/` → `service/` → `repository/` → `model/`
 - **Build**: `mvn clean package -DskipTests` (no tests exist — `backend/src/test/` is empty)

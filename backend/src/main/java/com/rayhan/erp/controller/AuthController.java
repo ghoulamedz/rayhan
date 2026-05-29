@@ -98,7 +98,6 @@ public class AuthController {
                     case "vente" -> ERole.ROLE_RESPONSABLE_VENTE;
                     case "achat" -> ERole.ROLE_RESPONSABLE_ACHAT;
                     case "production" -> ERole.ROLE_RESPONSABLE_PRODUCTION;
-                    case "rh" -> ERole.ROLE_RH;
                     default -> ERole.ROLE_MAGASINIER;
                 };
                 Role foundRole = roleRepository.findByName(eRole)

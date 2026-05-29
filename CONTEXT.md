@@ -33,3 +33,20 @@ Utilisateur qui peut se connecter à l'ERP pour accéder à son portail client. 
 **ROLE_CLIENT**
 Rôle dans le système (enum ERole). Pour l'instant, aucun accès aux écrans — réservé à un futur portail client. Créé automatiquement par DataInitializer.
 
+## Staff / Employés
+
+**Compte staff (User avec un rôle interne)**
+Utilisateur interne de l'ERP — PDG, Responsable Ventes, Responsable Achats, Responsable Production ou Magasinier. Pas lié à un Client. Créé et géré exclusivement par le PDG depuis l'écran Utilisateurs.
+
+**Rôles staff (internes)**
+ROLE_PDG, ROLE_RESPONSABLE_VENTE, ROLE_RESPONSABLE_ACHAT, ROLE_RESPONSABLE_PRODUCTION, ROLE_MAGASINIER. Les rôles ROLE_CLIENT et ROLE_FOURNISSEUR sont des rôles externes (portail), pas gérés depuis cet écran.
+
+**Accès par rôle**
+| Rôle | Écrans accessibles |
+|---|---|
+| ROLE_PDG | Tous (dashboard, articles, ventes, clients, achats, fournisseurs, production, stock, rapports, utilisateurs) |
+| ROLE_RESPONSABLE_VENTE | Ventes, Clients, Stock |
+| ROLE_RESPONSABLE_ACHAT | Achats, Fournisseurs, Stock |
+| ROLE_RESPONSABLE_PRODUCTION | Production, Stock |
+| ROLE_MAGASINIER | Stock |
+

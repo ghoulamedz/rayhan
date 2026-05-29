@@ -13,6 +13,7 @@ import 'package:rayhan_erp/services/sales_order_service.dart';
 import 'package:rayhan_erp/services/purchase_order_service.dart';
 import 'package:rayhan_erp/services/production_service.dart';
 import 'package:rayhan_erp/services/stock_service.dart';
+import 'package:rayhan_erp/services/user_service.dart';
 import 'package:rayhan_erp/mock/mock_services.dart';
 import 'package:rayhan_erp/mock/mock_config.dart';
 import 'package:rayhan_erp/providers/auth_provider.dart';
@@ -24,6 +25,7 @@ import 'package:rayhan_erp/providers/production_provider.dart';
 import 'package:rayhan_erp/providers/clients_provider.dart';
 import 'package:rayhan_erp/providers/fournisseurs_provider.dart';
 import 'package:rayhan_erp/providers/stock_provider.dart';
+import 'package:rayhan_erp/providers/user_provider.dart';
 import 'package:rayhan_erp/screens/landing_screen.dart';
 import 'package:rayhan_erp/screens/login_screen.dart';
 import 'package:rayhan_erp/screens/dashboard_screen.dart';
@@ -35,6 +37,7 @@ import 'package:rayhan_erp/screens/stock_screen.dart';
 import 'package:rayhan_erp/screens/signup_screen.dart';
 import 'package:rayhan_erp/screens/forgot_password_screen.dart';
 import 'package:rayhan_erp/screens/rapports_screen.dart';
+import 'package:rayhan_erp/screens/utilisateurs_screen.dart';
 import 'package:rayhan_erp/screens/clients_screen.dart';
 import 'package:rayhan_erp/screens/fournisseurs_screen.dart';
 import 'package:rayhan_erp/widgets/role_guard.dart';
@@ -79,6 +82,9 @@ void main() async {
         )),
         ChangeNotifierProvider(create: (_) => StockProvider(
           stockService: useMock ? MockStockService() : RealStockService(),
+        )),
+        ChangeNotifierProvider(create: (_) => UserProvider(
+          userService: useMock ? MockUserService() : RealUserService(),
         )),
       ],
       child: const RayhanApp(),
@@ -144,6 +150,7 @@ class _RayhanAppState extends State<RayhanApp> {
               builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
           GoRoute(path: '/rapports', builder: (_, __) => const RapportsScreen()),
+          GoRoute(path: '/utilisateurs', builder: (_, __) => const UtilisateursScreen()),
           GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
           GoRoute(
               path: '/forgot-password',

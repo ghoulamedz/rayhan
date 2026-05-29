@@ -3,15 +3,16 @@ import '../constants/app_theme.dart';
 
 class RoleGuard {
   static const Map<String, List<String>> routeRoles = {
-    '/dashboard': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER', 'ROLE_RH'],
-    '/articles': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER'],
+    '/dashboard': ['ROLE_PDG'],
+    '/articles': ['ROLE_PDG'],
     '/ventes': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/clients': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/achats': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
     '/fournisseurs': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
     '/production': ['ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION'],
-    '/stock': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION'],
+    '/stock': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER'],
     '/rapports': ['ROLE_PDG'],
+    '/utilisateurs': ['ROLE_PDG'],
   };
 
   static bool hasAccess(String? role, String route) {
@@ -24,7 +25,8 @@ class RoleGuard {
   }
 
   static String getDefaultRoute(String? role) {
-    if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE') return '/dashboard';
+    if (role == 'ROLE_PDG') return '/dashboard';
+    if (role == 'ROLE_RESPONSABLE_VENTE') return '/ventes';
     if (role == 'ROLE_RESPONSABLE_ACHAT' || role == 'ROLE_MAGASINIER') return '/stock';
     if (role == 'ROLE_RESPONSABLE_PRODUCTION') return '/production';
     if (role == 'ROLE_FOURNISSEUR') return '/';

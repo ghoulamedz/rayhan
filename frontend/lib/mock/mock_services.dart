@@ -7,6 +7,7 @@ import '../models/purchase_order.dart';
 import '../models/fournisseur.dart';
 import '../models/production_order.dart';
 import '../models/stock_movement.dart';
+import '../models/user.dart';
 import '../services/auth_service.dart';
 import '../services/article_service.dart';
 import '../services/dashboard_service.dart';
@@ -16,6 +17,7 @@ import '../services/sales_order_service.dart';
 import '../services/purchase_order_service.dart';
 import '../services/production_service.dart';
 import '../services/stock_service.dart';
+import '../services/user_service.dart';
 import 'mock_data.dart';
 import 'mock_config.dart';
 
@@ -513,5 +515,84 @@ class MockStockService implements StockService {
       motif: motif,
       dateHeure: DateTime.now().toIso8601String(),
     );
+  }
+}
+
+class MockUserService implements UserService {
+  int _idCounter = 100;
+
+  List<User> _mockUsers() => MockConfig.mockUsers
+      .where((mu) => mu.role != 'ROLE_CLIENT' && mu.role != 'ROLE_FOURNISSEUR')
+      .toList()
+      .asMap()
+      .entries
+      .map((e) => User(
+            id: e.key + 1,
+            username: e.value.username,
+            email: e.value.email,
+            firstName: e.value.firstName,
+            lastName: e.value.lastName,
+            enabled: true,
+            roles: [e.value.role],
+          ))
+      .toList();
+
+  @override
+  Future<List<User>> fetchAll() async {
+    await MockData.delay();
+    return _mockUsers();
+  }
+
+  @override
+  Future<User> getById(int id) async {
+    await MockData.delay();
+    return _mockUsers().firstWhere((u) => u.id == id);
+  }
+
+  @override
+  Future<User> create(Map<String, dynamic> data) async {
+    await MockData.delay();
+    final user = User(
+      id: _idCounter++,
+      username: data['username'] as String,
+      email: data['email'] as String,
+      firstName: data['firstName'] as String?,
+      lastName: data['lastName'] as String?,
+      enabled: true,
+      roles: List<String>.from(data['roles'] as List),
+    );
+    return user;
+  }
+
+  @override
+  Future<User> update(int id, Map<String, dynamic> data) async {
+    await MockData.delay();
+    final existing = _mockUsers().firstWhere((u) => u.id == id);
+    return User(
+      id: id,
+      username: data['username'] as String? ?? existing.username,
+      email: data['email'] as String? ?? existing.email,
+      firstName: data['firstName'] as String? ?? existing.firstName,
+      lastName: data['lastName'] as String? ?? existing.lastName,
+      enabled: data['enabled'] as bool? ?? existing.enabled,
+      roles: data['roles'] != null
+          ? List<String>.from(data['roles'] as List)
+          : existing.roles,
+    );
+  }
+
+  @override
+  Future<void> setPassword(int id, String password) async {
+    await MockData.delay();
+  }
+
+  @override
+  Future<void> disable(int id) async {
+    await MockData.delay();
+  }
+
+  @override
+  Future<void> enable(int id) async {
+    await MockData.delay();
   }
 }

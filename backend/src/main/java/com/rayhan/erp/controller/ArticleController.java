@@ -18,20 +18,20 @@ public class ArticleController {
     private ArticleService articleService;
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_PDG')")
     public List<Article> getAllArticles() {
         return articleService.getAllArticles();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_PDG')")
     public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
         Article article = articleService.getArticleById(id);
         return article != null ? ResponseEntity.ok(article) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/type/{type}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_PDG')")
     public List<Article> getArticlesByType(@PathVariable Article.TypeArticle type) {
         return articleService.getArticlesByType(type);
     }
@@ -43,13 +43,13 @@ public class ArticleController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_MAGASINIER')")
+    @PreAuthorize("hasRole('ROLE_PDG')")
     public Article createArticle(@Valid @RequestBody Article article) {
         return articleService.createArticle(article);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION')")
+    @PreAuthorize("hasRole('ROLE_PDG')")
     public ResponseEntity<Article> updateArticle(@PathVariable Long id, @Valid @RequestBody Article details) {
         Article updated = articleService.updateArticle(id, details);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();

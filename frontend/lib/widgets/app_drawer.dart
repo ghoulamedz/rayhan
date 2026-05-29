@@ -58,25 +58,32 @@ class AppDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
-                _item(context, Icons.dashboard_rounded, 'Tableau de bord',
-                    '/dashboard', role),
-                _item(context, Icons.inventory_2_rounded, 'Articles',
-                    '/articles', role),
-                _item(context, Icons.shopping_cart_rounded, 'Ventes',
-                    '/ventes', role),
+                if (role == 'ROLE_PDG')
+                  _item(context, Icons.dashboard_rounded, 'Tableau de bord',
+                      '/dashboard', role),
+                if (role == 'ROLE_PDG')
+                  _item(context, Icons.inventory_2_rounded, 'Articles',
+                      '/articles', role),
+                if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE')
+                  _item(context, Icons.shopping_cart_rounded, 'Ventes',
+                      '/ventes', role),
                 if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE')
                   _item(context, Icons.people_rounded, 'Clients',
                       '/clients', role),
                 if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_ACHAT')
                   _item(context, Icons.factory_rounded, 'Fournisseurs',
                       '/fournisseurs', role),
-                _item(context, Icons.local_shipping_rounded, 'Achats',
-                    '/achats', role),
-                _item(context, Icons.precision_manufacturing_rounded,
-                    'Production', '/production', role),
+                if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_ACHAT')
+                  _item(context, Icons.local_shipping_rounded, 'Achats',
+                      '/achats', role),
+                if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_PRODUCTION')
+                  _item(context, Icons.precision_manufacturing_rounded,
+                      'Production', '/production', role),
                 _item(context, Icons.warehouse_rounded, 'Stock', '/stock', role),
-                if (role == 'ROLE_PDG')
+                if (role == 'ROLE_PDG') ...[
+                  _item(context, Icons.people_alt_rounded, 'Utilisateurs', '/utilisateurs', role),
                   _item(context, Icons.assessment_rounded, 'Rapports', '/rapports', role),
+                ],
               ],
             ),
           ),
@@ -137,8 +144,6 @@ class AppDrawer extends StatelessWidget {
         return 'Responsable Production';
       case 'ROLE_MAGASINIER':
         return 'Magasinier';
-      case 'ROLE_RH':
-        return 'Responsable RH';
       case 'ROLE_CLIENT':
         return 'Client';
       default:
