@@ -8,6 +8,7 @@ class RoleGuard {
     '/ventes': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/clients': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/achats': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
+    '/fournisseurs': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],
     '/production': ['ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/stock': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/rapports': ['ROLE_PDG'],
@@ -26,6 +27,7 @@ class RoleGuard {
     if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE') return '/dashboard';
     if (role == 'ROLE_RESPONSABLE_ACHAT' || role == 'ROLE_MAGASINIER') return '/stock';
     if (role == 'ROLE_RESPONSABLE_PRODUCTION') return '/production';
+    if (role == 'ROLE_FOURNISSEUR') return '/';
     return '/dashboard';
   }
 }

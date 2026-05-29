@@ -7,5 +7,6 @@ public enum ERole {
     ROLE_RESPONSABLE_PRODUCTION, // Responsable Production
     ROLE_MAGASINIER,             // Magasinier
     ROLE_RH,                     // Responsable RH
-    ROLE_CLIENT                  // Client (accès portail)
+    ROLE_CLIENT,                 // Client (accès portail)
+    ROLE_FOURNISSEUR             // Fournisseur (accès portail)
 }

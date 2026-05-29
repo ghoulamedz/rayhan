@@ -67,6 +67,9 @@ class AppDrawer extends StatelessWidget {
                 if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_VENTE')
                   _item(context, Icons.people_rounded, 'Clients',
                       '/clients', role),
+                if (role == 'ROLE_PDG' || role == 'ROLE_RESPONSABLE_ACHAT')
+                  _item(context, Icons.factory_rounded, 'Fournisseurs',
+                      '/fournisseurs', role),
                 _item(context, Icons.local_shipping_rounded, 'Achats',
                     '/achats', role),
                 _item(context, Icons.precision_manufacturing_rounded,

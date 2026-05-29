@@ -30,6 +30,14 @@ public class FournisseurService {
         return fournisseurRepository.save(fournisseur);
     }
 
+    public boolean deleteFournisseur(Long id) {
+        return fournisseurRepository.findById(id).map(f -> {
+            f.setActif(false);
+            fournisseurRepository.save(f);
+            return true;
+        }).orElse(false);
+    }
+
     public Fournisseur updateFournisseur(Long id, Fournisseur details) {
         return fournisseurRepository.findById(id).map(f -> {
             f.setRaisonSociale(details.getRaisonSociale());

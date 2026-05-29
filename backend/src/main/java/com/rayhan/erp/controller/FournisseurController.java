@@ -42,6 +42,13 @@ public class FournisseurController {
         return fournisseurService.createFournisseur(fournisseur);
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT')")
+    public ResponseEntity<Void> deleteFournisseur(@PathVariable Long id) {
+        boolean deleted = fournisseurService.deleteFournisseur(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT')")
     public ResponseEntity<Fournisseur> updateFournisseur(@PathVariable Long id,

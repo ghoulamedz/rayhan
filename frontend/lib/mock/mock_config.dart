@@ -66,6 +66,14 @@ class MockConfig {
       lastName: 'Ben Salem',
       email: 'rh@rayhan.tn',
     ),
+    MockUser(
+      username: 'fournisseur',
+      password: '123456',
+      role: 'ROLE_FOURNISSEUR',
+      firstName: 'Ali',
+      lastName: 'Mejri',
+      email: 'fournisseur@rayhan.tn',
+    ),
   ];
 
   static MockUser? findUser(String username, String password) {

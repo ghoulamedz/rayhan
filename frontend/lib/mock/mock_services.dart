@@ -252,17 +252,60 @@ class MockFournisseurService implements FournisseurService {
     Fournisseur(id: 2, raisonSociale: 'CHIMIPLAST S.A.', matriculeFiscal: '444555666', adresse: 'Sfax'),
     Fournisseur(id: 3, raisonSociale: 'EUROPLAST GmbH', matriculeFiscal: '777888999', adresse: 'Hambourg, Allemagne'),
   ];
+  int _nextId = 4;
 
   @override
   Future<List<Fournisseur>> fetchAll() async {
     await MockData.delay();
-    return List.unmodifiable(_fournisseurs);
+    return List.unmodifiable(_fournisseurs.where((f) => f.actif));
+  }
+
+  @override
+  Future<Fournisseur> getById(int id) async {
+    await MockData.delay();
+    return _fournisseurs.firstWhere((f) => f.id == id);
   }
 
   @override
   Future<Fournisseur> create(Fournisseur f) async {
     await MockData.delay();
-    return f;
+    final created = Fournisseur(
+      id: _nextId++,
+      raisonSociale: f.raisonSociale,
+      matriculeFiscal: f.matriculeFiscal,
+      telephone: f.telephone,
+      email: f.email,
+      adresse: f.adresse,
+      ville: f.ville,
+      pays: f.pays,
+      categorieProduit: f.categorieProduit,
+      modePaiement: f.modePaiement,
+      actif: true,
+    );
+    _fournisseurs.add(created);
+    return created;
+  }
+
+  @override
+  Future<Fournisseur> update(int id, Fournisseur f) async {
+    await MockData.delay();
+    final idx = _fournisseurs.indexWhere((x) => x.id == id);
+    if (idx == -1) throw Exception('Not found');
+    final updated = Fournisseur(
+      id: id,
+      raisonSociale: f.raisonSociale,
+      matriculeFiscal: f.matriculeFiscal,
+      telephone: f.telephone,
+      email: f.email,
+      adresse: f.adresse,
+      ville: f.ville,
+      pays: f.pays,
+      categorieProduit: f.categorieProduit,
+      modePaiement: f.modePaiement,
+      actif: f.actif,
+    );
+    _fournisseurs[idx] = updated;
+    return updated;
   }
 }
 
