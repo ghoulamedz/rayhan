@@ -30,6 +30,7 @@ class RoleGuard {
     if (role == 'ROLE_RESPONSABLE_ACHAT' || role == 'ROLE_MAGASINIER') return '/stock';
     if (role == 'ROLE_RESPONSABLE_PRODUCTION') return '/production';
     if (role == 'ROLE_FOURNISSEUR') return '/';
+    if (role == 'ROLE_CLIENT') return '/catalogue';
     return '/dashboard';
   }
 }

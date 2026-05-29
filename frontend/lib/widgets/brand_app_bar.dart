@@ -8,6 +8,7 @@ class BrandAppBar extends StatelessWidget {
   final String? subtitle;
   final String currentRoute;
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
 
   const BrandAppBar({
     super.key,
@@ -15,6 +16,7 @@ class BrandAppBar extends StatelessWidget {
     this.subtitle,
     required this.currentRoute,
     this.actions,
+    this.bottom,
   });
 
   static double heightFor(BuildContext context) {
@@ -43,6 +45,7 @@ class BrandAppBar extends StatelessWidget {
         children: [
           if (isDesktop) _buildBrandingRow(context),
           _buildTitleRow(context, isDesktop),
+          if (bottom != null) bottom!,
         ],
       ),
     );

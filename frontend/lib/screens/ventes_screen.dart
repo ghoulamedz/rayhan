@@ -16,13 +16,23 @@ class VentesScreen extends StatefulWidget {
   State<VentesScreen> createState() => _VentesScreenState();
 }
 
-class _VentesScreenState extends State<VentesScreen> {
+class _VentesScreenState extends State<VentesScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabCtrl;
+
   @override
   void initState() {
     super.initState();
+    _tabCtrl = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<VentesProvider>().load();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,7 +41,7 @@ class _VentesScreenState extends State<VentesScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
+        preferredSize: Size.fromHeight(BrandAppBar.heightFor(context) + 48),
         child: BrandAppBar(
           title: 'Commandes Ventes',
           subtitle: !provider.isLoading
@@ -44,6 +54,16 @@ class _VentesScreenState extends State<VentesScreen> {
               onPressed: () => context.read<VentesProvider>().load(),
             ),
           ],
+          bottom: TabBar(
+            controller: _tabCtrl,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white60,
+            tabs: const [
+              Tab(text: 'Toutes'),
+              Tab(text: 'En attente'),
+            ],
+          ),
         ),
       ),
       drawer: const AppDrawer(currentRoute: '/ventes'),
@@ -54,12 +74,18 @@ class _VentesScreenState extends State<VentesScreen> {
         label: const Text('Nouvelle commande'),
       ),
       body: AppTheme.glassBackground(
-        child: _buildBody(provider),
+        child: TabBarView(
+          controller: _tabCtrl,
+          children: [
+            _buildAllOrders(provider),
+            _buildPendingOrders(provider),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildBody(VentesProvider provider) {
+  Widget _buildAllOrders(VentesProvider provider) {
     if (provider.isLoading) return const Center(child: CircularProgressIndicator());
     if (provider.error != null) {
       return Center(
@@ -105,6 +131,169 @@ class _VentesScreenState extends State<VentesScreen> {
       ),
     );
   }
+
+  Widget _buildPendingOrders(VentesProvider provider) {
+    final pending = provider.orders
+        .where((o) => o.statut == 'EN_ATTENTE')
+        .toList();
+
+    if (provider.isLoading) return const Center(child: CircularProgressIndicator());
+    if (pending.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle_outline,
+                size: 64, color: AppTheme.kSuccessGreen),
+            const SizedBox(height: 16),
+            Text('Aucune commande en attente',
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
+          ],
+        ),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: () => context.read<VentesProvider>().load(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: pending.length,
+        itemBuilder: (ctx, i) => _PendingOrderCard(order: pending[i]),
+      ),
+    );
+  }
+}
+
+class _PendingOrderCard extends StatelessWidget {
+  final SalesOrder order;
+  const _PendingOrderCard({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(order.reference ?? '—',
+                      style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text('EN ATTENTE',
+                      style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.business_outlined,
+                    size: 14, color: AppTheme.kTextSecondary),
+                const SizedBox(width: 4),
+                Text(order.client?.raisonSociale ?? '—',
+                    style: AppTheme.bodySmall.copyWith(fontSize: 13)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today_outlined,
+                        size: 13, color: AppTheme.kTextSecondary),
+                    const SizedBox(width: 4),
+                    Text(order.dateCommande,
+                        style: AppTheme.bodySmall
+                            .copyWith(color: AppTheme.kTextSecondary)),
+                  ],
+                ),
+                Text(fmt.format(order.totalTTC),
+                    style: AppTheme.titleSmall.copyWith(
+                        color: AppTheme.kSuccessGreen)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => _reject(context),
+                  icon: const Icon(Icons.close, size: 18),
+                  label: const Text('Refuser'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.kErrorRed,
+                    side: const BorderSide(color: AppTheme.kErrorRed),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () => _approve(context),
+                  icon: const Icon(Icons.check, size: 18),
+                  label: const Text('Approuver'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.kSuccessGreen,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _approve(BuildContext context) async {
+    final provider = context.read<VentesProvider>();
+    final error = await provider.approve(order.id!);
+    if (!context.mounted) return;
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error), backgroundColor: AppTheme.kErrorRed),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Commande approuvée'),
+          backgroundColor: AppTheme.kSuccessGreen,
+        ),
+      );
+    }
+  }
+
+  Future<void> _reject(BuildContext context) async {
+    final provider = context.read<VentesProvider>();
+    final error = await provider.reject(order.id!);
+    if (!context.mounted) return;
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error), backgroundColor: AppTheme.kErrorRed),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Commande refusée'),
+          backgroundColor: AppTheme.kSuccessGreen,
+        ),
+      );
+    }
+  }
 }
 
 class _OrderCard extends StatelessWidget {
@@ -145,71 +334,71 @@ class _OrderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(order.reference ?? '—',
-                        style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(order.statutLabel,
-                        style: TextStyle(
-                            color: color,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.business_outlined,
-                      size: 14, color: AppTheme.kTextSecondary),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(order.client?.raisonSociale ?? '—',
-                        style: AppTheme.bodySmall.copyWith(fontSize: 13)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today_outlined,
-                          size: 13, color: AppTheme.kTextSecondary),
-                      const SizedBox(width: 4),
-                      Text(order.dateCommande,
-                          style: AppTheme.bodySmall
-                              .copyWith(color: AppTheme.kTextSecondary)),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(order.reference ?? '—',
+                                style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(order.statutLabel,
+                                style: TextStyle(
+                                    color: color,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.business_outlined,
+                              size: 14, color: AppTheme.kTextSecondary),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(order.client?.raisonSociale ?? '—',
+                                style: AppTheme.bodySmall.copyWith(fontSize: 13)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today_outlined,
+                                  size: 13, color: AppTheme.kTextSecondary),
+                              const SizedBox(width: 4),
+                              Text(order.dateCommande,
+                                  style: AppTheme.bodySmall
+                                      .copyWith(color: AppTheme.kTextSecondary)),
+                            ],
+                          ),
+                          Text(fmt.format(order.totalTTC),
+                              style: AppTheme.titleSmall.copyWith(
+                                  color: AppTheme.kSuccessGreen)),
+                        ],
+                      ),
+                      if (order.lignes.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text('${order.lignes.length} ligne(s)',
+                            style: AppTheme.bodySmall
+                                .copyWith(color: AppTheme.kTextSecondary)),
+                      ],
                     ],
                   ),
-                  Text(fmt.format(order.totalTTC),
-                      style: AppTheme.titleSmall.copyWith(
-                          color: AppTheme.kSuccessGreen)),
-                ],
+                ),
               ),
-              if (order.lignes.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Text('${order.lignes.length} ligne(s)',
-                    style: AppTheme.bodySmall
-                        .copyWith(color: AppTheme.kTextSecondary)),
-              ],
-              ],
-            ),
+            ],
           ),
         ),
-      ],
-    ),
-  ),
-  ),
+      ),
     );
   }
 }

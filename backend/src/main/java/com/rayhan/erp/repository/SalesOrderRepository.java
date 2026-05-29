@@ -15,6 +15,8 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Long> {
     Optional<SalesOrder> findByReference(String reference);
     boolean existsByReference(String reference);
     List<SalesOrder> findByStatutOrderByDateCommandeDesc(SalesOrder.StatutCommande statut);
+    List<SalesOrder> findByClientIdOrderByDateCommandeDesc(Long clientId);
+    List<SalesOrder> findByStatut(SalesOrder.StatutCommande statut);
 
     @Query("SELECT COALESCE(SUM(s.totalTTC), 0) FROM SalesOrder s WHERE s.dateCommande BETWEEN :debut AND :fin")
     BigDecimal sumTotalTTCByDateCommandeBetween(LocalDate debut, LocalDate fin);

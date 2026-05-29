@@ -35,7 +35,7 @@ public class SalesOrder {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 25)
-    private StatutCommande statut = StatutCommande.CONFIRMEE;
+    private StatutCommande statut = StatutCommande.EN_ATTENTE;
 
     @Column(precision = 15, scale = 3)
     private BigDecimal totalHT = BigDecimal.ZERO;
@@ -57,6 +57,6 @@ public class SalesOrder {
     private User creePar;
 
     public enum StatutCommande {
-        CONFIRMEE, EN_PREPARATION, PARTIELLEMENT_LIVREE, COMPLETEMENT_LIVREE, ANNULEE
+        EN_ATTENTE, CONFIRMEE, EN_PREPARATION, PARTIELLEMENT_LIVREE, COMPLETEMENT_LIVREE, ANNULEE
     }
 }

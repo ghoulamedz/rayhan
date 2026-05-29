@@ -8,6 +8,7 @@ class Article {
   final double stockActuel;
   final double stockMinimum;
   final bool actif;
+  final String? assetImage;
 
   Article({
     this.id,
@@ -19,6 +20,7 @@ class Article {
     this.stockActuel = 0,
     this.stockMinimum = 0,
     this.actif = true,
+    this.assetImage,
   });
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
@@ -31,6 +33,7 @@ class Article {
         stockActuel: (json['stockActuel'] ?? 0).toDouble(),
         stockMinimum: (json['stockMinimum'] ?? 0).toDouble(),
         actif: json['actif'] ?? true,
+        assetImage: json['assetImage'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +46,7 @@ class Article {
         'stockActuel': stockActuel,
         'stockMinimum': stockMinimum,
         'actif': actif,
+        if (assetImage != null) 'assetImage': assetImage,
       };
 
   bool get enAlerte => stockActuel <= stockMinimum;

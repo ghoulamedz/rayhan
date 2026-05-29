@@ -14,4 +14,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByType(Article.TypeArticle type);
     List<Article> findByActifTrue();
     List<Article> findByStockActuelLessThanEqualAndActifTrue(java.math.BigDecimal seuil);
+    List<Article> findByTypeAndActifTrue(Article.TypeArticle type);
 }

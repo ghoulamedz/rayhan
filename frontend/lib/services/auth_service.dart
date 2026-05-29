@@ -3,6 +3,8 @@ import 'api_client.dart';
 
 abstract class AuthService {
   Future<Map<String, dynamic>> login(String username, String password);
+  Future<Map<String, dynamic>> signup(
+      String firstName, String lastName, String email, String username, String password);
   Future<void> saveToken(String token, String role);
   Future<String?> getToken();
   Future<String?> getRole();
@@ -13,6 +15,19 @@ class RealAuthService implements AuthService {
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
     final response = await ApiClient.instance.post('/auth/signin', data: {
+      'username': username,
+      'password': password,
+    });
+    return response.data as Map<String, dynamic>;
+  }
+
+  @override
+  Future<Map<String, dynamic>> signup(
+      String firstName, String lastName, String email, String username, String password) async {
+    final response = await ApiClient.instance.post('/auth/signup', data: {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
       'username': username,
       'password': password,
     });

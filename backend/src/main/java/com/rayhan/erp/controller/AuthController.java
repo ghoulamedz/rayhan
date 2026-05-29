@@ -4,9 +4,11 @@ import com.rayhan.erp.dto.request.LoginRequest;
 import com.rayhan.erp.dto.request.SignupRequest;
 import com.rayhan.erp.dto.response.JwtResponse;
 import com.rayhan.erp.dto.response.MessageResponse;
+import com.rayhan.erp.model.Client;
 import com.rayhan.erp.model.ERole;
 import com.rayhan.erp.model.Role;
 import com.rayhan.erp.model.User;
+import com.rayhan.erp.repository.ClientRepository;
 import com.rayhan.erp.repository.RoleRepository;
 import com.rayhan.erp.repository.UserRepository;
 import com.rayhan.erp.security.jwt.JwtUtils;
@@ -21,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class AuthController {
     @Autowired RoleRepository roleRepository;
     @Autowired PasswordEncoder encoder;
     @Autowired JwtUtils jwtUtils;
+    @Autowired ClientRepository clientRepository;
 
     /**
      * POST /api/auth/signin
@@ -64,7 +66,7 @@ public class AuthController {
 
     /**
      * POST /api/auth/signup
-     * Inscription d'un nouvel utilisateur (réservé au PDG en production)
+     * Inscription publique — crée un compte client avec le rôle ROLE_CLIENT
      */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -77,6 +79,14 @@ public class AuthController {
                 .body(new MessageResponse("Erreur : Cet email est déjà utilisé."));
         }
 
+        Client client = new Client(
+            signUpRequest.getFirstName() + " " + signUpRequest.getLastName(),
+            null,
+            null
+        );
+        client.setEmail(signUpRequest.getEmail());
+        client = clientRepository.save(client);
+
         User user = new User(
             signUpRequest.getUsername(),
             signUpRequest.getEmail(),
@@ -84,30 +94,30 @@ public class AuthController {
             signUpRequest.getFirstName(),
             signUpRequest.getLastName());
 
-        Set<String> strRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null || strRoles.isEmpty()) {
-            Role magasinierRole = roleRepository.findByName(ERole.ROLE_MAGASINIER)
-                .orElseThrow(() -> new RuntimeException("Rôle introuvable en base."));
-            roles.add(magasinierRole);
-        } else {
-            strRoles.forEach(role -> {
-                ERole eRole = switch (role.toLowerCase()) {
-                    case "pdg" -> ERole.ROLE_PDG;
-                    case "vente" -> ERole.ROLE_RESPONSABLE_VENTE;
-                    case "achat" -> ERole.ROLE_RESPONSABLE_ACHAT;
-                    case "production" -> ERole.ROLE_RESPONSABLE_PRODUCTION;
-                    default -> ERole.ROLE_MAGASINIER;
-                };
-                Role foundRole = roleRepository.findByName(eRole)
-                    .orElseThrow(() -> new RuntimeException("Rôle introuvable : " + role));
-                roles.add(foundRole);
-            });
-        }
-
-        user.setRoles(roles);
+        Role clientRole = roleRepository.findByName(ERole.ROLE_CLIENT)
+            .orElseThrow(() -> new RuntimeException("Rôle ROLE_CLIENT introuvable en base."));
+        user.setRoles(Set.of(clientRole));
+        user.setClient(client);
         userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("Utilisateur créé avec succès !"));
+
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                signUpRequest.getUsername(), signUpRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+            userDetails.getId(),
+            userDetails.getUsername(),
+            userDetails.getEmail(),
+            userDetails.getFirstName(),
+            userDetails.getLastName(),
+            roles));
     }
 }

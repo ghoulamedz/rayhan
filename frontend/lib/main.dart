@@ -14,6 +14,9 @@ import 'package:rayhan_erp/services/purchase_order_service.dart';
 import 'package:rayhan_erp/services/production_service.dart';
 import 'package:rayhan_erp/services/stock_service.dart';
 import 'package:rayhan_erp/services/user_service.dart';
+import 'package:rayhan_erp/services/catalog_service.dart';
+import 'package:rayhan_erp/services/client_order_service.dart';
+import 'package:rayhan_erp/services/notification_service.dart';
 import 'package:rayhan_erp/mock/mock_services.dart';
 import 'package:rayhan_erp/mock/mock_config.dart';
 import 'package:rayhan_erp/providers/auth_provider.dart';
@@ -26,6 +29,9 @@ import 'package:rayhan_erp/providers/clients_provider.dart';
 import 'package:rayhan_erp/providers/fournisseurs_provider.dart';
 import 'package:rayhan_erp/providers/stock_provider.dart';
 import 'package:rayhan_erp/providers/user_provider.dart';
+import 'package:rayhan_erp/providers/catalog_provider.dart';
+import 'package:rayhan_erp/providers/client_order_provider.dart';
+import 'package:rayhan_erp/providers/notification_provider.dart';
 import 'package:rayhan_erp/screens/landing_screen.dart';
 import 'package:rayhan_erp/screens/login_screen.dart';
 import 'package:rayhan_erp/screens/dashboard_screen.dart';
@@ -40,6 +46,12 @@ import 'package:rayhan_erp/screens/rapports_screen.dart';
 import 'package:rayhan_erp/screens/utilisateurs_screen.dart';
 import 'package:rayhan_erp/screens/clients_screen.dart';
 import 'package:rayhan_erp/screens/fournisseurs_screen.dart';
+import 'package:rayhan_erp/screens/catalog_screen.dart';
+import 'package:rayhan_erp/screens/product_detail_screen.dart';
+import 'package:rayhan_erp/screens/client_order_form_screen.dart';
+import 'package:rayhan_erp/screens/client_orders_screen.dart';
+import 'package:rayhan_erp/screens/client_order_detail_screen.dart';
+import 'package:rayhan_erp/screens/profile_screen.dart';
 import 'package:rayhan_erp/widgets/role_guard.dart';
 
 void main() async {
@@ -86,6 +98,15 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider(
           userService: useMock ? MockUserService() : RealUserService(),
         )),
+        ChangeNotifierProvider(create: (_) => CatalogProvider(
+          catalogService: useMock ? MockCatalogService() : RealCatalogService(),
+        )),
+        ChangeNotifierProvider(create: (_) => ClientOrderProvider(
+          clientOrderService: useMock ? MockClientOrderService() : RealClientOrderService(),
+        )),
+        ChangeNotifierProvider(create: (_) => NotificationProvider(
+          notificationService: useMock ? MockNotificationService() : RealNotificationService(),
+        )),
       ],
       child: const RayhanApp(),
     ),
@@ -115,8 +136,11 @@ class _RayhanAppState extends State<RayhanApp> {
           final role = auth.role;
           final onLoginForm = state.matchedLocation == '/login';
           final publicRoutes = ['/', '/login', '/signup', '/forgot-password'];
+          final isPublic = publicRoutes.any((r) =>
+              state.matchedLocation == r ||
+              state.matchedLocation.startsWith('/catalogue'));
 
-          if (!loggedIn && !publicRoutes.contains(state.matchedLocation)) {
+          if (!loggedIn && !isPublic) {
             return '/login';
           }
           if (loggedIn && (onLoginForm || state.matchedLocation == '/')) {
@@ -125,7 +149,7 @@ class _RayhanAppState extends State<RayhanApp> {
               return defaultRoute;
             }
           }
-          if (loggedIn && !publicRoutes.contains(state.matchedLocation)) {
+          if (loggedIn && !isPublic) {
             if (!RoleGuard.hasAccess(role, state.matchedLocation)) {
               return RoleGuard.getDefaultRoute(role);
             }
@@ -155,6 +179,24 @@ class _RayhanAppState extends State<RayhanApp> {
           GoRoute(
               path: '/forgot-password',
               builder: (_, __) => const ForgotPasswordScreen()),
+          GoRoute(
+              path: '/catalogue',
+              builder: (_, __) => const CatalogScreen()),
+          GoRoute(
+              path: '/catalogue/:id',
+              builder: (_, __) => const ProductDetailScreen()),
+          GoRoute(
+              path: '/catalogue/commander',
+              builder: (_, __) => const ClientOrderFormScreen()),
+          GoRoute(
+              path: '/mes-commandes',
+              builder: (_, __) => const ClientOrdersScreen()),
+          GoRoute(
+              path: '/mes-commandes/:id',
+              builder: (_, __) => const ClientOrderDetailScreen()),
+          GoRoute(
+              path: '/mon-profil',
+              builder: (_, __) => const ProfileScreen()),
         ],
       );
     }

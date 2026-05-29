@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.client IS NULL")
     List<User> findAllStaff();
+
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role")
+    List<User> findByRole(com.rayhan.erp.model.ERole role);
 }

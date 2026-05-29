@@ -8,6 +8,7 @@ import '../models/fournisseur.dart';
 import '../models/production_order.dart';
 import '../models/stock_movement.dart';
 import '../models/user.dart';
+import '../models/notification.dart';
 import '../services/auth_service.dart';
 import '../services/article_service.dart';
 import '../services/dashboard_service.dart';
@@ -18,6 +19,9 @@ import '../services/purchase_order_service.dart';
 import '../services/production_service.dart';
 import '../services/stock_service.dart';
 import '../services/user_service.dart';
+import '../services/catalog_service.dart';
+import '../services/client_order_service.dart';
+import '../services/notification_service.dart';
 import 'mock_data.dart';
 import 'mock_config.dart';
 
@@ -59,6 +63,22 @@ class MockAuthService implements AuthService {
   @override
   Future<void> logout() async {
     _currentUser = null;
+  }
+
+  @override
+  Future<Map<String, dynamic>> signup(
+      String firstName, String lastName, String email, String username, String password) async {
+    await MockData.delay();
+    return {
+      'token': '${MockConfig.mockTokenPrefix}ROLE_CLIENT',
+      'type': 'Bearer',
+      'id': MockConfig.mockUsers.length + 1,
+      'username': username,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'roles': ['ROLE_CLIENT'],
+    };
   }
 }
 
@@ -350,6 +370,22 @@ class MockSalesOrderService implements SalesOrderService {
     await MockData.delay();
   }
 
+  @override
+  Future<void> approve(int orderId) async {
+    await MockData.delay();
+  }
+
+  @override
+  Future<void> reject(int orderId) async {
+    await MockData.delay();
+  }
+
+  @override
+  Future<List<SalesOrder>> fetchPending() async {
+    await MockData.delay();
+    return [];
+  }
+
   String _statusFromLabel(String label) {
     switch (label) {
       case 'En cours': return 'EN_PREPARATION';
@@ -593,6 +629,72 @@ class MockUserService implements UserService {
 
   @override
   Future<void> enable(int id) async {
+    await MockData.delay();
+  }
+}
+
+class MockCatalogService implements CatalogService {
+  List<Article> _articles = [];
+
+  @override
+  Future<List<Article>> fetchCatalog() async {
+    await MockData.delay();
+    if (_articles.isEmpty) {
+      _articles = MockData.articles
+          .map((m) => Article.fromJson(m))
+          .where((a) => a.type == 'PF')
+          .toList();
+    }
+    return List.from(_articles);
+  }
+
+  @override
+  Future<Article> fetchArticle(int id) async {
+    await MockData.delay();
+    if (_articles.isEmpty) await fetchCatalog();
+    return _articles.firstWhere((a) => a.id == id);
+  }
+}
+
+class MockClientOrderService implements ClientOrderService {
+  @override
+  Future<List<SalesOrder>> fetchMyOrders() async {
+    await MockData.delay();
+    return [];
+  }
+
+  @override
+  Future<SalesOrder> createOrder(Map<String, dynamic> data) async {
+    await MockData.delay();
+    throw UnimplementedError('Mock: createOrder');
+  }
+
+  @override
+  Future<void> cancelOrder(int id) async {
+    await MockData.delay();
+  }
+}
+
+class MockNotificationService implements NotificationService {
+  @override
+  Future<int> getUnreadCount() async {
+    await MockData.delay();
+    return 0;
+  }
+
+  @override
+  Future<List<AppNotification>> getAll() async {
+    await MockData.delay();
+    return [];
+  }
+
+  @override
+  Future<void> markAsRead(int id) async {
+    await MockData.delay();
+  }
+
+  @override
+  Future<void> markAllAsRead() async {
     await MockData.delay();
   }
 }

@@ -55,6 +55,30 @@ class VentesProvider extends ChangeNotifier {
     }
   }
 
+  Future<String?> approve(int orderId) async {
+    try {
+      await salesOrderService.approve(orderId);
+      await load();
+      return null;
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('Stock insuffisant')) {
+        return msg;
+      }
+      return 'Erreur lors de l\'approbation';
+    }
+  }
+
+  Future<String?> reject(int orderId) async {
+    try {
+      await salesOrderService.reject(orderId);
+      await load();
+      return null;
+    } catch (e) {
+      return 'Erreur lors du refus';
+    }
+  }
+
   Future<String?> deliver(int orderId, List<SalesOrderLine> lignes) async {
     try {
       final payload = {

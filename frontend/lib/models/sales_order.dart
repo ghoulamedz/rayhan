@@ -100,6 +100,7 @@ class SalesOrder {
       };
 
   static const Map<String, String> statutLabels = {
+    'EN_ATTENTE': 'En attente',
     'CONFIRMEE': 'Confirmée',
     'EN_PREPARATION': 'En préparation',
     'PARTIELLEMENT_LIVREE': 'Part. livrée',
@@ -108,6 +109,7 @@ class SalesOrder {
   };
 
   static const Map<String, int> statutColors = {
+    'EN_ATTENTE': 0xFFF97316,
     'CONFIRMEE': 0xFF3B82F6,
     'EN_PREPARATION': 0xFFF59E0B,
     'PARTIELLEMENT_LIVREE': 0xFF8B5CF6,

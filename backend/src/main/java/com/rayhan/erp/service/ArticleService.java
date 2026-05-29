@@ -18,6 +18,10 @@ public class ArticleService {
         return articleRepository.findByActifTrue();
     }
 
+    public List<Article> getPublicCatalog() {
+        return articleRepository.findByTypeAndActifTrue(Article.TypeArticle.PF);
+    }
+
     public List<Article> getArticlesByType(Article.TypeArticle type) {
         return articleRepository.findByType(type);
     }
@@ -41,6 +45,7 @@ public class ArticleService {
             article.setUniteMesure(details.getUniteMesure());
             article.setPrixUnitaire(details.getPrixUnitaire());
             article.setStockMinimum(details.getStockMinimum());
+            article.setAssetImage(details.getAssetImage());
             return articleRepository.save(article);
         }).orElse(null);
     }

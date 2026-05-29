@@ -42,6 +42,9 @@ public class Article {
 
     private boolean actif = true;
 
+    @Column(length = 100)
+    private String assetImage;
+
     public enum TypeArticle {
         MP,   // Matière Première (HDPE, LDPE, colorants)
         PSF,  // Produit Semi-Fini (film tubulaire)

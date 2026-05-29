@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
+import 'package:rayhan_erp/providers/auth_provider.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -45,16 +47,36 @@ class _SignupScreenState extends State<SignupScreen>
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Inscription réussie ! Vous pouvez maintenant vous connecter.'),
-        backgroundColor: AppTheme.kSuccessGreen,
-      ),
+
+    final auth = context.read<AuthProvider>();
+    final success = await auth.signup(
+      _firstNameCtrl.text.trim(),
+      _lastNameCtrl.text.trim(),
+      _emailCtrl.text.trim(),
+      _usernameCtrl.text.trim(),
+      _passwordCtrl.text,
     );
-    context.go('/login');
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Inscription réussie ! Bienvenue.'),
+          backgroundColor: AppTheme.kSuccessGreen,
+        ),
+      );
+      context.go('/catalogue');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(auth.errorMessage ?? 'Erreur lors de l\'inscription'),
+          backgroundColor: AppTheme.kErrorRed,
+        ),
+      );
+    }
   }
 
   @override

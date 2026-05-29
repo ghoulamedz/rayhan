@@ -221,6 +221,51 @@ class PdfService {
     return doc.save();
   }
 
+  static Future<Uint8List> generateDevis(SalesOrder order) async {
+    final doc = pw.Document();
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(24),
+        build: (ctx) => [
+          PdfBrandedHeader.build(
+            title: 'Devis',
+            reference: 'DEV-001',
+            subtitle: 'Date: ${order.dateCommande}',
+          ),
+          pw.SizedBox(height: 16),
+          if (order.client != null)
+            _infoBlock('Client', [
+              order.client!.raisonSociale,
+              order.client!.adresse ?? '',
+              order.client!.matriculeFiscal ?? '',
+            ]),
+          pw.SizedBox(height: 16),
+          PdfLineItemTable.build(
+            columns: ['Réf', 'Désignation', 'Qté', 'PU HT', 'Total HT'],
+            columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
+            items: order.lignes.map((l) => PdfLineItem([
+              l.article?.reference ?? '',
+              l.article?.designation ?? '',
+              l.quantiteCommandee.toString(),
+              'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
+              'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
+            ])).toList(),
+          ),
+          pw.SizedBox(height: 8),
+          PdfTotalsBox.build(
+            totalHT: order.totalHT,
+            totalTVA: order.totalTVA,
+            totalTTC: order.totalTTC,
+          ),
+          pw.SizedBox(height: 24),
+          PdfFooter.build(),
+        ],
+      ),
+    );
+    return doc.save();
+  }
+
   static void downloadPdf(Uint8List bytes, String filename) {
     final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);

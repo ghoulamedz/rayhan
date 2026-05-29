@@ -15,6 +15,8 @@ class AppDrawer extends StatelessWidget {
     final auth = context.read<AuthProvider>();
     final role = auth.role;
 
+    if (role == 'ROLE_CLIENT') return const SizedBox.shrink();
+
     return Drawer(
       child: Column(
         children: [
