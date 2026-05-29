@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/clients_provider.dart';
+import '../services/client_service.dart';
 import '../models/client.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
@@ -17,13 +17,14 @@ class ClientsScreen extends StatefulWidget {
 class _ClientsScreenState extends State<ClientsScreen> {
   final _searchCtrl = TextEditingController();
   String _search = '';
+  List<Client> _clients = [];
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ClientsProvider>().load();
-    });
+    _load();
   }
 
   @override
@@ -32,13 +33,22 @@ class _ClientsScreenState extends State<ClientsScreen> {
     super.dispose();
   }
 
-  List<Client> get _filtered {
-    final clients = context.watch<ClientsProvider>().clients;
-    return clients.where((c) =>
-      _search.isEmpty ||
-      c.raisonSociale.toLowerCase().contains(_search.toLowerCase()) ||
-      (c.matriculeFiscal?.contains(_search) ?? false)).toList();
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final service = context.read<ClientService>();
+      _clients = await service.fetchAll();
+    } catch (_) {
+      _error = 'Impossible de charger les clients.';
+    } finally {
+      if (mounted) setState(() { _loading = false; });
+    }
   }
+
+  List<Client> get _filtered => _clients.where((c) =>
+    _search.isEmpty ||
+    c.raisonSociale.toLowerCase().contains(_search.toLowerCase()) ||
+    (c.matriculeFiscal?.contains(_search) ?? false)).toList();
 
   void _openForm([Client? client]) {
     final isEdit = client != null;
@@ -94,14 +104,17 @@ class _ClientsScreenState extends State<ClientsScreen> {
                 ville: ctrlVille.text.trim().isEmpty ? null : ctrlVille.text.trim(),
                 actif: client?.actif ?? true,
               );
-              final provider = context.read<ClientsProvider>();
-              final err = isEdit && client!.id != null
-                  ? await provider.update(client.id!, updated)
-                  : await provider.create(updated);
-              if (err != null) {
-                if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(err)));
-              } else {
+              try {
+                final service = context.read<ClientService>();
+                if (isEdit && client!.id != null) {
+                  await service.update(client.id!, updated);
+                } else {
+                  await service.create(updated);
+                }
                 if (ctx.mounted) Navigator.pop(ctx);
+                _load();
+              } catch (_) {
+                if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement')));
               }
             },
             child: Text(isEdit ? 'Enregistrer' : 'Créer'),
@@ -113,17 +126,16 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ClientsProvider>();
     final filtered = _filtered;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
         child: BrandAppBar(
           title: 'Clients',
-          subtitle: provider.isLoading ? null : '${provider.clients.length} client(s)',
+          subtitle: _loading ? null : '${_clients.length} client(s)',
           currentRoute: '/clients',
           actions: [
-            IconButton(icon: const Icon(Icons.refresh_outlined), onPressed: () => provider.load()),
+            IconButton(icon: const Icon(Icons.refresh_outlined), onPressed: _load),
           ],
         ),
       ),
@@ -153,22 +165,22 @@ class _ClientsScreenState extends State<ClientsScreen> {
               ),
             ),
           ),
-          Expanded(child: _buildBody(provider, filtered)),
+          Expanded(child: _buildBody(filtered)),
         ],
       ),
     );
   }
 
-  Widget _buildBody(ClientsProvider provider, List<Client> filtered) {
-    if (provider.isLoading) return const Center(child: CircularProgressIndicator());
-    if (provider.error != null) {
+  Widget _buildBody(List<Client> filtered) {
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_error != null) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.error_outline, size: 48, color: AppTheme.kTextHint),
           const SizedBox(height: 12),
-          Text(provider.error!, style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+          Text(_error!, style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => provider.load(), style: AppTheme.primaryButton, child: const Text('Réessayer')),
+          ElevatedButton(onPressed: _load, style: AppTheme.primaryButton, child: const Text('Réessayer')),
         ]),
       );
     }
@@ -182,7 +194,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
       );
     }
     return RefreshIndicator(
-      onRefresh: () => provider.load(),
+      onRefresh: _load,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: filtered.length,

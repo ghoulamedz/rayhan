@@ -63,8 +63,6 @@ public class StockService {
         if (quantite.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("La quantité doit être positive.");
         }
-        article = articleRepository.findByIdWithLock(article.getId())
-            .orElseThrow(() -> new IllegalArgumentException("Article introuvable : " + article.getId()));
         if (article.getStockActuel().compareTo(quantite) < 0) {
             throw new IllegalStateException(
                 "Stock insuffisant pour " + article.getDesignation() +

@@ -77,6 +77,7 @@ class BrandAppBar extends StatelessWidget {
               'assets/images/rayhan_icon.png',
               width: 22,
               height: 22,
+              color: AppTheme.kWhite,
             ),
           ),
           const SizedBox(width: 10),

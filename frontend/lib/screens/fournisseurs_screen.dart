@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/fournisseurs_provider.dart';
+import '../services/fournisseur_service.dart';
 import '../models/fournisseur.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
@@ -17,13 +17,14 @@ class FournisseursScreen extends StatefulWidget {
 class _FournisseursScreenState extends State<FournisseursScreen> {
   final _searchCtrl = TextEditingController();
   String _search = '';
+  List<Fournisseur> _fournisseurs = [];
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FournisseursProvider>().load();
-    });
+    _load();
   }
 
   @override
@@ -32,13 +33,22 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
     super.dispose();
   }
 
-  List<Fournisseur> get _filtered {
-    final fournisseurs = context.watch<FournisseursProvider>().fournisseurs;
-    return fournisseurs.where((f) =>
-      _search.isEmpty ||
-      f.raisonSociale.toLowerCase().contains(_search.toLowerCase()) ||
-      (f.matriculeFiscal?.contains(_search) ?? false)).toList();
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final service = context.read<FournisseurService>();
+      _fournisseurs = await service.fetchAll();
+    } catch (_) {
+      _error = 'Impossible de charger les fournisseurs.';
+    } finally {
+      if (mounted) setState(() { _loading = false; });
+    }
   }
+
+  List<Fournisseur> get _filtered => _fournisseurs.where((f) =>
+    _search.isEmpty ||
+    f.raisonSociale.toLowerCase().contains(_search.toLowerCase()) ||
+    (f.matriculeFiscal?.contains(_search) ?? false)).toList();
 
   void _openForm([Fournisseur? fournisseur]) {
     final isEdit = fournisseur != null;
@@ -48,16 +58,16 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
     final ctrlEmail = TextEditingController(text: fournisseur?.email ?? '');
     final ctrlAdresse = TextEditingController(text: fournisseur?.adresse ?? '');
     final ctrlVille = TextEditingController(text: fournisseur?.ville ?? '');
-    final ctrlPays = TextEditingController(text: fournisseur?.pays ?? '');
+    final ctrlPays = TextEditingController(text: fournisseur?.pays ?? 'Tunisie');
     final ctrlCategorie = TextEditingController(text: fournisseur?.categorieProduit ?? '');
-    final ctrlModePaiement = TextEditingController(text: fournisseur?.modePaiement ?? '');
+    final ctrlPaiement = TextEditingController(text: fournisseur?.modePaiement ?? '');
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(children: [
-          Icon(isEdit ? Icons.edit_outlined : Icons.local_shipping_outlined, size: 20, color: AppTheme.kCtaOrange),
+          Icon(isEdit ? Icons.edit_outlined : Icons.add_business_outlined, size: 20, color: AppTheme.kPrimaryTeal),
           const SizedBox(width: 8),
           Text(isEdit ? 'Modifier le fournisseur' : 'Nouveau fournisseur', style: AppTheme.titleSmall),
         ]),
@@ -81,9 +91,9 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
                 const SizedBox(height: 12),
                 TextField(controller: ctrlPays, decoration: const InputDecoration(labelText: 'Pays'), textCapitalization: TextCapitalization.words),
                 const SizedBox(height: 12),
-                TextField(controller: ctrlCategorie, decoration: const InputDecoration(labelText: 'Catégorie de produits'), textCapitalization: TextCapitalization.words),
+                TextField(controller: ctrlCategorie, decoration: const InputDecoration(labelText: 'Catégorie produit'), textCapitalization: TextCapitalization.sentences),
                 const SizedBox(height: 12),
-                TextField(controller: ctrlModePaiement, decoration: const InputDecoration(labelText: 'Mode de paiement')),
+                TextField(controller: ctrlPaiement, decoration: const InputDecoration(labelText: 'Mode de paiement'), textCapitalization: TextCapitalization.sentences),
               ],
             ),
           ),
@@ -101,19 +111,22 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
                 email: ctrlEmail.text.trim().isEmpty ? null : ctrlEmail.text.trim(),
                 adresse: ctrlAdresse.text.trim().isEmpty ? null : ctrlAdresse.text.trim(),
                 ville: ctrlVille.text.trim().isEmpty ? null : ctrlVille.text.trim(),
-                pays: ctrlPays.text.trim().isEmpty ? null : ctrlPays.text.trim(),
+                pays: ctrlPays.text.trim().isEmpty ? 'Tunisie' : ctrlPays.text.trim(),
                 categorieProduit: ctrlCategorie.text.trim().isEmpty ? null : ctrlCategorie.text.trim(),
-                modePaiement: ctrlModePaiement.text.trim().isEmpty ? null : ctrlModePaiement.text.trim(),
+                modePaiement: ctrlPaiement.text.trim().isEmpty ? null : ctrlPaiement.text.trim(),
                 actif: fournisseur?.actif ?? true,
               );
-              final provider = context.read<FournisseursProvider>();
-              final err = isEdit && fournisseur!.id != null
-                  ? await provider.update(fournisseur.id!, updated)
-                  : await provider.create(updated);
-              if (err != null) {
-                if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(err)));
-              } else {
+              try {
+                final service = context.read<FournisseurService>();
+                if (isEdit && fournisseur!.id != null) {
+                  await service.update(fournisseur.id!, updated);
+                } else {
+                  await service.create(updated);
+                }
                 if (ctx.mounted) Navigator.pop(ctx);
+                _load();
+              } catch (_) {
+                if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Erreur lors de l\'enregistrement')));
               }
             },
             child: Text(isEdit ? 'Enregistrer' : 'Créer'),
@@ -125,17 +138,16 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<FournisseursProvider>();
     final filtered = _filtered;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
         child: BrandAppBar(
           title: 'Fournisseurs',
-          subtitle: provider.isLoading ? null : '${provider.fournisseurs.length} fournisseur(s)',
+          subtitle: _loading ? null : '${_fournisseurs.length} fournisseur(s)',
           currentRoute: '/fournisseurs',
           actions: [
-            IconButton(icon: const Icon(Icons.refresh_outlined), onPressed: () => provider.load()),
+            IconButton(icon: const Icon(Icons.refresh_outlined), onPressed: _load),
           ],
         ),
       ),
@@ -165,36 +177,36 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
               ),
             ),
           ),
-          Expanded(child: _buildBody(provider, filtered)),
+          Expanded(child: _buildBody(filtered)),
         ],
       ),
     );
   }
 
-  Widget _buildBody(FournisseursProvider provider, List<Fournisseur> filtered) {
-    if (provider.isLoading) return const Center(child: CircularProgressIndicator());
-    if (provider.error != null) {
+  Widget _buildBody(List<Fournisseur> filtered) {
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_error != null) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.error_outline, size: 48, color: AppTheme.kTextHint),
           const SizedBox(height: 12),
-          Text(provider.error!, style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+          Text(_error!, style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => provider.load(), style: AppTheme.primaryButton, child: const Text('Réessayer')),
+          ElevatedButton(onPressed: _load, style: AppTheme.primaryButton, child: const Text('Réessayer')),
         ]),
       );
     }
     if (filtered.isEmpty) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.local_shipping_outlined, size: 64, color: AppTheme.kBorderLight),
+          Icon(Icons.business_outlined, size: 64, color: AppTheme.kBorderLight),
           const SizedBox(height: 16),
           Text('Aucun fournisseur trouvé', style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
         ]),
       );
     }
     return RefreshIndicator(
-      onRefresh: () => provider.load(),
+      onRefresh: _load,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: filtered.length,
@@ -254,8 +266,8 @@ class _FournisseurCard extends StatelessWidget {
                             const SizedBox(height: 4),
                             if (fournisseur.matriculeFiscal != null)
                               Text('MF: ${fournisseur.matriculeFiscal}', style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
-                            if (fournisseur.telephone != null)
-                              Text(fournisseur.telephone!, style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
+                            if (fournisseur.ville != null)
+                              Text('${fournisseur.ville}${fournisseur.pays != null ? ', ${fournisseur.pays}' : ''}', style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
                           ],
                         ),
                       ),
