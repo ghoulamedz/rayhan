@@ -24,6 +24,7 @@ import 'package:rayhan_erp/providers/production_provider.dart';
 import 'package:rayhan_erp/providers/clients_provider.dart';
 import 'package:rayhan_erp/providers/stock_provider.dart';
 import 'package:rayhan_erp/screens/landing_screen.dart';
+import 'package:rayhan_erp/screens/login_screen.dart';
 import 'package:rayhan_erp/screens/dashboard_screen.dart';
 import 'package:rayhan_erp/screens/articles_screen.dart';
 import 'package:rayhan_erp/screens/ventes_screen.dart';
@@ -96,20 +97,18 @@ class _RayhanAppState extends State<RayhanApp> {
     if (_router == null) {
       final auth = Provider.of<AuthProvider>(context, listen: false);
       _router = GoRouter(
-        initialLocation: '/login',
+        initialLocation: '/',
         refreshListenable: auth,
         redirect: (_, state) {
           final loggedIn = auth.isAuthenticated;
           final role = auth.role;
-          final onLogin = state.matchedLocation == '/login';
-          final onSignup = state.matchedLocation == '/signup';
-          final onForgot = state.matchedLocation == '/forgot-password';
-          final publicRoutes = ['/login', '/signup', '/forgot-password'];
+          final onLoginForm = state.matchedLocation == '/login';
+          final publicRoutes = ['/', '/login', '/signup', '/forgot-password'];
 
           if (!loggedIn && !publicRoutes.contains(state.matchedLocation)) {
             return '/login';
           }
-          if (loggedIn && onLogin) {
+          if (loggedIn && (onLoginForm || state.matchedLocation == '/')) {
             return RoleGuard.getDefaultRoute(role);
           }
           if (loggedIn && !publicRoutes.contains(state.matchedLocation)) {
@@ -120,7 +119,8 @@ class _RayhanAppState extends State<RayhanApp> {
           return null;
         },
         routes: [
-          GoRoute(path: '/login', builder: (_, __) => const LandingScreen()),
+          GoRoute(path: '/', builder: (_, __) => const LandingScreen()),
+          GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
           GoRoute(
               path: '/dashboard', builder: (_, __) => const DashboardScreen()),
           GoRoute(
