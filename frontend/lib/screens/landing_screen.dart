@@ -90,30 +90,28 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   Widget _buildAppBar() {
-    final scrollRatio = (_scrollOffset / 80).clamp(0.0, 1.0);
-    final easedRatio = Curves.easeOut.transform(scrollRatio);
-
     return SliverAppBar(
       centerTitle: false,
       floating: false,
       pinned: true,
       expandedHeight: 80,
-      elevation: 2 * easedRatio,
-      backgroundColor: Color.lerp(Colors.transparent, AppTheme.kSurfaceWhite, easedRatio),
+      elevation: _scrollOffset > 50 ? 2 : 0,
+      backgroundColor:
+          _scrollOffset > 50 ? AppTheme.kSurfaceWhite : Colors.transparent,
       automaticallyImplyLeading: false,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          gradient: scrollRatio < 1
-              ? LinearGradient(
+          gradient: _scrollOffset > 50
+              ? null
+              : LinearGradient(
                   colors: [
-                    Color.lerp(AppTheme.kPrimaryNavy, AppTheme.kSurfaceWhite, easedRatio)!,
-                    Color.lerp(AppTheme.kPrimaryTeal, AppTheme.kSurfaceWhite, easedRatio)!,
+                    AppTheme.kPrimaryTealDark,
+                    AppTheme.kPrimaryTeal,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                )
-              : null,
-          color: scrollRatio >= 1 ? AppTheme.kSurfaceWhite : null,
+                ),
+          color: _scrollOffset > 50 ? AppTheme.kSurfaceWhite : null,
         ),
         child: FlexibleSpaceBar(
           titlePadding:
@@ -126,19 +124,16 @@ class _LandingScreenState extends State<LandingScreen>
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Color.lerp(
-                        Colors.white.withValues(alpha: 0.2),
-                        AppTheme.kPrimaryTeal,
-                        easedRatio,
-                      ),
+                      color: _scrollOffset > 50
+                          ? AppTheme.kPrimaryTeal
+                          : Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(
-                      'assets/images/rayhan_icon.png',
-                      width: 22,
-                      height: 22,
-                      color: Color.lerp(Colors.white, AppTheme.kWhite, easedRatio),
-                    ),
+                    child: Icon(Icons.factory_rounded,
+                        color: _scrollOffset > 50
+                            ? AppTheme.kSurfaceWhite
+                            : Colors.white,
+                        size: 24),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -147,7 +142,9 @@ class _LandingScreenState extends State<LandingScreen>
                       fontFamily: 'Manrope',
                       fontWeight: FontWeight.w800,
                       fontSize: 20,
-                      color: Color.lerp(Colors.white, AppTheme.kTextPrimary, easedRatio),
+                      color: _scrollOffset > 50
+                          ? AppTheme.kTextPrimary
+                          : Colors.white,
                     ),
                   ),
                 ],
@@ -157,16 +154,12 @@ class _LandingScreenState extends State<LandingScreen>
                 icon: const Icon(Icons.login_rounded, size: 18),
                 label: const Text('Se connecter'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: Color.lerp(
-                    Colors.white.withValues(alpha: 0.2),
-                    AppTheme.kPrimaryTeal,
-                    easedRatio,
-                  ),
-                  foregroundColor: Color.lerp(
-                    Colors.white,
-                    AppTheme.kWhite,
-                    easedRatio,
-                  ),
+                  backgroundColor: _scrollOffset > 50
+                      ? AppTheme.kPrimaryTeal
+                      : Colors.white.withValues(alpha: 0.2),
+                  foregroundColor: _scrollOffset > 50
+                      ? AppTheme.kSurfaceWhite
+                      : Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
@@ -183,8 +176,9 @@ class _LandingScreenState extends State<LandingScreen>
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.kPrimaryNavy,
+            AppTheme.kPrimaryTealDark,
             AppTheme.kPrimaryTeal,
+            Color(0xFF0A8F7E)
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -520,12 +514,12 @@ class _LandingScreenState extends State<LandingScreen>
 
   Color _roleColor(String role) {
     switch (role) {
-      case 'ROLE_PDG': return AppTheme.kPrimaryNavy;
-      case 'ROLE_RESPONSABLE_VENTE': return AppTheme.kPrimaryTeal;
-      case 'ROLE_RESPONSABLE_ACHAT': return AppTheme.kCtaOrange;
+      case 'ROLE_PDG': return AppTheme.kPrimaryBurgundy;
+      case 'ROLE_RESPONSABLE_VENTE': return AppTheme.kSecondaryTan;
+      case 'ROLE_RESPONSABLE_ACHAT': return AppTheme.kPrimaryBurgundyLight;
       case 'ROLE_RESPONSABLE_PRODUCTION': return AppTheme.kWarningAmber;
       case 'ROLE_MAGASINIER': return AppTheme.kSuccessGreen;
-      case 'ROLE_CLIENT': return AppTheme.kPrimaryTeal;
+      case 'ROLE_RH': return const Color(0xFF8B5CF6);
       default: return AppTheme.kTextHint;
     }
   }
@@ -537,7 +531,7 @@ class _LandingScreenState extends State<LandingScreen>
       case 'ROLE_RESPONSABLE_ACHAT': return 'Achats';
       case 'ROLE_RESPONSABLE_PRODUCTION': return 'Production';
       case 'ROLE_MAGASINIER': return 'Magasin';
-      case 'ROLE_CLIENT': return 'Client';
+      case 'ROLE_RH': return 'RH';
       default: return role;
     }
   }
@@ -668,10 +662,10 @@ class _LandingScreenState extends State<LandingScreen>
 
   Widget _buildPourquoiSection() {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.kPrimaryNavy,
+            AppTheme.kPrimaryTealDark,
             AppTheme.kPrimaryTeal,
           ],
           begin: Alignment.topLeft,
@@ -894,12 +888,8 @@ class _LandingScreenState extends State<LandingScreen>
                   color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Image.asset(
-                  'assets/images/rayhan_icon.png',
-                  width: 24,
-                  height: 24,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.factory_rounded,
+                    color: Colors.white, size: 24),
               ),
               const SizedBox(width: 10),
               const Text(

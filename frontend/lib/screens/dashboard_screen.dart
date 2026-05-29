@@ -981,7 +981,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               if (!provider.suggestionsLoading && provider.suggestions.isNotEmpty)
                 GestureDetector(
                   onTap: () => _refreshAll(),
-                  child: Text('Actualiser', style: AppTheme.bodySmall.copyWith(color: AppTheme.kPrimaryTeal)),
+                  child: Text('Actualiser', style: AppTheme.bodySmall.copyWith(color: AppTheme.kPrimaryRed)),
                 ),
             ],
           ),
@@ -995,7 +995,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final color = switch (s.type) {
       'warning' => AppTheme.kErrorRed,
       'success' => AppTheme.kSuccessGreen,
-      _ => AppTheme.kPrimaryTeal,
+      _ => AppTheme.kPrimaryRed,
     };
     final icon = switch (s.type) {
       'warning' => Icons.warning_amber_rounded,

@@ -13,9 +13,7 @@ import '../constants/app_theme.dart';
 class PdfService {
   PdfService._();
 
-  static Future<void> init() async {
-    await loadPdfAssets();
-  }
+  static Future<void> init() async {}
 
   static Future<Uint8List> generatePurchaseReceipt(PurchaseOrder order) async {
     final doc = pw.Document();
@@ -246,13 +244,13 @@ class PdfService {
           pw.Text(title,
               style: pw.TextStyle(
                   fontSize: 10,
-                  font: pdfFont(bold: true),
+                  fontWeight: pw.FontWeight.bold,
                   color: PdfColor.fromInt(AppTheme.kTextPrimary.value))),
           pw.SizedBox(height: 4),
           ...lines.where((l) => l.isNotEmpty).map((l) => pw.Padding(
                 padding: pw.EdgeInsets.only(bottom: 2),
-                child: pw.Text(l.replaceAll('null', '-'),
-                    style: pw.TextStyle(fontSize: 9, font: pdfFont(), color: PdfColors.grey)),
+                child: pw.Text(l.replaceAll('null', '—'),
+                    style: pw.TextStyle(fontSize: 9, color: PdfColors.grey)),
               )),
         ],
       ),
@@ -265,16 +263,16 @@ class PdfService {
         padding: pw.EdgeInsets.all(8),
         decoration: pw.BoxDecoration(
           color: PdfColor.fromInt(
-              AppTheme.kPrimaryTeal.withValues(alpha: 0.06).value),
+              AppTheme.kPrimaryRed.withValues(alpha: 0.06).value),
           borderRadius: pw.BorderRadius.circular(4),
         ),
         child: pw.Column(
           children: [
             pw.Text(value,
                 style: pw.TextStyle(
-                    fontSize: 14, font: pdfFont(bold: true))),
+                    fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.Text(label,
-                style: pw.TextStyle(fontSize: 8, font: pdfFont(), color: PdfColors.grey)),
+                style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
           ],
         ),
       ),
