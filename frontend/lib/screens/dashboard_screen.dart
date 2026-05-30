@@ -14,7 +14,7 @@ import '../models/suggestion.dart';
 import '../constants/app_theme.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
-import '../mock/mock_data.dart';
+import '../mock/mock.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -358,7 +358,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildRevenueChart(DashboardKpi kpi) {
-    final mockData = MockData.revenueByMonth();
+    final mockData = MockConfig.useMock
+        ? MockData.revenueByMonth()
+        : List.filled(12, 0.0);
     return AppTheme.withGlass(
       radius: 16,
       blur: 16,
@@ -469,7 +471,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildOrdersChart(DashboardKpi kpi) {
-    final mockData = MockData.ordersByDay();
+    final mockData = MockConfig.useMock
+        ? MockData.ordersByDay()
+        : List.filled(7, 0.0);
     return AppTheme.withGlass(
       radius: 16,
       blur: 16,
@@ -838,7 +842,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildActivityFeed() {
-    final activities = MockData.recentActivity;
+    final activities = MockConfig.useMock
+        ? MockData.recentActivity
+        : <Map<String, dynamic>>[];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

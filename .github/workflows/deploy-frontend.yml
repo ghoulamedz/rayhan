@@ -7,12 +7,8 @@ on:
       - 'frontend/**'
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-
 jobs:
   deploy-pages:
-    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,55 +27,37 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Build Web
+      - name: Build Demo
         run: |
           cd frontend
           flutter pub get
-          flutter build web --release --base-href /rayhan/
-          cp build/web/index.html build/web/404.html
+          flutter build web --release \
+            --dart-define=USE_MOCK=true \
+            --base-href=/rayhan/ \
+            --output=build/demo
+          cp build/demo/index.html build/demo/404.html
+
+      - name: Build Prod
+        run: |
+          cd frontend
+          flutter build web --release \
+            --dart-define=USE_MOCK=false \
+            --dart-define=API_BASE_URL=${{ secrets.API_BASE_URL }} \
+            --base-href=/rayhan/prod/ \
+            --output=build/prod
+          cp build/prod/index.html build/prod/404.html
+
+      - name: Combine Artifacts
+        run: |
+          mkdir -p frontend/build/pages/prod
+          cp -r frontend/build/demo/* frontend/build/pages/
+          cp -r frontend/build/prod/* frontend/build/pages/prod/
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./frontend/build/web
+          path: ./frontend/build/pages
 
       - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  push-docker-image:
-    name: Push Frontend Docker Image
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
-          tags: |
-            type=sha,prefix={{date 'YYYYMMDD'}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
