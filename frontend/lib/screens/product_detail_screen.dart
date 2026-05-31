@@ -81,11 +81,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: Image.asset(
               article.assetImage != null
                   ? 'assets/images/products/${article.assetImage}'
-                  : 'assets/images/product_placeholder.png',
+                  : 'assets/images/products/product_poubelle.jpg',
               height: 240,
               width: double.infinity,
               fit: BoxFit.cover,
-              cacheWidth: 400,
             ),
           ),
           const SizedBox(height: 20),

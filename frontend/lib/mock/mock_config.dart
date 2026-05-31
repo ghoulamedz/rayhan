@@ -59,12 +59,12 @@ class MockConfig {
       email: 'magasinier@rayhan.tn',
     ),
     MockUser(
-      username: 'fournisseur',
+      username: 'client',
       password: '123456',
-      role: 'ROLE_FOURNISSEUR',
-      firstName: 'Ali',
-      lastName: 'Mejri',
-      email: 'fournisseur@rayhan.tn',
+      role: 'ROLE_CLIENT',
+      firstName: 'Omar',
+      lastName: 'Ben Salem',
+      email: 'client@rayhan.tn',
     ),
   ];
 

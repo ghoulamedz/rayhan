@@ -88,16 +88,28 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
     return RefreshIndicator(
       onRefresh: () => context.read<CatalogProvider>().load(),
-      child: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.72,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemCount: articles.length,
-        itemBuilder: (ctx, i) => _ProductCard(article: articles[i]),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final crossAxisCount = constraints.maxWidth > 700 ? 3 : 2;
+          final spacing = 12.0;
+          final padding = 16.0 * 2;
+          final totalSpacing = spacing * (crossAxisCount - 1);
+          final itemWidth = (constraints.maxWidth - padding - totalSpacing) / crossAxisCount;
+          const contentHeight = 128.0;
+          final aspectRatio = itemWidth / (itemWidth + contentHeight);
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: aspectRatio,
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+            ),
+            itemCount: articles.length,
+            itemBuilder: (ctx, i) => _ProductCard(article: articles[i]),
+          );
+        },
       ),
     );
   }
@@ -165,59 +177,57 @@ class _ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              article.assetImage != null
-                  ? 'assets/images/products/${article.assetImage}'
-                  : 'assets/images/product_placeholder.png',
-              height: 120,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              cacheWidth: 200,
+            AspectRatio(
+              aspectRatio: 1,
+              child: Image.asset(
+                article.assetImage != null
+                    ? 'assets/images/products/${article.assetImage}'
+                    : 'assets/images/products/product_poubelle.jpg',
+                fit: BoxFit.contain,
+              ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      article.designation,
-                      style: AppTheme.titleSmall.copyWith(fontSize: 13),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    article.designation,
+                    style: AppTheme.titleSmall.copyWith(fontSize: 13),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    priceFmt.format(article.prixUnitaire),
+                    style: AppTheme.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.kPrimaryRed,
                     ),
-                    const Spacer(),
-                    Text(
-                      priceFmt.format(article.prixUnitaire),
-                      style: AppTheme.bodyMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.kPrimaryRed,
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (article.id != null) {
+                          context.push(
+                              '/catalogue/commander?articleId=${article.id}');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.kSuccessGreen,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        elevation: 0,
                       ),
+                      child: const Text('Commander',
+                          style: TextStyle(fontSize: 12)),
                     ),
-                    const SizedBox(height: 6),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (article.id != null) {
-                            context.push(
-                                '/catalogue/commander?articleId=${article.id}');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.kSuccessGreen,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          elevation: 0,
-                        ),
-                        child: const Text('Commander',
-                            style: TextStyle(fontSize: 12)),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

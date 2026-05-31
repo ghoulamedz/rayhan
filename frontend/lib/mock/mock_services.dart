@@ -558,7 +558,7 @@ class MockUserService implements UserService {
   int _idCounter = 100;
 
   List<User> _mockUsers() => MockConfig.mockUsers
-      .where((mu) => mu.role != 'ROLE_CLIENT' && mu.role != 'ROLE_FOURNISSEUR')
+      .where((mu) => mu.role != 'ROLE_CLIENT')
       .toList()
       .asMap()
       .entries

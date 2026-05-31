@@ -61,7 +61,8 @@ void main() async {
 
   final useMock = MockConfig.useMock;
 
-  final AuthService authService = useMock ? MockAuthService() : RealAuthService();
+  final AuthService authService =
+      useMock ? MockAuthService() : RealAuthService();
   final auth = AuthProvider(authService: authService);
   await auth.checkAuth();
 
@@ -69,44 +70,76 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: auth),
-        ChangeNotifierProvider(create: (_) => DashboardProvider(
-          dashboardService: useMock ? MockDashboardService() : RealDashboardService(),
-        )),
-        ChangeNotifierProvider(create: (_) => ArticleProvider(
-          articleService: useMock ? MockArticleService() : RealArticleService(),
-        )),
-        ChangeNotifierProvider(create: (_) => VentesProvider(
-          salesOrderService: useMock ? MockSalesOrderService() : RealSalesOrderService(),
-          clientService: useMock ? MockClientService() : RealClientService(),
-        )),
-        ChangeNotifierProvider(create: (_) => AchatsProvider(
-          purchaseOrderService: useMock ? MockPurchaseOrderService() : RealPurchaseOrderService(),
-          fournisseurService: useMock ? MockFournisseurService() : RealFournisseurService(),
-        )),
-        ChangeNotifierProvider(create: (_) => ClientsProvider(
-          clientService: useMock ? MockClientService() : RealClientService(),
-        )),
-        ChangeNotifierProvider(create: (_) => FournisseursProvider(
-          fournisseurService: useMock ? MockFournisseurService() : RealFournisseurService(),
-        )),
-        ChangeNotifierProvider(create: (_) => ProductionProvider(
-          productionService: useMock ? MockProductionService() : RealProductionService(),
-        )),
-        ChangeNotifierProvider(create: (_) => StockProvider(
-          stockService: useMock ? MockStockService() : RealStockService(),
-        )),
-        ChangeNotifierProvider(create: (_) => UserProvider(
-          userService: useMock ? MockUserService() : RealUserService(),
-        )),
-        ChangeNotifierProvider(create: (_) => CatalogProvider(
-          catalogService: useMock ? MockCatalogService() : RealCatalogService(),
-        )),
-        ChangeNotifierProvider(create: (_) => ClientOrderProvider(
-          clientOrderService: useMock ? MockClientOrderService() : RealClientOrderService(),
-        )),
-        ChangeNotifierProvider(create: (_) => NotificationProvider(
-          notificationService: useMock ? MockNotificationService() : RealNotificationService(),
-        )),
+        ChangeNotifierProvider(
+            create: (_) => DashboardProvider(
+                  dashboardService:
+                      useMock ? MockDashboardService() : RealDashboardService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => ArticleProvider(
+                  articleService:
+                      useMock ? MockArticleService() : RealArticleService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => VentesProvider(
+                  salesOrderService: useMock
+                      ? MockSalesOrderService()
+                      : RealSalesOrderService(),
+                  clientService:
+                      useMock ? MockClientService() : RealClientService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => AchatsProvider(
+                  purchaseOrderService: useMock
+                      ? MockPurchaseOrderService()
+                      : RealPurchaseOrderService(),
+                  fournisseurService: useMock
+                      ? MockFournisseurService()
+                      : RealFournisseurService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => ClientsProvider(
+                  clientService:
+                      useMock ? MockClientService() : RealClientService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => FournisseursProvider(
+                  fournisseurService: useMock
+                      ? MockFournisseurService()
+                      : RealFournisseurService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => ProductionProvider(
+                  productionService: useMock
+                      ? MockProductionService()
+                      : RealProductionService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => StockProvider(
+                  stockService:
+                      useMock ? MockStockService() : RealStockService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => UserProvider(
+                  userService: useMock ? MockUserService() : RealUserService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => CatalogProvider(
+                  catalogService:
+                      useMock ? MockCatalogService() : RealCatalogService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => ClientOrderProvider(
+                  clientOrderService: useMock
+                      ? MockClientOrderService()
+                      : RealClientOrderService(),
+                )),
+        ChangeNotifierProvider(
+            create: (_) => NotificationProvider(
+                  notificationService: useMock
+                      ? MockNotificationService()
+                      : RealNotificationService(),
+                )),
       ],
       child: const RayhanApp(),
     ),
@@ -173,15 +206,17 @@ class _RayhanAppState extends State<RayhanApp> {
               path: '/production',
               builder: (_, __) => const ProductionScreen()),
           GoRoute(path: '/stock', builder: (_, __) => const StockScreen()),
-          GoRoute(path: '/rapports', builder: (_, __) => const RapportsScreen()),
-          GoRoute(path: '/utilisateurs', builder: (_, __) => const UtilisateursScreen()),
+          GoRoute(
+              path: '/rapports', builder: (_, __) => const RapportsScreen()),
+          GoRoute(
+              path: '/utilisateurs',
+              builder: (_, __) => const UtilisateursScreen()),
           GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
           GoRoute(
               path: '/forgot-password',
               builder: (_, __) => const ForgotPasswordScreen()),
           GoRoute(
-              path: '/catalogue',
-              builder: (_, __) => const CatalogScreen()),
+              path: '/catalogue', builder: (_, __) => const CatalogScreen()),
           GoRoute(
               path: '/catalogue/:id',
               builder: (_, __) => const ProductDetailScreen()),
@@ -195,8 +230,7 @@ class _RayhanAppState extends State<RayhanApp> {
               path: '/mes-commandes/:id',
               builder: (_, __) => const ClientOrderDetailScreen()),
           GoRoute(
-              path: '/mon-profil',
-              builder: (_, __) => const ProfileScreen()),
+              path: '/mon-profil', builder: (_, __) => const ProfileScreen()),
         ],
       );
     }
