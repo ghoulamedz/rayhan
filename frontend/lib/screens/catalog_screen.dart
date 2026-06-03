@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rayhan_erp/providers/catalog_provider.dart';
+import 'package:rayhan_erp/providers/auth_provider.dart';
 import 'package:rayhan_erp/models/article.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/widgets/client_scaffold.dart';
@@ -38,11 +39,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
     return ClientScaffold(
       currentRoute: '/catalogue',
-      body: Column(
-        children: [
-          _CatalogSearchBar(controller: _searchController, provider: provider),
-          Expanded(child: _buildContent(provider, pfArticles)),
-        ],
+      body: AppTheme.glassBackground(
+        child: Column(
+          children: [
+            _CatalogSearchBar(controller: _searchController, provider: provider),
+            Expanded(child: _buildContent(provider, pfArticles)),
+          ],
+        ),
       ),
     );
   }
@@ -90,12 +93,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
       onRefresh: () => context.read<CatalogProvider>().load(),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final crossAxisCount = constraints.maxWidth > 700 ? 3 : 2;
-          final spacing = 12.0;
+          final crossAxisCount = constraints.maxWidth > 900 ? 4 : constraints.maxWidth > 600 ? 3 : 2;
+          final spacing = 10.0;
           final padding = 16.0 * 2;
           final totalSpacing = spacing * (crossAxisCount - 1);
           final itemWidth = (constraints.maxWidth - padding - totalSpacing) / crossAxisCount;
-          const contentHeight = 128.0;
+          const contentHeight = 117.0;
           final aspectRatio = itemWidth / (itemWidth + contentHeight);
 
           return GridView.builder(
@@ -122,10 +125,7 @@ class _CatalogSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppTheme.withGlass(
-      radius: 0,
-      blur: 16,
-      opacity: 0.7,
+    return AppTheme.gradientBar(
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextField(
@@ -206,15 +206,23 @@ class _ProductCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (article.id != null) {
-                          context.push(
-                              '/catalogue/commander?articleId=${article.id}');
-                        }
-                      },
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (article.id == null) return;
+                          final loggedIn = context
+                              .read<AuthProvider>()
+                              .isAuthenticated;
+                          if (loggedIn) {
+                            context.push(
+                                '/catalogue/commander?articleId=${article.id}');
+                          } else {
+                            final redirect = Uri.encodeComponent(
+                                '/catalogue/commander?articleId=${article.id}');
+                            context.push('/login?redirect=$redirect');
+                          }
+                        },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.kSuccessGreen,
                         foregroundColor: Colors.white,

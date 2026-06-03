@@ -8,7 +8,7 @@ class BrandAppBar extends StatelessWidget {
   final String? subtitle;
   final String currentRoute;
   final List<Widget>? actions;
-  final PreferredSizeWidget? bottom;
+  final Widget? bottom;
 
   const BrandAppBar({
     super.key,
@@ -31,7 +31,14 @@ class BrandAppBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceWhite,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.kSurfaceWhite,
+            AppTheme.kPrimaryOrange.withValues(alpha: 0.04),
+          ],
+        ),
         boxShadow: [
           BoxShadow(
             color: AppTheme.kBlack.withValues(alpha: 0.04),
@@ -80,12 +87,11 @@ class BrandAppBar extends StatelessWidget {
               'assets/images/rayhan_icon.png',
               width: 22,
               height: 22,
-              color: AppTheme.kWhite,
             ),
           ),
           const SizedBox(width: 10),
           Text(
-            'Rayhan ERP',
+            'RayhanERP',
             style: TextStyle(
               color: AppTheme.kWhite,
               fontSize: 16,
@@ -126,7 +132,21 @@ class BrandAppBar extends StatelessWidget {
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               tooltip: 'Menu',
             )),
-          if (!isDesktop) const SizedBox(width: 4),
+          if (!isDesktop) ...[
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: AppTheme.kPrimaryRed.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Image.asset(
+                'assets/images/rayhan_icon.png',
+                width: 18,
+                height: 18,
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

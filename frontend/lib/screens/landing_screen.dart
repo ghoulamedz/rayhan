@@ -71,29 +71,31 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   Widget _buildAppBar() {
+    final collapsed = _scrollOffset > 30;
     return SliverAppBar(
       centerTitle: false,
       floating: false,
       pinned: true,
       expandedHeight: 80,
-      elevation: _scrollOffset > 50 ? 2 : 0,
-      backgroundColor:
-          _scrollOffset > 50 ? AppTheme.kSurfaceWhite : Colors.transparent,
+      elevation: collapsed ? 1 : 0,
+      backgroundColor: collapsed
+          ? AppTheme.kBackgroundCream.withValues(alpha: 0.85)
+          : Colors.transparent,
       automaticallyImplyLeading: false,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: _scrollOffset > 50
-              ? null
-              : LinearGradient(
+        decoration: collapsed
+            ? null
+            : BoxDecoration(
+                gradient: LinearGradient(
                   colors: [
-                    AppTheme.kPrimaryTealDark,
-                    AppTheme.kPrimaryTeal,
+                    AppTheme.kPrimaryRedDark,
+                    AppTheme.kPrimaryRed,
+                    AppTheme.kPrimaryOrange,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-          color: _scrollOffset > 50 ? AppTheme.kSurfaceWhite : null,
-        ),
+              ),
         child: FlexibleSpaceBar(
           titlePadding:
               const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -105,16 +107,16 @@ class _LandingScreenState extends State<LandingScreen>
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: _scrollOffset > 50
-                          ? AppTheme.kPrimaryTeal
+                      color: collapsed
+                          ? AppTheme.kPrimaryRed.withValues(alpha: 0.1)
                           : Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.factory_rounded,
-                        color: _scrollOffset > 50
-                            ? AppTheme.kSurfaceWhite
-                            : Colors.white,
-                        size: 24),
+                    child: Image.asset(
+                      'assets/images/rayhan_icon.png',
+                      width: 24,
+                      height: 24,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -123,9 +125,7 @@ class _LandingScreenState extends State<LandingScreen>
                       fontFamily: 'Manrope',
                       fontWeight: FontWeight.w800,
                       fontSize: 20,
-                      color: _scrollOffset > 50
-                          ? AppTheme.kTextPrimary
-                          : Colors.white,
+                      color: collapsed ? AppTheme.kTextPrimary : Colors.white,
                     ),
                   ),
                 ],
@@ -135,12 +135,11 @@ class _LandingScreenState extends State<LandingScreen>
                 icon: const Icon(Icons.login_rounded, size: 18),
                 label: const Text('Se connecter'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: _scrollOffset > 50
-                      ? AppTheme.kPrimaryTeal
+                  backgroundColor: collapsed
+                      ? AppTheme.kPrimaryRed
                       : Colors.white.withValues(alpha: 0.2),
-                  foregroundColor: _scrollOffset > 50
-                      ? AppTheme.kSurfaceWhite
-                      : Colors.white,
+                  foregroundColor:
+                      collapsed ? AppTheme.kSurfaceWhite : Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
@@ -243,7 +242,7 @@ class _LandingScreenState extends State<LandingScreen>
               height: 3,
               width: 60,
               decoration: BoxDecoration(
-                color: AppTheme.kSecondaryAmber,
+                color: AppTheme.kSecondaryGold,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -261,62 +260,72 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
-
-
   Widget _buildProductsSection() {
-    return Container(
-      color: AppTheme.kBackgroundOffWhite,
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      child: Column(
-        children: [
-          Text(AppText.productsTitle,
-              style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
-          const SizedBox(height: 8),
-          Text(AppText.productsSubtitle,
-              textAlign: TextAlign.center,
-              style:
-                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
-          const SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (ctx, constraints) {
-              final isWide = constraints.maxWidth > 700;
-              return Wrap(
-                spacing: 20,
-                runSpacing: 20,
-                children: [
-                  _productCard(
-                    title: AppText.productSacs,
-                    desc: AppText.productSacsDesc,
-                    icon: Icons.inventory_2_rounded,
-                    color: AppTheme.kPrimaryTeal,
-                    imagePath: 'assets/images/products/product_sacs.jpg',
+    return AppTheme.glassBackground(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+        child: Column(
+          children: [
+            Text(AppText.productsTitle,
+                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
+            const SizedBox(height: 8),
+            Text(AppText.productsSubtitle,
+                textAlign: TextAlign.center,
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
+            const SizedBox(height: 40),
+            LayoutBuilder(
+              builder: (ctx, constraints) {
+                final crossAxisCount = constraints.maxWidth > 900
+                    ? 4
+                    : constraints.maxWidth > 600
+                        ? 2
+                        : 1;
+                final aspect = crossAxisCount == 4 ? 0.85 : 0.9;
+                return GridView(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: aspect,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
                   ),
-                  _productCard(
-                    title: AppText.productFilm,
-                    desc: AppText.productFilmDesc,
-                    icon: Icons.wrap_text_rounded,
-                    color: AppTheme.kSecondaryAmber,
-                    imagePath: 'assets/images/products/product_film.jpg',
-                  ),
-                  _productCard(
-                    title: AppText.productSangles,
-                    desc: AppText.productSanglesDesc,
-                    icon: Icons.link_rounded,
-                    color: AppTheme.kCtaOrange,
-                    imagePath: 'assets/images/products/product_sangles.jpg',
-                  ),
-                  _productCard(
-                    title: AppText.productPoubelle,
-                    desc: AppText.productPoubelleDesc,
-                    icon: Icons.cleaning_services_rounded,
-                    color: AppTheme.kPrimaryTealDark,
-                    imagePath: 'assets/images/products/product_poubelle.jpg',
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+                  children: [
+                    _productCard(
+                      title: AppText.productSacs,
+                      desc: AppText.productSacsDesc,
+                      icon: Icons.inventory_2_rounded,
+                      color: AppTheme.kPrimaryRed,
+                      imagePath: 'assets/images/products/product_sacs.jpg',
+                    ),
+                    _productCard(
+                      title: AppText.productFilm,
+                      desc: AppText.productFilmDesc,
+                      icon: Icons.wrap_text_rounded,
+                      color: AppTheme.kSecondaryGold,
+                      imagePath: 'assets/images/products/product_film.jpg',
+                    ),
+                    _productCard(
+                      title: AppText.productSangles,
+                      desc: AppText.productSanglesDesc,
+                      icon: Icons.link_rounded,
+                      color: AppTheme.kPrimaryOrange,
+                      imagePath: 'assets/images/products/product_sangles.jpg',
+                    ),
+                    _productCard(
+                      title: AppText.productPoubelle,
+                      desc: AppText.productPoubelleDesc,
+                      icon: Icons.cleaning_services_rounded,
+                      color: AppTheme.kPrimaryRedDark,
+                      imagePath: 'assets/images/products/product_poubelle.jpg',
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -329,9 +338,8 @@ class _LandingScreenState extends State<LandingScreen>
     required String imagePath,
   }) {
     return Container(
-      width: 280,
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceWhite,
+        color: AppTheme.kSectionBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppTheme.shadowMd,
       ),
@@ -374,6 +382,24 @@ class _LandingScreenState extends State<LandingScreen>
                 Text(desc,
                     style: AppTheme.bodySmall
                         .copyWith(color: AppTheme.kTextSecondary)),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => context.push('/catalogue'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.kSuccessGreen,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      elevation: 0,
+                    ),
+                    child: const Text('Commander',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w600)),
+                  ),
+                ),
               ],
             ),
           ),
@@ -383,61 +409,49 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   Widget _buildPourquoiSection() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.kPrimaryTealDark,
-            AppTheme.kPrimaryTeal,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      child: Column(
-        children: [
-          Text(AppText.pourquoiTitle,
-              style: AppTheme.headlineLarge
-                  .copyWith(fontSize: 28, color: Colors.white)),
-          const SizedBox(height: 8),
-          Text(
-            'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 15,
+    return AppTheme.glassBackground(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+        child: Column(
+          children: [
+            Text(AppText.pourquoiTitle,
+                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
+            const SizedBox(height: 8),
+            Text(
+              'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
+              textAlign: TextAlign.center,
+              style:
+                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary),
             ),
-          ),
-          const SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (ctx, constraints) {
-              final isWide = constraints.maxWidth > 700;
-              return Wrap(
-                spacing: 20,
-                runSpacing: 20,
-                alignment: WrapAlignment.center,
-                children: [
-                  _pourquoiCard(
-                    icon: Icons.verified_rounded,
-                    title: AppText.pourquoiQuality,
-                    desc: AppText.pourquoiQualityDesc,
-                  ),
-                  _pourquoiCard(
-                    icon: Icons.flash_on_rounded,
-                    title: AppText.pourquoiDelivery,
-                    desc: AppText.pourquoiDeliveryDesc,
-                  ),
-                  _pourquoiCard(
-                    icon: Icons.auto_awesome_rounded,
-                    title: AppText.pourquoiExpertise,
-                    desc: AppText.pourquoiExpertiseDesc,
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+            const SizedBox(height: 40),
+            LayoutBuilder(
+              builder: (ctx, constraints) {
+                return Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _pourquoiCard(
+                      icon: Icons.verified_rounded,
+                      title: AppText.pourquoiQuality,
+                      desc: AppText.pourquoiQualityDesc,
+                    ),
+                    _pourquoiCard(
+                      icon: Icons.flash_on_rounded,
+                      title: AppText.pourquoiDelivery,
+                      desc: AppText.pourquoiDeliveryDesc,
+                    ),
+                    _pourquoiCard(
+                      icon: Icons.auto_awesome_rounded,
+                      title: AppText.pourquoiExpertise,
+                      desc: AppText.pourquoiExpertiseDesc,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -451,9 +465,9 @@ class _LandingScreenState extends State<LandingScreen>
       width: 300,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.12),
+        color: AppTheme.kSectionBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        boxShadow: AppTheme.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,92 +475,86 @@ class _LandingScreenState extends State<LandingScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: AppTheme.kPrimaryOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: 28),
+            child: Icon(icon, color: AppTheme.kPrimaryOrange, size: 28),
           ),
           const SizedBox(height: 16),
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17)),
+          Text(title, style: AppTheme.titleSmall.copyWith(fontSize: 17)),
           const SizedBox(height: 8),
           Text(desc,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 13,
-                height: 1.5,
-              )),
+              style:
+                  AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
         ],
       ),
     );
   }
 
   Widget _buildModulesSection() {
-    return Container(
-      color: AppTheme.kBackgroundOffWhite,
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      child: Column(
-        children: [
-          Text(AppText.modulesTitle,
-              style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
-          const SizedBox(height: 8),
-          Text(AppText.modulesSubtitle,
-              textAlign: TextAlign.center,
-              style:
-                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
-          const SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (ctx, constraints) {
-              final isWide = constraints.maxWidth > 700;
-              return Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                alignment: WrapAlignment.center,
-                children: [
-                  _moduleCard(
-                    icon: Icons.dashboard_rounded,
-                    title: 'Tableau de bord',
-                    desc: 'Indicateurs en temps réel',
-                    color: AppTheme.kPrimaryTeal,
-                  ),
-                  _moduleCard(
-                    icon: Icons.shopping_cart_rounded,
-                    title: 'Gestion des ventes',
-                    desc: 'Commandes, factures, clients',
-                    color: AppTheme.kSecondaryAmber,
-                  ),
-                  _moduleCard(
-                    icon: Icons.local_shipping_rounded,
-                    title: 'Gestion des achats',
-                    desc: 'Approvisionnement, fournisseurs',
-                    color: AppTheme.kCtaOrange,
-                  ),
-                  _moduleCard(
-                    icon: Icons.precision_manufacturing_rounded,
-                    title: 'Production',
-                    desc: 'OF, BOM, suivi atelier',
-                    color: AppTheme.kPrimaryTealDark,
-                  ),
-                  _moduleCard(
-                    icon: Icons.warehouse_rounded,
-                    title: 'Gestion de stock',
-                    desc: 'Mouvements, alertes, inventaire',
-                    color: AppTheme.kSuccessGreen,
-                  ),
-                  _moduleCard(
-                    icon: Icons.inventory_2_rounded,
-                    title: 'Articles & Produits',
-                    desc: 'MP, PSF, PF, nomenclatures',
-                    color: AppTheme.kSecondaryAmber,
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+    return AppTheme.glassBackground(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+        child: Column(
+          children: [
+            Text(AppText.modulesTitle,
+                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
+            const SizedBox(height: 8),
+            Text(AppText.modulesSubtitle,
+                textAlign: TextAlign.center,
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
+            const SizedBox(height: 40),
+            LayoutBuilder(
+              builder: (ctx, constraints) {
+                final isWide = constraints.maxWidth > 700;
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _moduleCard(
+                      icon: Icons.dashboard_rounded,
+                      title: 'Tableau de bord',
+                      desc: 'Indicateurs en temps réel',
+                      color: AppTheme.kPrimaryRed,
+                    ),
+                    _moduleCard(
+                      icon: Icons.shopping_cart_rounded,
+                      title: 'Gestion des ventes',
+                      desc: 'Commandes, factures, clients',
+                      color: AppTheme.kSecondaryGold,
+                    ),
+                    _moduleCard(
+                      icon: Icons.local_shipping_rounded,
+                      title: 'Gestion des achats',
+                      desc: 'Approvisionnement, fournisseurs',
+                      color: AppTheme.kPrimaryOrange,
+                    ),
+                    _moduleCard(
+                      icon: Icons.precision_manufacturing_rounded,
+                      title: 'Production',
+                      desc: 'OF, BOM, suivi atelier',
+                      color: AppTheme.kPrimaryRedDark,
+                    ),
+                    _moduleCard(
+                      icon: Icons.warehouse_rounded,
+                      title: 'Gestion de stock',
+                      desc: 'Mouvements, alertes, inventaire',
+                      color: AppTheme.kSuccessGreen,
+                    ),
+                    _moduleCard(
+                      icon: Icons.inventory_2_rounded,
+                      title: 'Articles & Produits',
+                      desc: 'MP, PSF, PF, nomenclatures',
+                      color: AppTheme.kSecondaryGold,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -561,7 +569,7 @@ class _LandingScreenState extends State<LandingScreen>
       width: 220,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceWhite,
+        color: AppTheme.kSectionBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppTheme.shadowSm,
       ),

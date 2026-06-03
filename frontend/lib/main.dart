@@ -173,6 +173,11 @@ class _RayhanAppState extends State<RayhanApp> {
               state.matchedLocation == r ||
               state.matchedLocation.startsWith('/catalogue'));
 
+          if (!loggedIn &&
+              state.matchedLocation.startsWith('/catalogue/commander')) {
+            final redirect = Uri.encodeComponent(state.matchedLocation);
+            return '/login?redirect=$redirect';
+          }
           if (!loggedIn && !isPublic) {
             return '/login';
           }

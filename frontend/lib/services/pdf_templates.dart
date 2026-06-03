@@ -34,7 +34,7 @@ class PdfBrandedHeader {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text('Rayhan ERP',
+                  pw.Text('RayhanERP',
                       style: pw.TextStyle(
                         fontSize: 18,
                         fontWeight: pw.FontWeight.bold,

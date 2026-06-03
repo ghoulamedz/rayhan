@@ -9,12 +9,15 @@ import '../services/pdf_service.dart';
 
 class PurchaseOrderDetailScreen extends StatelessWidget {
   final PurchaseOrder order;
-  const PurchaseOrderDetailScreen({super.key, required this.order});
+  final bool isEmbedded;
+  const PurchaseOrderDetailScreen({super.key, required this.order, this.isEmbedded = false});
 
   @override
   Widget build(BuildContext context) {
     final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
     final statusColor = Color(order.statutColor);
+    final content = _buildContent(context, fmt, statusColor);
+    if (isEmbedded) return content;
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundCream,
       appBar: AppBar(
@@ -44,60 +47,99 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
             ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      body: content,
+    );
+  }
+
+  Widget _buildContent(BuildContext context, NumberFormat fmt, Color statusColor) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: statusColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.circle, color: statusColor, size: 10),
+              const SizedBox(width: 8),
+              Text(order.statutLabel,
+                  style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 14)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: AppTheme.cardDecorationMd,
+          child: Column(
+            children: [
+              _infoRow(label: 'Fournisseur', value: order.fournisseur?.raisonSociale ?? '—'),
+              _infoRow(label: 'Date commande', value: order.dateCommande),
+              if (order.dateLivraisonPrevue != null)
+                _infoRow(label: 'Livraison prévue', value: order.dateLivraisonPrevue!),
+              if (order.notes != null && order.notes!.isNotEmpty)
+                _infoRow(label: 'Notes', value: order.notes!),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Lignes de commande', style: AppTheme.titleSmall.copyWith(fontSize: 14)),
+        const SizedBox(height: 8),
+        ...order.lignes.map((l) => _LigneCard(ligne: l, fmt: fmt)),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: AppTheme.cardDecorationMd,
+          child: Column(
+            children: [
+              _infoRow(label: 'Total HT', value: fmt.format(order.totalHT)),
+              _infoRow(label: 'TVA (19%)', value: fmt.format(order.totalTVA)),
+              const Divider(color: AppTheme.kBorderLight),
+              _totalRow(label: 'Total TTC', value: fmt.format(order.totalTTC), bold: true),
+            ],
+          ),
+        ),
+        if (isEmbedded) ...[
+          const SizedBox(height: 16),
+          if (order.peutReceptionner)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _confirmReceive(context),
+                icon: const Icon(Icons.inventory_outlined, size: 18),
+                label: const Text('Réceptionner'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.kPrimaryRed,
+                  foregroundColor: AppTheme.kSurfaceWhite,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
             ),
-            child: Row(
-              children: [
-                Icon(Icons.circle, color: statusColor, size: 10),
-                const SizedBox(width: 8),
-                Text(order.statutLabel,
-                    style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 14)),
-              ],
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final bytes = await PdfService.generatePurchaseReceipt(order);
+                PdfService.downloadPdf(bytes, 'BR_${order.reference ?? "N/A"}.pdf');
+              },
+              icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+              label: const Text('Imprimer PDF'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kPrimaryRed,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cardDecorationMd,
-            child: Column(
-              children: [
-                _infoRow(label: 'Fournisseur', value: order.fournisseur?.raisonSociale ?? '—'),
-                _infoRow(label: 'Date commande', value: order.dateCommande),
-                if (order.dateLivraisonPrevue != null)
-                  _infoRow(label: 'Livraison prévue', value: order.dateLivraisonPrevue!),
-                if (order.notes != null && order.notes!.isNotEmpty)
-                  _infoRow(label: 'Notes', value: order.notes!),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text('Lignes de commande', style: AppTheme.titleSmall.copyWith(fontSize: 14)),
-          const SizedBox(height: 8),
-          ...order.lignes.map((l) => _LigneCard(ligne: l, fmt: fmt)),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cardDecorationMd,
-            child: Column(
-              children: [
-                _infoRow(label: 'Total HT', value: fmt.format(order.totalHT)),
-                _infoRow(label: 'TVA (19%)', value: fmt.format(order.totalTVA)),
-                const Divider(color: AppTheme.kBorderLight),
-                _totalRow(label: 'Total TTC', value: fmt.format(order.totalTTC), bold: true),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
         ],
-      ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 
@@ -114,7 +156,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
         context.read<AchatsProvider>().receive(order.id!, order.lignes).then((err) {
           if (context.mounted) {
             if (err == null) {
-              Navigator.pop(context);
+              if (!isEmbedded) Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Réception enregistrée — stock mis à jour'),
                 backgroundColor: AppTheme.kSuccessGreen,

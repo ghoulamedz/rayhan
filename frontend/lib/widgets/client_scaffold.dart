@@ -44,12 +44,22 @@ class _ClientScaffoldState extends State<ClientScaffold> {
         backgroundColor: AppTheme.kPrimaryRedDark,
         foregroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'Rayhan ERP',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/rayhan_icon.png',
+              width: 22,
+              height: 22,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'RayhanERP',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
         ),
         actions: [
           if (role == 'ROLE_CLIENT') ...[

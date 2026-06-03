@@ -8,7 +8,8 @@ import 'utilisateur_form_screen.dart';
 
 class UtilisateurDetailScreen extends StatefulWidget {
   final User user;
-  const UtilisateurDetailScreen({super.key, required this.user});
+  final bool isEmbedded;
+  const UtilisateurDetailScreen({super.key, required this.user, this.isEmbedded = false});
 
   @override
   State<UtilisateurDetailScreen> createState() => _UtilisateurDetailScreenState();
@@ -89,6 +90,8 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final content = _buildContent(context);
+    if (widget.isEmbedded) return content;
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundCream,
       appBar: AppBar(
@@ -110,127 +113,133 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.kPrimaryGradient,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  child: Text(_user.initials,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18)),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(_user.displayName,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18)),
-                      const SizedBox(height: 4),
-                      Text(_user.email,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 13)),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: _user.enabled
-                        ? AppTheme.kSuccessGreen.withValues(alpha: 0.2)
-                        : AppTheme.kTextHint.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    _user.enabled ? 'Actif' : 'Inactif',
-                    style: TextStyle(
-                        color: _user.enabled
-                            ? AppTheme.kSuccessGreen
-                            : AppTheme.kTextHint,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
+      body: content,
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.kPrimaryGradient,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.kSurfaceWhite,
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(16)),
-              boxShadow: AppTheme.shadowSm,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Rôles',
-                    style:
-                        AppTheme.titleSmall.copyWith(fontSize: 14)),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _user.roles.map((r) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _user.roleColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        User.roleLabelLong(r),
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                child: Text(_user.initials,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_user.displayName,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                    const SizedBox(height: 4),
+                    Text(_user.email,
                         style: TextStyle(
-                            color: _user.roleColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    );
-                  }).toList(),
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 13)),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: _user.enabled
+                      ? AppTheme.kSuccessGreen.withValues(alpha: 0.2)
+                      : AppTheme.kTextHint.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  _user.enabled ? 'Actif' : 'Inactif',
+                  style: TextStyle(
+                      color: _user.enabled
+                          ? AppTheme.kSuccessGreen
+                          : AppTheme.kTextHint,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: AppTheme.cardDecorationMd,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Informations',
-                    style:
-                        AppTheme.titleSmall.copyWith(fontSize: 14)),
-                const SizedBox(height: 8),
-                _item('Nom d\'utilisateur', _user.username),
-                _item('Email', _user.email),
-                _item('Prénom', _user.firstName ?? '—'),
-                _item('Nom', _user.lastName ?? '—'),
-                _item('Statut', _user.enabled ? 'Actif' : 'Inactif'),
-              ],
-            ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.kSurfaceWhite,
+            borderRadius:
+                const BorderRadius.vertical(bottom: Radius.circular(16)),
+            boxShadow: AppTheme.shadowSm,
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Rôles',
+                  style:
+                      AppTheme.titleSmall.copyWith(fontSize: 14)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _user.roles.map((r) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _user.roleColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      User.roleLabelLong(r),
+                      style: TextStyle(
+                          color: _user.roleColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: AppTheme.cardDecorationMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Informations',
+                  style:
+                      AppTheme.titleSmall.copyWith(fontSize: 14)),
+              const SizedBox(height: 8),
+              _item('Nom d\'utilisateur', _user.username),
+              _item('Email', _user.email),
+              _item('Prénom', _user.firstName ?? '—'),
+              _item('Nom', _user.lastName ?? '—'),
+              _item('Statut', _user.enabled ? 'Actif' : 'Inactif'),
+            ],
+          ),
+        ),
+        if (widget.isEmbedded) ...[
           const SizedBox(height: 24),
           SizedBox(
-            height: 48,
+            width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _resetPassword,
               icon: const Icon(Icons.lock_reset_outlined),
@@ -239,14 +248,14 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
                 backgroundColor: AppTheme.kWarningAmber.withValues(alpha: 0.15),
                 foregroundColor: AppTheme.kWarningAmber,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 48,
+            width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () async {
                 final confirm = await AppDialogs.showConfirm(
@@ -271,14 +280,15 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
                 foregroundColor:
                     _user.enabled ? AppTheme.kErrorRed : AppTheme.kSuccessGreen,
                 elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
-          const SizedBox(height: 32),
         ],
-      ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 

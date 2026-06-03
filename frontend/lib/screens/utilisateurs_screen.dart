@@ -16,6 +16,8 @@ class UtilisateursScreen extends StatefulWidget {
 }
 
 class _UtilisateursScreenState extends State<UtilisateursScreen> {
+  User? _selectedUser;
+
   @override
   void initState() {
     super.initState();
@@ -23,6 +25,8 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
       context.read<UserProvider>().load();
     });
   }
+
+  bool get _isDesktop => MediaQuery.of(context).size.width > 900;
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +50,32 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
         ),
       ),
       drawer: const AppDrawer(currentRoute: '/utilisateurs'),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const UtilisateurFormScreen())),
-        icon: const Icon(Icons.person_add),
-        label: const Text('Nouvel utilisateur'),
-      ),
+      floatingActionButton: _isDesktop && _selectedUser != null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const UtilisateurFormScreen())),
+              icon: const Icon(Icons.person_add),
+              label: const Text('Nouvel utilisateur'),
+            ),
       body: AppTheme.glassBackground(
-        child: _buildBody(provider),
+        child: _isDesktop && _selectedUser != null
+            ? Row(
+                children: [
+                  SizedBox(
+                    width: 380,
+                    child: _buildBody(provider),
+                  ),
+                  Container(width: 1, color: AppTheme.kBorderLight),
+                  Expanded(
+                    child: UtilisateurDetailScreen(
+                      user: _selectedUser!,
+                      isEmbedded: true,
+                    ),
+                  ),
+                ],
+              )
+            : _buildBody(provider),
       ),
     );
   }
@@ -108,7 +130,14 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.users.length,
-        itemBuilder: (ctx, i) => _UserCard(user: provider.users[i]),
+        itemBuilder: (ctx, i) => _UserCard(
+          user: provider.users[i],
+          isSelected: _selectedUser?.id == provider.users[i].id,
+          onTap: _isDesktop
+              ? () => setState(() => _selectedUser = provider.users[i])
+              : () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => UtilisateurDetailScreen(user: provider.users[i]))),
+        ),
       ),
     );
   }
@@ -116,96 +145,102 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
 
 class _UserCard extends StatelessWidget {
   final User user;
-  const _UserCard({required this.user});
+  final bool isSelected;
+  final VoidCallback onTap;
+  const _UserCard({required this.user, this.isSelected = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => UtilisateurDetailScreen(user: user)),
-      ),
+      onTap: onTap,
       child: AppTheme.withGlass(
         radius: 12,
         blur: 16,
         opacity: 0.7,
         margin: const EdgeInsets.only(bottom: 10),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  color: user.enabled
-                      ? AppTheme.kSuccessGreen
-                      : AppTheme.kTextHint,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
+        child: Container(
+          decoration: isSelected
+              ? BoxDecoration(
+                  border: Border.all(color: user.roleColor, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
+                )
+              : null,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    color: user.enabled
+                        ? AppTheme.kSuccessGreen
+                        : AppTheme.kTextHint,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: user.roleColor.withValues(alpha: 0.2),
-                        child: Text(user.initials,
-                            style: TextStyle(
-                                color: user.roleColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(user.displayName,
-                                style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(Icons.email_outlined,
-                                    size: 12, color: AppTheme.kTextSecondary),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(user.email,
-                                      style: AppTheme.bodySmall
-                                          .copyWith(fontSize: 11),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: user.roleColor.withValues(alpha: 0.2),
+                          child: Text(user.initials,
+                              style: TextStyle(
+                                  color: user.roleColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(user.displayName,
+                                  style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(Icons.email_outlined,
+                                      size: 12, color: AppTheme.kTextSecondary),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(user.email,
+                                        style: AppTheme.bodySmall
+                                            .copyWith(fontSize: 11),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (user.roles.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: user.roleColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ],
-                        ),
-                      ),
-                      if (user.roles.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: user.roleColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(20),
+                            child: Text(
+                              User.roleLabelFor(user.roles.first),
+                              style: TextStyle(
+                                  color: user.roleColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600),
+                            ),
                           ),
-                          child: Text(
-                            User.roleLabelFor(user.roles.first),
-                            style: TextStyle(
-                                color: user.roleColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

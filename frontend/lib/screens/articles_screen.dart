@@ -87,10 +87,7 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppTheme.withGlass(
-      radius: 0,
-      blur: 16,
-      opacity: 0.7,
+    return AppTheme.gradientBar(
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextField(
@@ -135,10 +132,7 @@ class _FilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppTheme.withGlass(
-      radius: 0,
-      blur: 16,
-      opacity: 0.7,
+    return AppTheme.gradientBar(
       child: Container(
         padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
         child: SingleChildScrollView(

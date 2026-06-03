@@ -19,6 +19,7 @@ class VentesScreen extends StatefulWidget {
 class _VentesScreenState extends State<VentesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabCtrl;
+  SalesOrder? _selectedOrder;
 
   @override
   void initState() {
@@ -34,6 +35,8 @@ class _VentesScreenState extends State<VentesScreen>
     _tabCtrl.dispose();
     super.dispose();
   }
+
+  bool get _isDesktop => MediaQuery.of(context).size.width > 900;
 
   @override
   Widget build(BuildContext context) {
@@ -54,33 +57,62 @@ class _VentesScreenState extends State<VentesScreen>
               onPressed: () => context.read<VentesProvider>().load(),
             ),
           ],
-          bottom: TabBar(
-            controller: _tabCtrl,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white60,
-            tabs: const [
-              Tab(text: 'Toutes'),
-              Tab(text: 'En attente'),
-            ],
+          bottom: AppTheme.gradientBar(
+            child: TabBar(
+              controller: _tabCtrl,
+              indicatorColor: AppTheme.kPrimaryRed,
+              labelColor: AppTheme.kPrimaryRed,
+              unselectedLabelColor: AppTheme.kTextSecondary,
+              tabs: const [
+                Tab(text: 'Toutes'),
+                Tab(text: 'En attente'),
+              ],
+            ),
           ),
         ),
       ),
       drawer: const AppDrawer(currentRoute: '/ventes'),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const SalesOrderFormScreen())),
-        icon: const Icon(Icons.add),
-        label: const Text('Nouvelle commande'),
-      ),
+      floatingActionButton: _isDesktop && _selectedOrder != null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const SalesOrderFormScreen())),
+              icon: const Icon(Icons.add),
+              label: const Text('Nouvelle commande'),
+            ),
       body: AppTheme.glassBackground(
-        child: TabBarView(
-          controller: _tabCtrl,
-          children: [
-            _buildAllOrders(provider),
-            _buildPendingOrders(provider),
-          ],
-        ),
+        child: _isDesktop && _selectedOrder != null
+            ? Row(
+                children: [
+                  SizedBox(
+                    width: 380,
+                    child: TabBarView(
+                      controller: _tabCtrl,
+                      children: [
+                        _buildAllOrders(provider),
+                        _buildPendingOrders(provider),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    color: AppTheme.kBorderLight,
+                  ),
+                  Expanded(
+                    child: SalesOrderDetailScreen(
+                      order: _selectedOrder!,
+                      isEmbedded: true,
+                    ),
+                  ),
+                ],
+              )
+            : TabBarView(
+                controller: _tabCtrl,
+                children: [
+                  _buildAllOrders(provider),
+                  _buildPendingOrders(provider),
+                ],
+              ),
       ),
     );
   }
@@ -127,7 +159,14 @@ class _VentesScreenState extends State<VentesScreen>
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.orders.length,
-        itemBuilder: (ctx, i) => _OrderCard(order: provider.orders[i]),
+        itemBuilder: (ctx, i) => _OrderCard(
+          order: provider.orders[i],
+          isSelected: _selectedOrder?.id == provider.orders[i].id,
+          onTap: _isDesktop
+              ? () => setState(() => _selectedOrder = provider.orders[i])
+              : () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => SalesOrderDetailScreen(order: provider.orders[i]))),
+        ),
       ),
     );
   }
@@ -158,7 +197,13 @@ class _VentesScreenState extends State<VentesScreen>
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: pending.length,
-        itemBuilder: (ctx, i) => _PendingOrderCard(order: pending[i]),
+        itemBuilder: (ctx, i) => _PendingOrderCard(
+          order: pending[i],
+          onTap: _isDesktop
+              ? null
+              : () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => SalesOrderDetailScreen(order: pending[i]))),
+        ),
       ),
     );
   }
@@ -166,7 +211,8 @@ class _VentesScreenState extends State<VentesScreen>
 
 class _PendingOrderCard extends StatelessWidget {
   final SalesOrder order;
-  const _PendingOrderCard({required this.order});
+  final VoidCallback? onTap;
+  const _PendingOrderCard({required this.order, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +344,9 @@ class _PendingOrderCard extends StatelessWidget {
 
 class _OrderCard extends StatelessWidget {
   final SalesOrder order;
-  const _OrderCard({required this.order});
+  final bool isSelected;
+  final VoidCallback onTap;
+  const _OrderCard({required this.order, this.isSelected = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -306,96 +354,101 @@ class _OrderCard extends StatelessWidget {
     final color = Color(order.statutColor);
 
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => SalesOrderDetailScreen(order: order)),
-      ),
+      onTap: onTap,
       child: AppTheme.withGlass(
         radius: 12,
         blur: 16,
         opacity: 0.7,
         margin: const EdgeInsets.only(bottom: 10),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
+        child: Container(
+          decoration: isSelected
+              ? BoxDecoration(
+                  border: Border.all(color: color, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
+                )
+              : null,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(order.reference ?? '—',
-                                style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(order.reference ?? '—',
+                                  style: AppTheme.titleSmall.copyWith(fontSize: 15)),
                             ),
-                            child: Text(order.statutLabel,
-                                style: TextStyle(
-                                    color: color,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600)),
-                          ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: color.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(order.statutLabel,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.business_outlined,
+                                size: 14, color: AppTheme.kTextSecondary),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(order.client?.raisonSociale ?? '—',
+                                  style: AppTheme.bodySmall.copyWith(fontSize: 13)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today_outlined,
+                                    size: 13, color: AppTheme.kTextSecondary),
+                                const SizedBox(width: 4),
+                                Text(order.dateCommande,
+                                    style: AppTheme.bodySmall
+                                        .copyWith(color: AppTheme.kTextSecondary)),
+                              ],
+                            ),
+                            Text(fmt.format(order.totalTTC),
+                                style: AppTheme.titleSmall.copyWith(
+                                    color: AppTheme.kSuccessGreen)),
+                          ],
+                        ),
+                        if (order.lignes.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text('${order.lignes.length} ligne(s)',
+                              style: AppTheme.bodySmall
+                                  .copyWith(color: AppTheme.kTextSecondary)),
                         ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.business_outlined,
-                              size: 14, color: AppTheme.kTextSecondary),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(order.client?.raisonSociale ?? '—',
-                                style: AppTheme.bodySmall.copyWith(fontSize: 13)),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_today_outlined,
-                                  size: 13, color: AppTheme.kTextSecondary),
-                              const SizedBox(width: 4),
-                              Text(order.dateCommande,
-                                  style: AppTheme.bodySmall
-                                      .copyWith(color: AppTheme.kTextSecondary)),
-                            ],
-                          ),
-                          Text(fmt.format(order.totalTTC),
-                              style: AppTheme.titleSmall.copyWith(
-                                  color: AppTheme.kSuccessGreen)),
-                        ],
-                      ),
-                      if (order.lignes.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text('${order.lignes.length} ligne(s)',
-                            style: AppTheme.bodySmall
-                                .copyWith(color: AppTheme.kTextSecondary)),
                       ],
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

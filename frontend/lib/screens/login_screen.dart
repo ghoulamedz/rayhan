@@ -46,7 +46,9 @@ class _LoginScreenState extends State<LoginScreen>
     final ok = await auth.login(_usernameCtrl.text, _passwordCtrl.text);
     if (!mounted) return;
     if (ok) {
-      context.go('/dashboard');
+      final redirect =
+          GoRouterState.of(context).uri.queryParameters['redirect'];
+      context.go(redirect ?? '/dashboard');
     }
   }
 

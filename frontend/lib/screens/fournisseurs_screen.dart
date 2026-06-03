@@ -16,6 +16,8 @@ class FournisseursScreen extends StatefulWidget {
 }
 
 class _FournisseursScreenState extends State<FournisseursScreen> {
+  Fournisseur? _selectedFournisseur;
+
   @override
   void initState() {
     super.initState();
@@ -23,6 +25,8 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
       context.read<FournisseursProvider>().load();
     });
   }
+
+  bool get _isDesktop => MediaQuery.of(context).size.width > 900;
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +50,32 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
         ),
       ),
       drawer: const AppDrawer(currentRoute: '/fournisseurs'),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const FournisseurFormScreen())),
-        icon: const Icon(Icons.add),
-        label: const Text('Nouveau fournisseur'),
-      ),
+      floatingActionButton: _isDesktop && _selectedFournisseur != null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const FournisseurFormScreen())),
+              icon: const Icon(Icons.add),
+              label: const Text('Nouveau fournisseur'),
+            ),
       body: AppTheme.glassBackground(
-        child: _buildBody(provider),
+        child: _isDesktop && _selectedFournisseur != null
+            ? Row(
+                children: [
+                  SizedBox(
+                    width: 380,
+                    child: _buildBody(provider),
+                  ),
+                  Container(width: 1, color: AppTheme.kBorderLight),
+                  Expanded(
+                    child: FournisseurDetailScreen(
+                      fournisseur: _selectedFournisseur!,
+                      isEmbedded: true,
+                    ),
+                  ),
+                ],
+              )
+            : _buildBody(provider),
       ),
     );
   }
@@ -108,8 +130,14 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.fournisseurs.length,
-        itemBuilder: (ctx, i) =>
-            _FournisseurCard(fournisseur: provider.fournisseurs[i]),
+        itemBuilder: (ctx, i) => _FournisseurCard(
+          fournisseur: provider.fournisseurs[i],
+          isSelected: _selectedFournisseur?.id == provider.fournisseurs[i].id,
+          onTap: _isDesktop
+              ? () => setState(() => _selectedFournisseur = provider.fournisseurs[i])
+              : () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => FournisseurDetailScreen(fournisseur: provider.fournisseurs[i]))),
+        ),
       ),
     );
   }
@@ -117,83 +145,89 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
 
 class _FournisseurCard extends StatelessWidget {
   final Fournisseur fournisseur;
-  const _FournisseurCard({required this.fournisseur});
+  final bool isSelected;
+  final VoidCallback onTap;
+  const _FournisseurCard({required this.fournisseur, this.isSelected = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => FournisseurDetailScreen(fournisseur: fournisseur)),
-      ),
+      onTap: onTap,
       child: AppTheme.withGlass(
         radius: 12,
         blur: 16,
         opacity: 0.7,
         margin: const EdgeInsets.only(bottom: 10),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  color: fournisseur.actif
-                      ? AppTheme.kSuccessGreen
-                      : AppTheme.kTextHint,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
+        child: Container(
+          decoration: isSelected
+              ? BoxDecoration(
+                  border: Border.all(color: AppTheme.kSuccessGreen, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
+                )
+              : null,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    color: fournisseur.actif
+                        ? AppTheme.kSuccessGreen
+                        : AppTheme.kTextHint,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(fournisseur.raisonSociale,
-                          style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-                      const SizedBox(height: 8),
-                      if (fournisseur.matriculeFiscal != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.badge_outlined,
-                                  size: 14, color: AppTheme.kTextSecondary),
-                              const SizedBox(width: 4),
-                              Text('MF: ${fournisseur.matriculeFiscal}',
-                                  style: AppTheme.bodySmall
-                                      .copyWith(fontSize: 12)),
-                            ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(fournisseur.raisonSociale,
+                            style: AppTheme.titleSmall.copyWith(fontSize: 15)),
+                        const SizedBox(height: 8),
+                        if (fournisseur.matriculeFiscal != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.badge_outlined,
+                                    size: 14, color: AppTheme.kTextSecondary),
+                                const SizedBox(width: 4),
+                                Text('MF: ${fournisseur.matriculeFiscal}',
+                                    style: AppTheme.bodySmall
+                                        .copyWith(fontSize: 12)),
+                              ],
+                            ),
                           ),
-                        ),
-                      Row(
-                        children: [
-                          const Icon(Icons.phone_outlined,
-                              size: 13, color: AppTheme.kTextSecondary),
-                          const SizedBox(width: 4),
-                          Text(fournisseur.telephone ?? '—',
-                              style: AppTheme.bodySmall
-                                  .copyWith(color: AppTheme.kTextSecondary)),
-                          const SizedBox(width: 16),
-                          const Icon(Icons.email_outlined,
-                              size: 13, color: AppTheme.kTextSecondary),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(fournisseur.email ?? '—',
+                        Row(
+                          children: [
+                            const Icon(Icons.phone_outlined,
+                                size: 13, color: AppTheme.kTextSecondary),
+                            const SizedBox(width: 4),
+                            Text(fournisseur.telephone ?? '—',
                                 style: AppTheme.bodySmall
                                     .copyWith(color: AppTheme.kTextSecondary)),
-                          ),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(width: 16),
+                            const Icon(Icons.email_outlined,
+                                size: 13, color: AppTheme.kTextSecondary),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(fournisseur.email ?? '—',
+                                  style: AppTheme.bodySmall
+                                      .copyWith(color: AppTheme.kTextSecondary)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

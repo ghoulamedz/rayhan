@@ -31,7 +31,13 @@ Entreprise cliente, sous-type de Tiers (JOINED inheritance). Porte les infos com
 Utilisateur qui peut se connecter à l'ERP pour accéder à son portail client. Lié en 1:1 à un Client. Le username est l'email du client. Créé via l'écran Clients par PDG/Responsable Ventes.
 
 **ROLE_CLIENT**
-Rôle dans le système (enum ERole). Pour l'instant, aucun accès aux écrans — réservé à un futur portail client. Créé automatiquement par DataInitializer.
+Rôle dans le système (enum ERole). Accède au portail client (catalogue, commander, mes commandes, mon profil). Créé automatiquement par DataInitializer, lié en 1:1 à un Client via l'écran Clients (PDG/Responsable Ventes).
+
+**Catalogue public**
+Page `/catalogue` accessible sans authentification. Affiche les articles de type PF depuis le catalogue (mock en dev, backend avec JWT en prod). Les visiteurs peuvent parcourir, filtrer et voir le détail des produits.
+
+**Commander (portail client)**
+Bouton "Commander" sur chaque fiche produit du catalogue. Si le client est connecté (ROLE_CLIENT), le redirige vers `/catalogue/commander?articleId=X` (formulaire de commande). Sinon, le redirige vers `/login?redirect=...` puis, après authentification, vers le formulaire de commande avec l'article pré-sélectionné.
 
 ## Staff / Employés
 
@@ -40,6 +46,14 @@ Utilisateur interne de l'ERP — PDG, Responsable Ventes, Responsable Achats, Re
 
 **Rôles staff (internes)**
 ROLE_PDG, ROLE_RESPONSABLE_VENTE, ROLE_RESPONSABLE_ACHAT, ROLE_RESPONSABLE_PRODUCTION, ROLE_MAGASINIER. Les rôles ROLE_CLIENT et ROLE_FOURNISSEUR sont des rôles externes (portail), pas gérés depuis cet écran.
+
+## UI / Theming
+
+**glassBackground**
+Enveloppe de section au fond crème chaud (LinearGradient kBackgroundCream → kSecondaryGold 40% alpha → kBackgroundCream). Utilisée pour Products, Modules et Pourquoi sections de la landing page.
+
+**kSectionBg**
+Couleur de surface pour les cartes posées sur glassBackground : Color.lerp(kBackgroundCream, kPrimaryOrange, 0.08).
 
 **Accès par rôle**
 | Rôle | Écrans accessibles |

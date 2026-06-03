@@ -70,10 +70,7 @@ class _ProductionScreenState extends State<ProductionScreen> {
       body: AppTheme.glassBackground(
         child: Column(
           children: [
-            AppTheme.withGlass(
-              radius: 0,
-              blur: 16,
-              opacity: 0.7,
+            AppTheme.gradientBar(
               child: Container(
                 padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                 child: SingleChildScrollView(

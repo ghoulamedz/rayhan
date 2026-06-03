@@ -10,7 +10,8 @@ import '../services/pdf_service.dart';
 
 class StockDetailScreen extends StatefulWidget {
   final Article article;
-  const StockDetailScreen({super.key, required this.article});
+  final bool isEmbedded;
+  const StockDetailScreen({super.key, required this.article, this.isEmbedded = false});
 
   @override
   State<StockDetailScreen> createState() => _StockDetailScreenState();
@@ -31,7 +32,8 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
     final historique = stockProvider.historiqueOf(widget.article.id!);
     final article = widget.article;
     final priceFmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
-
+    final content = _buildContent(context, stockProvider, historique, article, priceFmt);
+    if (widget.isEmbedded) return content;
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundCream,
       appBar: AppBar(
@@ -52,73 +54,112 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: article.enAlerte ? AppTheme.kCtaGradient : AppTheme.kPrimaryGradient,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(article.designation,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 4),
-                Text('${article.type} · ${article.uniteMesure ?? ''}',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _StatCol(label: 'Stock actuel', value: article.stockActuel.toStringAsFixed(2)),
-                    _StatCol(label: 'Seuil minimum', value: article.stockMinimum.toStringAsFixed(2)),
-                    _StatCol(label: 'Prix unitaire', value: priceFmt.format(article.prixUnitaire)),
-                  ],
-                ),
-                if (article.enAlerte) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.warning_amber, color: Colors.white, size: 16),
-                        SizedBox(width: 8),
-                        Text('Stock inférieur au seuil minimum — réapprovisionner',
-                            style: TextStyle(color: Colors.white, fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
+      body: content,
+    );
+  }
+
+  Widget _buildContent(BuildContext context, StockProvider stockProvider, List<StockMovement> historique, Article article, NumberFormat priceFmt) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: article.enAlerte ? AppTheme.kCtaGradient : AppTheme.kPrimaryGradient,
+            borderRadius: BorderRadius.circular(16),
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Historique des mouvements', style: AppTheme.titleSmall.copyWith(fontSize: 14)),
-              if (stockProvider.isLoading)
-                const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+              Text(article.designation,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text('${article.type} · ${article.uniteMesure ?? ''}',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12)),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _StatCol(label: 'Stock actuel', value: article.stockActuel.toStringAsFixed(2)),
+                  _StatCol(label: 'Seuil minimum', value: article.stockMinimum.toStringAsFixed(2)),
+                  _StatCol(label: 'Prix unitaire', value: priceFmt.format(article.prixUnitaire)),
+                ],
+              ),
+              if (article.enAlerte) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.warning_amber, color: Colors.white, size: 16),
+                      SizedBox(width: 8),
+                      Text('Stock inférieur au seuil minimum — réapprovisionner',
+                          style: TextStyle(color: Colors.white, fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
-          const SizedBox(height: 10),
-          if (historique.isEmpty && !stockProvider.isLoading)
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(color: AppTheme.kSurfaceWhite, borderRadius: BorderRadius.circular(12)),
-              child: Center(
-                child: Text('Aucun mouvement enregistré',
-                    style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Historique des mouvements', style: AppTheme.titleSmall.copyWith(fontSize: 14)),
+            if (stockProvider.isLoading)
+              const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (historique.isEmpty && !stockProvider.isLoading)
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(color: AppTheme.kSurfaceWhite, borderRadius: BorderRadius.circular(12)),
+            child: Center(
+              child: Text('Aucun mouvement enregistré',
+                  style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
+            ),
+          ),
+        ...historique.map((m) => _MovementCard(movement: m)),
+        if (widget.isEmbedded) ...[
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _showAdjustDialog(context),
+              icon: const Icon(Icons.tune_outlined, size: 18),
+              label: const Text('Ajustement manuel'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kWarningAmber,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
-          ...historique.map((m) => _MovementCard(movement: m)),
-          const SizedBox(height: 32),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final bytes = await PdfService.generateStockReport(article, historique);
+                PdfService.downloadPdf(bytes, 'STOCK_${article.reference}.pdf');
+              },
+              icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+              label: const Text('Imprimer PDF'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kPrimaryRed,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
         ],
-      ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 

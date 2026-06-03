@@ -52,8 +52,7 @@ class _RapportsScreenState extends State<RapportsScreen>
               title: 'Rapports',
               currentRoute: '/rapports',
             ),
-            Container(
-              color: AppTheme.kSurfaceWhite,
+            AppTheme.gradientBar(
               child: TabBar(
                 controller: _tabController,
                 indicatorColor: AppTheme.kPrimaryRed,

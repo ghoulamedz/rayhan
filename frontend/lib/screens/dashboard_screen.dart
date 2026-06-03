@@ -970,30 +970,99 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildSuggestions(DashboardProvider provider) {
-    if (provider.suggestions.isEmpty && !provider.suggestionsLoading) {
-      return const SizedBox.shrink();
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
-          child: Row(
-            children: [
-              Text('Suggestions', style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-              const Spacer(),
-              if (provider.suggestionsLoading)
-                const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-              if (!provider.suggestionsLoading && provider.suggestions.isNotEmpty)
-                GestureDetector(
-                  onTap: () => _refreshAll(),
-                  child: Text('Actualiser', style: AppTheme.bodySmall.copyWith(color: AppTheme.kPrimaryRed)),
+    return AppTheme.withGlass(
+      radius: 16,
+      blur: 16,
+      opacity: 0.7,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 3,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: AppTheme.kPrimaryRed,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
+                const SizedBox(width: 10),
+                Text('Suggestions IA', style: AppTheme.titleSmall),
+                const Spacer(),
+                if (provider.suggestionsLoading)
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (provider.suggestions.isEmpty && !provider.suggestionsLoading)
+              _buildSuggestionsPrompt()
+            else ...[
+              ...provider.suggestions.map((s) => _suggestionCard(s, provider)),
+              const SizedBox(height: 8),
+              Center(
+                child: TextButton.icon(
+                  onPressed: _refreshAll,
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Actualiser les suggestions'),
+                ),
+              ),
             ],
-          ),
+          ],
         ),
-        ...provider.suggestions.map((s) => _suggestionCard(s, provider)),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionsPrompt() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppTheme.kPrimaryRed.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.auto_awesome_rounded,
+                  color: AppTheme.kPrimaryRed, size: 24),
+            ),
+            const SizedBox(height: 12),
+            Text('Obtenez des suggestions basées sur vos KPIs',
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
+            const SizedBox(height: 4),
+            Text(
+              'Analyse des ventes, achats, production et stock',
+              style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextHint),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _refreshAll,
+              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: const Text('Générer des suggestions'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kPrimaryRed,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
