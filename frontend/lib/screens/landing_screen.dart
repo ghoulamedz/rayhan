@@ -409,49 +409,61 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   Widget _buildPourquoiSection() {
-    return AppTheme.glassBackground(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-        child: Column(
-          children: [
-            Text(AppText.pourquoiTitle,
-                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
-            const SizedBox(height: 8),
-            Text(
-              'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
-              textAlign: TextAlign.center,
-              style:
-                  AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary),
-            ),
-            const SizedBox(height: 40),
-            LayoutBuilder(
-              builder: (ctx, constraints) {
-                return Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    _pourquoiCard(
-                      icon: Icons.verified_rounded,
-                      title: AppText.pourquoiQuality,
-                      desc: AppText.pourquoiQualityDesc,
-                    ),
-                    _pourquoiCard(
-                      icon: Icons.flash_on_rounded,
-                      title: AppText.pourquoiDelivery,
-                      desc: AppText.pourquoiDeliveryDesc,
-                    ),
-                    _pourquoiCard(
-                      icon: Icons.auto_awesome_rounded,
-                      title: AppText.pourquoiExpertise,
-                      desc: AppText.pourquoiExpertiseDesc,
-                    ),
-                  ],
-                );
-              },
-            ),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.kPrimaryRedDark,
+            AppTheme.kPrimaryRed,
+            AppTheme.kPrimaryOrange,
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+      child: Column(
+        children: [
+          Text(AppText.pourquoiTitle,
+              style: AppTheme.headlineLarge
+                  .copyWith(fontSize: 28, color: Colors.white)),
+          const SizedBox(height: 8),
+          Text(
+            'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 40),
+          LayoutBuilder(
+            builder: (ctx, constraints) {
+              return Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                alignment: WrapAlignment.center,
+                children: [
+                  _pourquoiCard(
+                    icon: Icons.verified_rounded,
+                    title: AppText.pourquoiQuality,
+                    desc: AppText.pourquoiQualityDesc,
+                  ),
+                  _pourquoiCard(
+                    icon: Icons.flash_on_rounded,
+                    title: AppText.pourquoiDelivery,
+                    desc: AppText.pourquoiDeliveryDesc,
+                  ),
+                  _pourquoiCard(
+                    icon: Icons.auto_awesome_rounded,
+                    title: AppText.pourquoiExpertise,
+                    desc: AppText.pourquoiExpertiseDesc,
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -465,9 +477,10 @@ class _LandingScreenState extends State<LandingScreen>
       width: 300,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.kSectionBg,
+        color: AppTheme.kPrimaryOrange.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.shadowSm,
+        border:
+            Border.all(color: AppTheme.kPrimaryOrange.withValues(alpha: 0.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,17 +488,24 @@ class _LandingScreenState extends State<LandingScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.kPrimaryOrange.withValues(alpha: 0.1),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppTheme.kPrimaryOrange, size: 28),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
           const SizedBox(height: 16),
-          Text(title, style: AppTheme.titleSmall.copyWith(fontSize: 17)),
+          Text(title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17)),
           const SizedBox(height: 8),
           Text(desc,
-              style:
-                  AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 13,
+                height: 1.5,
+              )),
         ],
       ),
     );

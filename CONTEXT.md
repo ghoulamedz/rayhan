@@ -50,7 +50,7 @@ ROLE_PDG, ROLE_RESPONSABLE_VENTE, ROLE_RESPONSABLE_ACHAT, ROLE_RESPONSABLE_PRODU
 ## UI / Theming
 
 **glassBackground**
-Enveloppe de section au fond crème chaud (LinearGradient kBackgroundCream → kSecondaryGold 40% alpha → kBackgroundCream). Utilisée pour Products, Modules et Pourquoi sections de la landing page.
+Enveloppe de section au fond crème chaud (LinearGradient kBackgroundCream → kSecondaryGold 40% alpha → kBackgroundCream). Utilisée pour Products et Modules sections de la landing page.
 
 **kSectionBg**
 Couleur de surface pour les cartes posées sur glassBackground : Color.lerp(kBackgroundCream, kPrimaryOrange, 0.08).
