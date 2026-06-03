@@ -49,6 +49,10 @@ ROLE_PDG, ROLE_RESPONSABLE_VENTE, ROLE_RESPONSABLE_ACHAT, ROLE_RESPONSABLE_PRODU
 
 ## UI / Theming
 
+**Palette**
+https://colorhunt.co/palette/39b1d1d6fb61f6850cde3e3e
+— #39B1D1 (cyan) → kPrimaryRed, #D6FB61 (lime) → kSecondaryGold, #F6850C (orange) → kPrimaryOrange, #DE3E3E (red) → kPrimaryRedDark / kErrorRed
+
 **glassBackground**
 Enveloppe de section au fond crème chaud (LinearGradient kBackgroundCream → kSecondaryGold 40% alpha → kBackgroundCream). Utilisée pour Products et Modules sections de la landing page.
 

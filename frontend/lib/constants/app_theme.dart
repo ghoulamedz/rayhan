@@ -4,38 +4,38 @@ import 'package:rayhan_erp/constants/custom_page_transition.dart';
 
 abstract final class AppTheme {
   // ── Color Palette ──────────────────────────────────────────────
-  // Palette: https://colorhunt.co/palette/1e104e452e5aff653fffc85c
-  static const Color kPrimaryRed = Color(0xFF1E104E);
-  static const Color kPrimaryOrange = Color(0xFFFF653F);
-  static const Color kPrimaryRedDark = Color(0xFF452E5A);
+  // Palette: https://colorhunt.co/palette/39b1d1d6fb61f6850cde3e3e
+  static const Color kPrimaryRed = Color(0xFF39B1D1);
+  static const Color kPrimaryOrange = Color(0xFFF6850C);
+  static const Color kPrimaryRedDark = Color(0xFFDE3E3E);
 
   // Background / surface
-  static const Color kBackgroundCream = Color(0xFFF5F2FA);
-  static const Color kSecondaryGold = Color(0xFFFFC85C);
-  static const Color kSurfaceGlass = Color(0xBFF5F2FA);
+  static const Color kBackgroundCream = Color(0xFFF0F8FA);
+  static const Color kSecondaryGold = Color(0xFFD6FB61);
+  static const Color kSurfaceGlass = Color(0xBFF0F8FA);
   static const Color kSurfaceWhite = Color(0xFFFFFFFF);
 
   // Text
   static const Color kTextPrimary = Color(0xFF1A1A2E);
-  static const Color kTextSecondary = Color(0xFF6B5E7B);
-  static const Color kTextHint = Color(0xFF9E8FB2);
+  static const Color kTextSecondary = Color(0xFF5A6B7A);
+  static const Color kTextHint = Color(0xFF8A9BA8);
 
   // Input / borders
-  static const Color kInputFill = Color(0xFFEDE8F0);
-  static const Color kBorderLight = Color(0xFFD4CDE0);
+  static const Color kInputFill = Color(0xFFEAF2F5);
+  static const Color kBorderLight = Color(0xFFC8D4DC);
 
   // Status colors
   static const Color kSuccessGreen = Color(0xFF4CAF50);
   static const Color kSuccessGreenLight = Color(0xFFC8E6C9);
   static const Color kWarningAmber = Color(0xFFFFA726);
   static const Color kWarningAmberLight = Color(0xFFFFE0B2);
-  static const Color kErrorRed = Color(0xFFE53935);
-  static const Color kErrorRedLight = Color(0xFFFFCDD2);
+  static const Color kErrorRed = Color(0xFFDE3E3E);
+  static const Color kErrorRedLight = Color(0xFFF5C8C8);
 
   // Neutrals
   static const Color kWhite = Color(0xFFFFFFFF);
   static const Color kBlack = Color(0xFF000000);
-  static const Color kDividerColor = Color(0xFFD4CDE0);
+  static const Color kDividerColor = Color(0xFFC8D4DC);
 
   // ── Glassmorphism helpers (glossy) ─────────────────────────────
   static BoxDecoration glassCard({
