@@ -33,6 +33,9 @@ Utilisateur qui peut se connecter à l'ERP pour accéder à son portail client. 
 **ROLE_CLIENT**
 Rôle dans le système (enum ERole). Accède au portail client (catalogue, commander, mes commandes, mon profil). Créé automatiquement par DataInitializer, lié en 1:1 à un Client via l'écran Clients (PDG/Responsable Ventes).
 
+**ClientScaffold**
+Coque d'écran pour le portail client (ROLE_CLIENT). Utilise un AppBar avec dégradé blanc → orange 4% (identique à BrandAppBar). Navigation par boutons dans l'AppBar (Catalogue, Mes commandes, notifications, profil, déconnexion), pas de drawer.
+
 **Catalogue public**
 Page `/catalogue` accessible sans authentification. Affiche les articles de type PF depuis le catalogue (mock en dev, backend avec JWT en prod). Les visiteurs peuvent parcourir, filtrer et voir le détail des produits.
 

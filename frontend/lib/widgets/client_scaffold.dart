@@ -41,9 +41,28 @@ class _ClientScaffoldState extends State<ClientScaffold> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.kPrimaryRedDark,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.kTextPrimary,
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.kSurfaceWhite,
+                AppTheme.kPrimaryOrange.withValues(alpha: 0.04),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.kBlack.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
         title: Row(
           children: [
             Image.asset(
@@ -55,7 +74,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
             Text(
               'RayhanERP',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
+                    color: AppTheme.kTextPrimary,
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -70,7 +89,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
                 style: TextStyle(
                   color: widget.currentRoute.startsWith('/catalogue')
                       ? Colors.amber
-                      : Colors.white,
+                      : AppTheme.kTextPrimary,
                   fontWeight: widget.currentRoute.startsWith('/catalogue')
                       ? FontWeight.bold
                       : FontWeight.normal,
@@ -84,7 +103,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
                 style: TextStyle(
                   color: widget.currentRoute.startsWith('/mes-commandes')
                       ? Colors.amber
-                      : Colors.white,
+                      : AppTheme.kTextPrimary,
                   fontWeight: widget.currentRoute.startsWith('/mes-commandes')
                       ? FontWeight.bold
                       : FontWeight.normal,
