@@ -17,10 +17,10 @@ public class ReferenceSequence {
     private String type;
 
     @Column(nullable = false)
-    private long lastValue = 0;
+    private long currentValue = 0;
 
-    public ReferenceSequence(String type, long lastValue) {
+    public ReferenceSequence(String type, long currentValue) {
         this.type = type;
-        this.lastValue = lastValue;
+        this.currentValue = currentValue;
     }
 }

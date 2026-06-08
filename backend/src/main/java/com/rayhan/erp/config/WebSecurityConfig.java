@@ -63,6 +63,7 @@ public class WebSecurityConfig {
             "https://rayhan-erp.bolbol.tn",
             "https://api.bolbol.tn",
             "https://*.bolbol.tn",
+            "https://*.github.com",
             "http://localhost:*",
             "http://127.0.0.1:*"
         ));
@@ -87,6 +88,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/test/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
             );
 

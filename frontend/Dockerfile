@@ -4,7 +4,12 @@ WORKDIR /app
 COPY pubspec.yaml pubspec.lock* ./
 RUN flutter pub get
 COPY . .
-RUN flutter build web --release --base-href /
+
+ARG USE_MOCK=false
+ARG API_BASE_URL=http://localhost:8090/api
+RUN flutter build web --release --base-href / \
+    --dart-define=USE_MOCK=$USE_MOCK \
+    --dart-define=API_BASE_URL=$API_BASE_URL
 
 # Étape 2 : Serveur Nginx
 FROM nginx:alpine

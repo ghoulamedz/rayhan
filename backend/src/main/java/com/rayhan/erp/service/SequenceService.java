@@ -17,6 +17,7 @@ public class SequenceService {
     private ReferenceSequenceRepository repository;
 
     @PostConstruct
+    @Transactional
     public void init() {
         List.of("CC", "BL", "BC", "BR", "OF").forEach(type -> {
             if (!repository.existsById(type)) {
@@ -28,8 +29,8 @@ public class SequenceService {
     public synchronized long getNextValue(String type) {
         ReferenceSequence seq = repository.findById(type)
             .orElseGet(() -> repository.save(new ReferenceSequence(type, 0)));
-        long next = seq.getLastValue() + 1;
-        seq.setLastValue(next);
+        long next = seq.getCurrentValue() + 1;
+        seq.setCurrentValue(next);
         repository.save(seq);
         return next;
     }

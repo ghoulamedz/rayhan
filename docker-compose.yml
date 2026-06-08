@@ -1,10 +1,14 @@
 version: '3.8'
 
 # ==========================================
-# Docker Compose — Rayhan ERP
-# 
-# Full stack (default): docker compose up -d --build
-# Frontend only (mock): docker compose -f docker-compose.yml up -d frontend
+# Docker Compose — Rayhan ERP (Default)
+#
+# Full stack, no mock. Builds from local source.
+#
+# Usage:
+#   docker compose up -d --build                      (default / dev)
+#   docker compose -f docker-compose.mock.yml up -d   (mock frontend only)
+#   docker compose -f docs/docker-compose.prod.yml up -d --build  (prod strict)
 # ==========================================
 
 services:
@@ -46,14 +50,18 @@ services:
     networks:
       - rayhan-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "wget", "--spider", "http://localhost:8080/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        USE_MOCK: "false"
+        API_BASE_URL: "http://localhost:8090/api"
     container_name: rayhan-frontend
     restart: unless-stopped
     depends_on:
@@ -68,9 +76,6 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-    # To use mock data: set USE_MOCK=true and run frontend standalone
-    # environment:
-    #   USE_MOCK: "true"
 
 volumes:
   mysql_data:

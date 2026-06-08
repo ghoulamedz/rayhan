@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ReferenceSequenceRepository extends JpaRepository<ReferenceSequence, String> {
 
     @Modifying
-    @Query("UPDATE ReferenceSequence r SET r.lastValue = r.lastValue + 1 WHERE r.type = :type")
+    @Query("UPDATE ReferenceSequence r SET r.currentValue = r.currentValue + 1 WHERE r.type = :type")
     int incrementByType(@Param("type") String type);
 }
