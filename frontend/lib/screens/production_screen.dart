@@ -84,12 +84,12 @@ class _ProductionScreenState extends State<ProductionScreen> {
                           label: Text(f.$2),
                           selected: selected,
                           onSelected: (_) => setState(() => _filterStatut = f.$1),
-                          selectedColor: AppTheme.kPrimaryBurgundyLight,
-                          checkmarkColor: AppTheme.kPrimaryBurgundy,
+                          selectedColor: AppTheme.kSafetyOrange,
+                          checkmarkColor: AppTheme.kDeepIndustrialBlue,
                           labelStyle: TextStyle(
                             fontSize: 12,
                             color: selected
-                                ? AppTheme.kPrimaryBurgundy
+                                ? AppTheme.kDeepIndustrialBlue
                                 : AppTheme.kTextSecondary,
                             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
                           ),
@@ -273,7 +273,7 @@ class _OFCard extends StatelessWidget {
                       _ActionBtn(
                         label: 'Lancer',
                         icon: Icons.play_arrow_rounded,
-                        color: AppTheme.kSecondaryTan,
+                        color: AppTheme.kGrowthGreen,
                         onTap: () => _launch(context, order),
                       ),
                     if (order.peutTerminer)
@@ -306,7 +306,7 @@ class _OFCard extends StatelessWidget {
       message: 'Lancer ${order.reference} ?\n\nLes matières premières seront consommées du stock.',
       confirmLabel: 'Lancer',
       icon: Icons.play_arrow_rounded,
-      accentColor: AppTheme.kSecondaryTan,
+      accentColor: AppTheme.kGrowthGreen,
     ).then((confirmed) {
       if (confirmed == true) {
         context.read<ProductionProvider>().launch(order.id!).then((err) {

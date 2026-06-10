@@ -35,8 +35,8 @@ class BrandAppBar extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.kSurfaceWhite,
-            AppTheme.kPrimaryOrange.withValues(alpha: 0.04),
+            AppTheme.kWhite,
+            AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.04),
           ],
         ),
         boxShadow: [
@@ -136,7 +136,7 @@ class BrandAppBar extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: AppTheme.kPrimaryRed.withValues(alpha: 0.1),
+                color: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Image.asset(

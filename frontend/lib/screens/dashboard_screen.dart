@@ -50,13 +50,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  void _generateSuggestions() {
+    final dash = context.read<DashboardProvider>();
+    context.read<ArticleProvider>().load().then((_) {
+      dash.loadSuggestions(
+        articles: context.read<ArticleProvider>().articles,
+        salesOrders: context.read<VentesProvider>().orders,
+        purchaseOrders: context.read<AchatsProvider>().orders,
+        productionOrders: context.read<ProductionProvider>().orders,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DashboardProvider>();
     final dateFmt = DateFormat('EEEE d MMMM yyyy', 'fr_FR');
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundWarm,
+      backgroundColor: AppTheme.kSurface,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(BrandAppBar.heightFor(context)),
         child: BrandAppBar(
@@ -162,7 +174,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ).format(kpi.ventes.chiffreAffairesMois),
                   subtitle: '+${kpi.ventes.nbCommandesMois} commandes',
                   icon: Icons.trending_up_rounded,
-                  accentColor: AppTheme.kPrimaryBurgundy,
+                  accentColor: AppTheme.kDeepIndustrialBlue,
                 ),
               ),
               SizedBox(
@@ -172,7 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   value: '${kpi.ventes.nbCommandesMois}',
                   subtitle: '${kpi.ventes.commandesEnCours} en cours',
                   icon: Icons.receipt_long_rounded,
-                  accentColor: AppTheme.kSecondaryTan,
+                  accentColor: AppTheme.kGrowthGreen,
                 ),
               ),
               SizedBox(
@@ -182,7 +194,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   value: '${kpi.production.ofEnCours}',
                   subtitle: '${kpi.production.ofPlanifies} planifiés',
                   icon: Icons.precision_manufacturing_rounded,
-                  accentColor: AppTheme.kPrimaryBurgundyLight,
+                  accentColor: AppTheme.kSafetyOrange,
                 ),
               ),
               SizedBox(
@@ -216,7 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ).format(kpi.ventes.chiffreAffairesMois),
                 subtitle: '+${kpi.ventes.nbCommandesMois} commandes',
                 icon: Icons.trending_up_rounded,
-                accentColor: AppTheme.kPrimaryBurgundy,
+                accentColor: AppTheme.kDeepIndustrialBlue,
               ),
             ),
             SizedBox(width: gap),
@@ -226,7 +238,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 value: '${kpi.ventes.nbCommandesMois}',
                 subtitle: '${kpi.ventes.commandesEnCours} en cours',
                 icon: Icons.receipt_long_rounded,
-                accentColor: AppTheme.kSecondaryTan,
+                accentColor: AppTheme.kGrowthGreen,
               ),
             ),
             SizedBox(width: gap),
@@ -236,7 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 value: '${kpi.production.ofEnCours}',
                 subtitle: '${kpi.production.ofPlanifies} planifiés',
                 icon: Icons.precision_manufacturing_rounded,
-                accentColor: AppTheme.kPrimaryBurgundyLight,
+                accentColor: AppTheme.kSafetyOrange,
               ),
             ),
             SizedBox(width: gap),
@@ -376,7 +388,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 3,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryBurgundy,
+                    color: AppTheme.kDeepIndustrialBlue,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -387,12 +399,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryBurgundy.withValues(alpha: 0.1),
+                    color: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text('Annuel',
                       style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.kPrimaryBurgundy)),
+                          color: AppTheme.kDeepIndustrialBlue)),
                 ),
               ],
             ),
@@ -442,7 +454,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       spots: List.generate(
                           mockData.length, (i) => FlSpot(i.toDouble(), mockData[i])),
                       isCurved: true,
-                      color: AppTheme.kPrimaryBurgundy,
+                      color: AppTheme.kDeepIndustrialBlue,
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
@@ -450,14 +462,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         getDotPainter: (spot, percent, barData, index) =>
                             FlDotCirclePainter(
                           radius: 3,
-                          color: AppTheme.kPrimaryBurgundy,
+                          color: AppTheme.kDeepIndustrialBlue,
                           strokeWidth: 2,
                           strokeColor: AppTheme.kWhite,
                         ),
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: AppTheme.kPrimaryBurgundy.withValues(alpha: 0.1),
+                        color: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
                       ),
                     ),
                   ],
@@ -489,7 +501,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 3,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppTheme.kSecondaryTan,
+                    color: AppTheme.kGrowthGreen,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -500,12 +512,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.kSecondaryTan.withValues(alpha: 0.2),
+                    color: AppTheme.kGrowthGreen.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text('7 jours',
                       style: AppTheme.bodySmall
-                          .copyWith(color: AppTheme.kSecondaryTan)),
+                          .copyWith(color: AppTheme.kGrowthGreen)),
                 ),
               ],
             ),
@@ -556,7 +568,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       barRods: [
                         BarChartRodData(
                           toY: mockData[i],
-                          color: AppTheme.kSecondaryTan,
+                          color: AppTheme.kGrowthGreen,
                           width: 20,
                           borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(4)),
@@ -592,7 +604,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 3,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryBurgundyLight,
+                    color: AppTheme.kSafetyOrange,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -603,12 +615,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryBurgundyLight.withValues(alpha: 0.15),
+                    color: AppTheme.kSafetyOrange.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text('${total} OF',
                       style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.kPrimaryBurgundyLight)),
+                          color: AppTheme.kSafetyOrange)),
                 ),
               ],
             ),
@@ -627,7 +639,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         sections: [
                           PieChartSectionData(
                             value: kpi.production.ofEnCours.toDouble(),
-                            color: AppTheme.kPrimaryBurgundy,
+                            color: AppTheme.kDeepIndustrialBlue,
                             radius: 40,
                             title: '',
                           ),
@@ -645,7 +657,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Text('${(pct * 100).toInt()}%',
                             style: AppTheme.headlineSmall
-                                .copyWith(color: AppTheme.kPrimaryBurgundy)),
+                                .copyWith(color: AppTheme.kDeepIndustrialBlue)),
                         Text('En cours',
                             style: AppTheme.bodySmall
                                 .copyWith(color: AppTheme.kTextSecondary)),
@@ -659,7 +671,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _legendDot(AppTheme.kPrimaryBurgundy, 'En cours'),
+                _legendDot(AppTheme.kDeepIndustrialBlue, 'En cours'),
                 const SizedBox(width: 16),
                 _legendDot(AppTheme.kBorderLight, 'Planifiés'),
               ],
@@ -828,7 +840,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon,
-                    size: 16, color: AppTheme.kPrimaryBurgundy),
+                    size: 16, color: AppTheme.kDeepIndustrialBlue),
                 const SizedBox(width: 8),
                 Text(label,
                     style: AppTheme.bodySmall
@@ -985,7 +997,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 3,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryRed,
+                    color: AppTheme.kDeepIndustrialBlue,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1008,7 +1020,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 8),
               Center(
                 child: TextButton.icon(
-                  onPressed: _refreshAll,
+                  onPressed: _generateSuggestions,
                   icon: const Icon(Icons.refresh, size: 16),
                   label: const Text('Actualiser les suggestions'),
                 ),
@@ -1031,11 +1043,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.kPrimaryRed.withValues(alpha: 0.1),
+                color: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.auto_awesome_rounded,
-                  color: AppTheme.kPrimaryRed, size: 24),
+                  color: AppTheme.kDeepIndustrialBlue, size: 24),
             ),
             const SizedBox(height: 12),
             Text('Obtenez des suggestions basées sur vos KPIs',
@@ -1048,11 +1060,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: _refreshAll,
+              onPressed: _generateSuggestions,
               icon: const Icon(Icons.auto_awesome_rounded, size: 18),
               label: const Text('Générer des suggestions'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.kPrimaryRed,
+                backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -1070,7 +1082,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final color = switch (s.type) {
       'warning' => AppTheme.kErrorRed,
       'success' => AppTheme.kSuccessGreen,
-      _ => AppTheme.kPrimaryRed,
+      _ => AppTheme.kDeepIndustrialBlue,
     };
     final icon = switch (s.type) {
       'warning' => Icons.warning_amber_rounded,
@@ -1128,7 +1140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     PopupMenuButton<String>(
                       icon: Icon(Icons.more_vert, color: AppTheme.kTextHint, size: 18),
                       onSelected: (val) {
-                        if (val == 'dismiss') provider.markSuggestionRead(s.id);
+                        if (val == 'dismiss') provider.dismissSuggestion(s.id);
                       },
                       itemBuilder: (_) => [
                         const PopupMenuItem(value: 'dismiss', child: Row(

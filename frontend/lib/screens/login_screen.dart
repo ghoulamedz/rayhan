@@ -60,15 +60,7 @@ class _LoginScreenState extends State<LoginScreen>
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppTheme.kPrimaryRedDark,
-              AppTheme.kPrimaryRed,
-              AppTheme.kPrimaryOrange,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppTheme.kPrimaryGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -81,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Container(
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      color: AppTheme.kSurfaceWhite,
+                      color: AppTheme.kWhite,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -188,13 +180,13 @@ class _LoginScreenState extends State<LoginScreen>
                           onPressed: () => context.push('/forgot-password'),
                           child: Text(AppText.forgotPasswordLink,
                               style: TextStyle(
-                                  color: AppTheme.kPrimaryTeal, fontSize: 12)),
+                                  color: AppTheme.kOnPrimaryContainer, fontSize: 12)),
                         ),
                         TextButton(
                           onPressed: () => context.push('/signup'),
                           child: Text(AppText.signupLink,
                               style: TextStyle(
-                                  color: AppTheme.kPrimaryTeal, fontSize: 12)),
+                                  color: AppTheme.kOnPrimaryContainer, fontSize: 12)),
                         ),
                       ],
                     ),
@@ -226,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen>
           child: Row(
             children: [
               Icon(Icons.people_outline,
-                  size: 16, color: AppTheme.kPrimaryBurgundyLight),
+                  size: 16, color: AppTheme.kOnPrimaryContainer),
               const SizedBox(width: 8),
               Text('Compte de démonstration',
                   style: AppTheme.bodySmall.copyWith(
@@ -251,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen>
         title: Row(
           children: [
             Icon(Icons.people_outline,
-                size: 20, color: AppTheme.kPrimaryBurgundy),
+                size: 20, color: AppTheme.kDeepIndustrialBlue),
             const SizedBox(width: 8),
             Text('Comptes de démonstration',
                 style: AppTheme.titleSmall),
@@ -297,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen>
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Fermer',
-                style: TextStyle(color: AppTheme.kPrimaryBurgundy)),
+                style: TextStyle(color: AppTheme.kDeepIndustrialBlue)),
           ),
         ],
       ),
@@ -307,17 +299,17 @@ class _LoginScreenState extends State<LoginScreen>
   Color _roleColor(String role) {
     switch (role) {
       case 'ROLE_PDG':
-        return AppTheme.kPrimaryBurgundy;
+        return AppTheme.kErrorRed;
       case 'ROLE_RESPONSABLE_VENTE':
-        return AppTheme.kSecondaryTan;
+        return AppTheme.kOnPrimaryContainer;
       case 'ROLE_RESPONSABLE_ACHAT':
-        return AppTheme.kPrimaryBurgundyLight;
+        return AppTheme.kSafetyOrange;
       case 'ROLE_RESPONSABLE_PRODUCTION':
-        return AppTheme.kWarningAmber;
+        return AppTheme.kGrowthGreen;
       case 'ROLE_MAGASINIER':
-        return AppTheme.kSuccessGreen;
+        return AppTheme.kWarningAmber;
       case 'ROLE_CLIENT':
-        return AppTheme.kPrimaryTeal;
+        return AppTheme.kOnPrimaryContainer;
       default:
         return AppTheme.kTextHint;
     }

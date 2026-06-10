@@ -202,7 +202,7 @@ class _ProductCard extends StatelessWidget {
                     priceFmt.format(article.prixUnitaire),
                     style: AppTheme.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.kPrimaryRed,
+                      color: AppTheme.kDeepIndustrialBlue,
                     ),
                   ),
                   const SizedBox(height: 8),

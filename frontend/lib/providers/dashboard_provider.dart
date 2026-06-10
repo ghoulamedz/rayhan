@@ -64,11 +64,8 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  void markSuggestionRead(int id) {
-    final idx = _suggestions.indexWhere((s) => s.id == id);
-    if (idx != -1) {
-      _suggestions[idx] = _suggestions[idx].copyWith(read: true);
-      notifyListeners();
-    }
+  void dismissSuggestion(int id) {
+    _suggestions.removeWhere((s) => s.id == id);
+    notifyListeners();
   }
 }

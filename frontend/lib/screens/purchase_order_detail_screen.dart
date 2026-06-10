@@ -19,7 +19,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
     final content = _buildContent(context, fmt, statusColor);
     if (isEmbedded) return content;
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(order.reference ?? '—'),
         actions: [
@@ -39,8 +39,8 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.inventory_outlined, size: 18),
                 label: const Text('Réceptionner'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.kPrimaryRed,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  backgroundColor: AppTheme.kDeepIndustrialBlue,
+                  foregroundColor: AppTheme.kWhite,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -113,8 +113,8 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.inventory_outlined, size: 18),
                 label: const Text('Réceptionner'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.kPrimaryRed,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  backgroundColor: AppTheme.kDeepIndustrialBlue,
+                  foregroundColor: AppTheme.kWhite,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -130,7 +130,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
               label: const Text('Imprimer PDF'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.kPrimaryRed,
+                backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -150,7 +150,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
       message: 'Réceptionner toutes les lignes de ${order.reference} ?\n\nLe stock sera incrémenté automatiquement.',
       confirmLabel: 'Réceptionner',
       icon: Icons.inventory_outlined,
-      accentColor: AppTheme.kPrimaryRed,
+      accentColor: AppTheme.kDeepIndustrialBlue,
     ).then((confirmed) {
       if (confirmed == true) {
         context.read<AchatsProvider>().receive(order.id!, order.lignes).then((err) {
@@ -193,7 +193,7 @@ class _LigneCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.kSurfaceWhite,
+          color: AppTheme.kWhite,
           borderRadius: BorderRadius.circular(10),
           boxShadow: AppTheme.shadowSm,
         ),
@@ -209,7 +209,7 @@ class _LigneCard extends StatelessWidget {
                 Text('${ligne.quantiteCommandee} ${ligne.article?.uniteMesure ?? ''} × ${fmt.format(ligne.prixUnitaireHT)}',
                     style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
                 Text(fmt.format(ligne.montantTTC ?? ligne.montantTTCCalc),
-                    style: AppTheme.titleSmall.copyWith(color: AppTheme.kPrimaryRed)),
+                    style: AppTheme.titleSmall.copyWith(color: AppTheme.kDeepIndustrialBlue)),
               ],
             ),
             if (ligne.quantiteRecue > 0)

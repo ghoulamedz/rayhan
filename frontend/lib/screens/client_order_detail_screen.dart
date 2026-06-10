@@ -331,7 +331,7 @@ class _LigneCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.kSurfaceWhite,
+          color: AppTheme.kWhite,
           borderRadius: BorderRadius.circular(10),
           boxShadow: AppTheme.shadowSm,
         ),

@@ -481,7 +481,7 @@ class _LigneWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               decoration: BoxDecoration(
-                color: AppTheme.kSurfaceWhite,
+                color: AppTheme.kWhite,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppTheme.kBorderLight),
               ),
@@ -559,7 +559,7 @@ class _LigneWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   decoration: BoxDecoration(
-                    color: AppTheme.kPrimaryRed.withValues(alpha: 0.06),
+                    color: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -573,7 +573,7 @@ class _LigneWidget extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: AppTheme.kPrimaryRed),
+                            color: AppTheme.kDeepIndustrialBlue),
                       ),
                     ],
                   ),
@@ -597,7 +597,7 @@ class _SectionCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceWhite,
+        color: AppTheme.kWhite,
         borderRadius: BorderRadius.circular(12),
         boxShadow: AppTheme.shadowSm,
       ),

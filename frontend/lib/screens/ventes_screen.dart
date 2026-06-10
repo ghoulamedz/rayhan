@@ -60,8 +60,8 @@ class _VentesScreenState extends State<VentesScreen>
           bottom: AppTheme.gradientBar(
             child: TabBar(
               controller: _tabCtrl,
-              indicatorColor: AppTheme.kPrimaryRed,
-              labelColor: AppTheme.kPrimaryRed,
+              indicatorColor: AppTheme.kDeepIndustrialBlue,
+              labelColor: AppTheme.kDeepIndustrialBlue,
               unselectedLabelColor: AppTheme.kTextSecondary,
               tabs: const [
                 Tab(text: 'Toutes'),

@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/constants/app_text.dart';
+import 'package:rayhan_erp/constants/colors.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -15,8 +18,14 @@ class _LandingScreenState extends State<LandingScreen>
   double _scrollOffset = 0;
   late final ScrollController _scrollCtrl;
   late final AnimationController _heroAnimCtrl;
-  late final Animation<double> _heroFade;
-  late final Animation<Offset> _heroSlide;
+  late final Animation<double> _heroTitleFade;
+  late final Animation<Offset> _heroTitleSlide;
+  late final Animation<double> _heroSubtitleFade;
+  late final Animation<Offset> _heroSubtitleSlide;
+  late final Animation<double> _heroBadgesFade;
+  late final Animation<Offset> _heroBadgesSlide;
+  late final Animation<double> _heroDividerFade;
+  late final Animation<Offset> _heroDividerSlide;
 
   @override
   void initState() {
@@ -24,17 +33,44 @@ class _LandingScreenState extends State<LandingScreen>
     _scrollCtrl = ScrollController()..addListener(_onScroll);
     _heroAnimCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 2000),
     )..forward();
-    _heroFade = CurvedAnimation(
+    _heroTitleFade = CurvedAnimation(
         parent: _heroAnimCtrl,
-        curve: const Interval(0, 0.6, curve: Curves.easeOut));
-    _heroSlide = Tween<Offset>(
+        curve: const Interval(0, 0.5, curve: Curves.easeOut));
+    _heroTitleSlide = Tween<Offset>(
       begin: const Offset(0, 0.08),
       end: Offset.zero,
     ).animate(CurvedAnimation(
         parent: _heroAnimCtrl,
-        curve: const Interval(0, 0.6, curve: Curves.easeOut)));
+        curve: const Interval(0, 0.5, curve: Curves.easeOut)));
+    _heroSubtitleFade = CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOut));
+    _heroSubtitleSlide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOut)));
+    _heroBadgesFade = CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.4, 0.8, curve: Curves.easeOut));
+    _heroBadgesSlide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.4, 0.8, curve: Curves.easeOut)));
+    _heroDividerFade = CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.6, 1.0, curve: Curves.easeOut));
+    _heroDividerSlide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+        parent: _heroAnimCtrl,
+        curve: const Interval(0.6, 1.0, curve: Curves.easeOut)));
   }
 
   @override
@@ -56,12 +92,13 @@ class _LandingScreenState extends State<LandingScreen>
           _buildAppBar(),
           SliverToBoxAdapter(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeroSection(),
-                _buildProductsSection(),
-                _buildPourquoiSection(),
-                _buildModulesSection(),
-                _buildFooter(),
+                _withReveal(startOffset: 200, child: _buildProductsSection()),
+                _withReveal(startOffset: 1000, child: _buildPourquoiSection()),
+                _withReveal(startOffset: 1600, child: _buildModulesSection()),
+                _withReveal(startOffset: 2000, child: _buildFooter()),
               ],
             ),
           ),
@@ -70,6 +107,35 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
+  // ── Parallax helper ──────────────────────────────────────────────
+  Widget _withParallax({
+    required Widget child,
+    required double factor,
+    double startOffset = 0,
+  }) {
+    final offset = max(0, _scrollOffset - startOffset) * factor;
+    return Transform.translate(
+      offset: Offset(0, -offset),
+      child: child,
+    );
+  }
+
+  Widget _withReveal({
+    required Widget child,
+    required double startOffset,
+    double distance = 400,
+  }) {
+    final t = ((_scrollOffset - startOffset) / distance).clamp(0.0, 1.0);
+    return Opacity(
+      opacity: t,
+      child: Transform.translate(
+        offset: Offset(0, 20 * (1 - t)),
+        child: child,
+      ),
+    );
+  }
+
+  // ── AppBar ──────────────────────────────────────────────────────
   Widget _buildAppBar() {
     final collapsed = _scrollOffset > 30;
     return SliverAppBar(
@@ -79,22 +145,14 @@ class _LandingScreenState extends State<LandingScreen>
       expandedHeight: 80,
       elevation: collapsed ? 1 : 0,
       backgroundColor: collapsed
-          ? AppTheme.kBackgroundCream.withValues(alpha: 0.85)
+          ? AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.95)
           : Colors.transparent,
       automaticallyImplyLeading: false,
       flexibleSpace: Container(
         decoration: collapsed
             ? null
             : BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.kPrimaryRedDark,
-                    AppTheme.kPrimaryRed,
-                    AppTheme.kPrimaryOrange,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: AppTheme.kPrimaryGradient,
               ),
         child: FlexibleSpaceBar(
           titlePadding:
@@ -107,9 +165,7 @@ class _LandingScreenState extends State<LandingScreen>
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: collapsed
-                          ? AppTheme.kPrimaryRed.withValues(alpha: 0.1)
-                          : Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Image.asset(
@@ -123,9 +179,9 @@ class _LandingScreenState extends State<LandingScreen>
                     'RayhanERP',
                     style: TextStyle(
                       fontFamily: 'Manrope',
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       fontSize: 20,
-                      color: collapsed ? AppTheme.kTextPrimary : Colors.white,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -135,13 +191,10 @@ class _LandingScreenState extends State<LandingScreen>
                 icon: const Icon(Icons.login_rounded, size: 18),
                 label: const Text('Se connecter'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: collapsed
-                      ? AppTheme.kPrimaryRed
-                      : Colors.white.withValues(alpha: 0.2),
-                  foregroundColor:
-                      collapsed ? AppTheme.kSurfaceWhite : Colors.white,
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ],
@@ -151,129 +204,168 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
+  // ── Hero Section ────────────────────────────────────────────────
   Widget _buildHeroSection() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.kPrimaryRedDark,
-            AppTheme.kPrimaryRed,
-            AppTheme.kPrimaryOrange,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 60),
-      child: FadeTransition(
-        opacity: _heroFade,
-        child: SlideTransition(
-          position: _heroSlide,
-          child: _heroTextContent(),
-        ),
-      ),
-    );
-  }
-
-  Widget _heroTextContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      clipBehavior: Clip.hardEdge,
       children: [
-        const SizedBox(height: 20),
-        Text(
-          AppText.heroTitle,
-          style: const TextStyle(
-            fontFamily: 'Manrope',
-            fontSize: 36,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            height: 1.2,
+        Positioned.fill(
+          child: _withParallax(
+            factor: 0.3,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepIndustrialBlue,
+                    AppColors.primary,
+                    AppColors.primaryContainer,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        Text(
-          AppText.heroSubtitle,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withValues(alpha: 0.85),
-            height: 1.6,
+        Positioned.fill(
+          child: _withParallax(
+            factor: 0.3,
+            child: ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: const [Colors.transparent, Colors.white],
+                stops: const [0.4, 0.7],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ).createShader(bounds),
+              blendMode: BlendMode.dstIn,
+              child: Image.asset(
+                'assets/images/factory_bg.png',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.check_circle, color: Colors.white, size: 16),
-                  SizedBox(width: 8),
-                  Text('Certifié ISO 9001',
-                      style: TextStyle(color: Colors.white, fontSize: 13)),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.local_shipping, color: Colors.white, size: 16),
-                  SizedBox(width: 8),
-                  Text('Livraison Express',
-                      style: TextStyle(color: Colors.white, fontSize: 13)),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 32),
-        Row(
-          children: [
-            Container(
-              height: 3,
-              width: 60,
-              decoration: BoxDecoration(
-                color: AppTheme.kSecondaryGold,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Depuis 1992',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 13,
-              ),
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(64, 60, 64, 120),
+          child: _heroTextContent(),
         ),
       ],
     );
   }
 
+  Widget _heroTextContent() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 800),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40),
+          FadeTransition(
+            opacity: _heroTitleFade,
+            child: SlideTransition(
+              position: _heroTitleSlide,
+              child: Text(
+                AppText.heroTitle,
+                style: AppTheme.displayLarge.copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          FadeTransition(
+            opacity: _heroSubtitleFade,
+            child: SlideTransition(
+              position: _heroSubtitleSlide,
+              child: Text(
+                AppText.heroSubtitle,
+                style: AppTheme.bodyLarge.copyWith(
+                  color: Colors.white.withValues(alpha: 0.85),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          FadeTransition(
+            opacity: _heroBadgesFade,
+            child: SlideTransition(
+              position: _heroBadgesSlide,
+              child: Row(
+                children: [
+                  _badge(Icons.check_circle, 'Certifié ISO 9001'),
+                  const SizedBox(width: 16),
+                  _badge(Icons.local_shipping, 'Livraison Express'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          FadeTransition(
+            opacity: _heroDividerFade,
+            child: SlideTransition(
+              position: _heroDividerSlide,
+              child: Row(
+                children: [
+                  Container(
+                    height: 3,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: AppColors.growthGreen,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Depuis 1992',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _badge(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(width: 8),
+          Text(label,
+              style: const TextStyle(
+                  color: Colors.white, fontSize: 14, fontFamily: 'Inter')),
+        ],
+      ),
+    );
+  }
+
+  // ── Products Section ────────────────────────────────────────────
   Widget _buildProductsSection() {
     return AppTheme.glassBackground(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 32),
         child: Column(
           children: [
             Text(AppText.productsTitle,
-                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
-            const SizedBox(height: 8),
+                style: AppTheme.headlineLarge
+                    .copyWith(color: AppTheme.kTextPrimary)),
+            const SizedBox(height: 12),
             Text(AppText.productsSubtitle,
                 textAlign: TextAlign.center,
-                style: AppTheme.bodyMedium
+                style: AppTheme.bodyLarge
                     .copyWith(color: AppTheme.kTextSecondary)),
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
             LayoutBuilder(
               builder: (ctx, constraints) {
                 final crossAxisCount = constraints.maxWidth > 900
@@ -281,43 +373,42 @@ class _LandingScreenState extends State<LandingScreen>
                     : constraints.maxWidth > 600
                         ? 2
                         : 1;
-                final aspect = crossAxisCount == 4 ? 0.85 : 0.9;
                 return GridView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
-                    childAspectRatio: aspect,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                    mainAxisExtent: 460,
+                    crossAxisSpacing: 24,
+                    mainAxisSpacing: 24,
                   ),
                   children: [
                     _productCard(
                       title: AppText.productSacs,
                       desc: AppText.productSacsDesc,
                       icon: Icons.inventory_2_rounded,
-                      color: AppTheme.kPrimaryRed,
+                      accent: AppColors.deepIndustrialBlue,
                       imagePath: 'assets/images/products/product_sacs.jpg',
                     ),
                     _productCard(
                       title: AppText.productFilm,
                       desc: AppText.productFilmDesc,
                       icon: Icons.wrap_text_rounded,
-                      color: AppTheme.kSecondaryGold,
+                      accent: AppColors.growthGreen,
                       imagePath: 'assets/images/products/product_film.jpg',
                     ),
                     _productCard(
                       title: AppText.productSangles,
                       desc: AppText.productSanglesDesc,
                       icon: Icons.link_rounded,
-                      color: AppTheme.kPrimaryOrange,
+                      accent: AppColors.safetyOrange,
                       imagePath: 'assets/images/products/product_sangles.jpg',
                     ),
                     _productCard(
                       title: AppText.productPoubelle,
                       desc: AppText.productPoubelleDesc,
                       icon: Icons.cleaning_services_rounded,
-                      color: AppTheme.kPrimaryRedDark,
+                      accent: AppColors.primaryContainer,
                       imagePath: 'assets/images/products/product_poubelle.jpg',
                     ),
                   ],
@@ -334,21 +425,29 @@ class _LandingScreenState extends State<LandingScreen>
     required String title,
     required String desc,
     required IconData icon,
-    required Color color,
+    required Color accent,
     required String imagePath,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.kSectionBg,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.shadowMd,
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border:
+            Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 160,
+            height: 180,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(imagePath),
@@ -356,51 +455,52 @@ class _LandingScreenState extends State<LandingScreen>
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Icon(icon, color: accent, size: 20),
                       ),
-                      child: Icon(icon, color: color, size: 18),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(title,
-                          style: AppTheme.titleSmall.copyWith(fontSize: 15)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(desc,
-                    style: AppTheme.bodySmall
-                        .copyWith(color: AppTheme.kTextSecondary)),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => context.push('/catalogue'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.kSuccessGreen,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      elevation: 0,
-                    ),
-                    child: const Text('Commander',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(title,
+                            style: AppTheme.titleSmall.copyWith(
+                                fontSize: 16, color: AppTheme.kTextPrimary)),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: Text(desc,
+                        style: AppTheme.bodySmall
+                            .copyWith(color: AppTheme.kTextSecondary)),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => context.push('/catalogue'),
+                      style: AppTheme.primaryButton.copyWith(
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(vertical: 18),
+                        ),
+                      ),
+                      child: const Text('Commander',
+                          style: TextStyle(fontSize: 22)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -408,63 +508,100 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
+  // ── Pourquoi Section ────────────────────────────────────────────
   Widget _buildPourquoiSection() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.kPrimaryRedDark,
-            AppTheme.kPrimaryRed,
-            AppTheme.kPrimaryOrange,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      child: Column(
-        children: [
-          Text(AppText.pourquoiTitle,
-              style: AppTheme.headlineLarge
-                  .copyWith(fontSize: 28, color: Colors.white)),
-          const SizedBox(height: 8),
-          Text(
-            'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 15,
+    return Stack(
+      clipBehavior: Clip.hardEdge,
+      alignment: Alignment.topCenter,
+      children: [
+        Positioned.fill(
+          child: _withParallax(
+            factor: 0.1,
+            startOffset: 1400,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepIndustrialBlue,
+                    AppColors.primary,
+                    AppColors.primaryContainer,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (ctx, constraints) {
-              return Wrap(
-                spacing: 20,
-                runSpacing: 20,
-                alignment: WrapAlignment.center,
-                children: [
-                  _pourquoiCard(
-                    icon: Icons.verified_rounded,
-                    title: AppText.pourquoiQuality,
-                    desc: AppText.pourquoiQualityDesc,
-                  ),
-                  _pourquoiCard(
-                    icon: Icons.flash_on_rounded,
-                    title: AppText.pourquoiDelivery,
-                    desc: AppText.pourquoiDeliveryDesc,
-                  ),
-                  _pourquoiCard(
-                    icon: Icons.auto_awesome_rounded,
-                    title: AppText.pourquoiExpertise,
-                    desc: AppText.pourquoiExpertiseDesc,
-                  ),
+        ),
+        Positioned.fill(
+          child: _withParallax(
+            factor: 0.1,
+            startOffset: 1400,
+            child: ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: const [
+                  Colors.white,
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.white
                 ],
-              );
-            },
+                stops: const [0.0, 0.3, 0.7, 1.0],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ).createShader(bounds),
+              blendMode: BlendMode.dstIn,
+              child: Image.asset(
+                'assets/images/factory_bg.png',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 64),
+          child: Column(
+            children: [
+              Text(AppText.pourquoiTitle,
+                  style: AppTheme.headlineLarge.copyWith(color: Colors.white)),
+              const SizedBox(height: 12),
+              Text(
+                'Découvrez pourquoi les plus grands industriels tunisiens nous font confiance.',
+                textAlign: TextAlign.center,
+                style: AppTheme.bodyLarge.copyWith(
+                  color: Colors.white.withValues(alpha: 0.85),
+                ),
+              ),
+              const SizedBox(height: 48),
+              LayoutBuilder(
+                builder: (ctx, constraints) {
+                  return Wrap(
+                    spacing: 24,
+                    runSpacing: 24,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      _pourquoiCard(
+                        icon: Icons.verified_rounded,
+                        title: AppText.pourquoiQuality,
+                        desc: AppText.pourquoiQualityDesc,
+                      ),
+                      _pourquoiCard(
+                        icon: Icons.flash_on_rounded,
+                        title: AppText.pourquoiDelivery,
+                        desc: AppText.pourquoiDeliveryDesc,
+                      ),
+                      _pourquoiCard(
+                        icon: Icons.auto_awesome_rounded,
+                        title: AppText.pourquoiExpertise,
+                        desc: AppText.pourquoiExpertiseDesc,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -474,13 +611,12 @@ class _LandingScreenState extends State<LandingScreen>
     required String desc,
   }) {
     return Container(
-      width: 300,
-      padding: const EdgeInsets.all(24),
+      width: 320,
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppTheme.kPrimaryOrange.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: AppTheme.kPrimaryOrange.withValues(alpha: 0.25)),
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,86 +624,82 @@ class _LandingScreenState extends State<LandingScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(icon, color: Colors.white, size: 28),
           ),
-          const SizedBox(height: 16),
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17)),
+          const SizedBox(height: 20),
+          Text(title, style: AppTheme.titleLarge.copyWith(color: Colors.white)),
           const SizedBox(height: 8),
           Text(desc,
-              style: TextStyle(
+              style: AppTheme.bodyMedium.copyWith(
                 color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 13,
-                height: 1.5,
               )),
         ],
       ),
     );
   }
 
+  // ── Modules Section ────────────────────────────────────────────
   Widget _buildModulesSection() {
-    return AppTheme.glassBackground(
+    return Container(
+      color: AppColors.surface,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 32),
         child: Column(
           children: [
             Text(AppText.modulesTitle,
-                style: AppTheme.headlineLarge.copyWith(fontSize: 28)),
-            const SizedBox(height: 8),
+                style: AppTheme.headlineLarge
+                    .copyWith(color: AppTheme.kTextPrimary)),
+            const SizedBox(height: 12),
             Text(AppText.modulesSubtitle,
                 textAlign: TextAlign.center,
-                style: AppTheme.bodyMedium
+                style: AppTheme.bodyLarge
                     .copyWith(color: AppTheme.kTextSecondary)),
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
             LayoutBuilder(
               builder: (ctx, constraints) {
-                final isWide = constraints.maxWidth > 700;
                 return Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
+                  spacing: 20,
+                  runSpacing: 20,
                   alignment: WrapAlignment.center,
                   children: [
                     _moduleCard(
                       icon: Icons.dashboard_rounded,
                       title: 'Tableau de bord',
                       desc: 'Indicateurs en temps réel',
-                      color: AppTheme.kPrimaryRed,
+                      accent: AppColors.deepIndustrialBlue,
                     ),
                     _moduleCard(
                       icon: Icons.shopping_cart_rounded,
                       title: 'Gestion des ventes',
                       desc: 'Commandes, factures, clients',
-                      color: AppTheme.kSecondaryGold,
+                      accent: AppColors.growthGreen,
                     ),
                     _moduleCard(
                       icon: Icons.local_shipping_rounded,
                       title: 'Gestion des achats',
                       desc: 'Approvisionnement, fournisseurs',
-                      color: AppTheme.kPrimaryOrange,
+                      accent: AppColors.safetyOrange,
                     ),
                     _moduleCard(
                       icon: Icons.precision_manufacturing_rounded,
                       title: 'Production',
                       desc: 'OF, BOM, suivi atelier',
-                      color: AppTheme.kPrimaryRedDark,
+                      accent: AppColors.primaryContainer,
                     ),
                     _moduleCard(
                       icon: Icons.warehouse_rounded,
                       title: 'Gestion de stock',
                       desc: 'Mouvements, alertes, inventaire',
-                      color: AppTheme.kSuccessGreen,
+                      accent: AppColors.growthGreen,
                     ),
                     _moduleCard(
                       icon: Icons.inventory_2_rounded,
                       title: 'Articles & Produits',
                       desc: 'MP, PSF, PF, nomenclatures',
-                      color: AppTheme.kSecondaryGold,
+                      accent: AppColors.deepIndustrialBlue,
                     ),
                   ],
                 );
@@ -583,15 +715,23 @@ class _LandingScreenState extends State<LandingScreen>
     required IconData icon,
     required String title,
     required String desc,
-    required Color color,
+    required Color accent,
   }) {
     return Container(
-      width: 220,
-      padding: const EdgeInsets.all(20),
+      width: 240,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.kSectionBg,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.shadowSm,
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border:
+            Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,16 +739,16 @@ class _LandingScreenState extends State<LandingScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: accent, size: 24),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Text(title,
               style: AppTheme.titleSmall
-                  .copyWith(fontSize: 15, color: AppTheme.kTextPrimary)),
-          const SizedBox(height: 4),
+                  .copyWith(fontSize: 16, color: AppTheme.kTextPrimary)),
+          const SizedBox(height: 6),
           Text(desc,
               style:
                   AppTheme.bodySmall.copyWith(color: AppTheme.kTextSecondary)),
@@ -617,64 +757,63 @@ class _LandingScreenState extends State<LandingScreen>
     );
   }
 
+  // ── Footer ──────────────────────────────────────────────────────
   Widget _buildFooter() {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF0D0A1A), Color(0xFF1A142E)],
+          colors: [
+            AppColors.deepIndustrialBlue,
+            AppColors.primary,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 32),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(Icons.factory_rounded,
-                    color: Colors.white, size: 24),
+                    color: Colors.white, size: 28),
               ),
-              const SizedBox(width: 10),
-              const Text(
+              const SizedBox(width: 12),
+              Text(
                 'RayhanERP',
-                style: TextStyle(
-                  fontFamily: 'Manrope',
+                style: AppTheme.headlineMedium.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           Text(
             AppText.footerTagline,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 14,
+            style: AppTheme.bodyLarge.copyWith(
+              color: Colors.white.withValues(alpha: 0.75),
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 40),
           Text(
             '© ${DateTime.now().year} ${AppText.footerCopyright}',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4),
-              fontSize: 12,
+            style: AppTheme.bodyMedium.copyWith(
+              color: Colors.white.withValues(alpha: 0.45),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             AppText.footerRights,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.3),
-              fontSize: 11,
+            style: AppTheme.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.35),
             ),
           ),
         ],

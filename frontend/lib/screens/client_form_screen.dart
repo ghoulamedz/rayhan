@@ -102,7 +102,7 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(title: const Text('Nouveau client')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -205,7 +205,7 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
   Widget _sectionHeader(String text) {
     return Text(text,
         style: AppTheme.titleSmall.copyWith(
-            color: AppTheme.kPrimaryRed, fontWeight: FontWeight.w700));
+            color: AppTheme.kDeepIndustrialBlue, fontWeight: FontWeight.w700));
   }
 
   InputDecoration _inputDeco(String label, IconData icon) {

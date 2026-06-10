@@ -50,8 +50,8 @@ class _ClientScaffoldState extends State<ClientScaffold> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppTheme.kSurfaceWhite,
-                AppTheme.kPrimaryOrange.withValues(alpha: 0.04),
+                AppTheme.kWhite,
+                AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.04),
               ],
             ),
             boxShadow: [
@@ -88,7 +88,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
                 'Catalogue',
                 style: TextStyle(
                   color: widget.currentRoute.startsWith('/catalogue')
-                      ? Colors.amber
+                      ? AppTheme.kSafetyOrange
                       : AppTheme.kTextPrimary,
                   fontWeight: widget.currentRoute.startsWith('/catalogue')
                       ? FontWeight.bold
@@ -102,7 +102,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
                 'Mes commandes',
                 style: TextStyle(
                   color: widget.currentRoute.startsWith('/mes-commandes')
-                      ? Colors.amber
+                      ? AppTheme.kSafetyOrange
                       : AppTheme.kTextPrimary,
                   fontWeight: widget.currentRoute.startsWith('/mes-commandes')
                       ? FontWeight.bold
@@ -128,14 +128,14 @@ class _ClientScaffoldState extends State<ClientScaffold> {
                     top: 6,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
+                      decoration: BoxDecoration(
+                        color: AppTheme.kErrorRed,
                         shape: BoxShape.circle,
                       ),
                       child: Text(
                         '${notif.unreadCount}',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppTheme.kWhite,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),

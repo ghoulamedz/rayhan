@@ -109,14 +109,14 @@ class AppDrawer extends StatelessWidget {
       String? role) {
     final selected = currentRoute == route;
     final hasAccess = RoleGuard.hasAccess(role, route);
-    final color = selected ? AppTheme.kPrimaryTeal : AppTheme.kTextPrimary;
+    final color = selected ? AppTheme.kOnPrimaryContainer : AppTheme.kTextPrimary;
     final opacity = hasAccess ? 1.0 : 0.4;
 
     return Opacity(
       opacity: opacity,
       child: ListTile(
         selected: selected,
-        selectedTileColor: AppTheme.kPrimaryTealLight,
+        selectedTileColor: AppTheme.kOnPrimaryContainer.withValues(alpha: 0.15),
         leading: Icon(icon, color: color, size: 22),
         title: Text(label,
             style: TextStyle(

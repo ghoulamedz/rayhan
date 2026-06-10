@@ -308,7 +308,7 @@ class PdfService {
         padding: pw.EdgeInsets.all(8),
         decoration: pw.BoxDecoration(
           color: PdfColor.fromInt(
-              AppTheme.kPrimaryRed.withValues(alpha: 0.06).value),
+              AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.06).value),
           borderRadius: pw.BorderRadius.circular(4),
         ),
         child: pw.Column(

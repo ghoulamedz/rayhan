@@ -197,13 +197,13 @@ class _ClientCard extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.kPrimaryOrange
+                                  color: AppTheme.kSafetyOrange
                                       .withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(client.typeClient!,
                                     style: TextStyle(
-                                        color: AppTheme.kPrimaryOrange,
+                                        color: AppTheme.kSafetyOrange,
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600)),
                               ),

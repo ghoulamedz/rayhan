@@ -26,7 +26,7 @@ class KpiCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppTheme.kSurfaceWhite,
+          color: AppTheme.kWhite,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

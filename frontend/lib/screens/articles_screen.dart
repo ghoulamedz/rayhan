@@ -146,12 +146,12 @@ class _FilterChips extends StatelessWidget {
                   label: Text(f.$2),
                   selected: selected,
                   onSelected: (_) => provider.setFilter(f.$1),
-                  selectedColor: AppTheme.kPrimaryBurgundyLight,
-                  checkmarkColor: AppTheme.kPrimaryBurgundy,
+                  selectedColor: AppTheme.kSafetyOrange,
+                  checkmarkColor: AppTheme.kDeepIndustrialBlue,
                   labelStyle: TextStyle(
                     fontSize: 12,
                     color: selected
-                        ? AppTheme.kPrimaryBurgundy
+                        ? AppTheme.kDeepIndustrialBlue
                         : AppTheme.kTextSecondary,
                     fontWeight:
                         selected ? FontWeight.w600 : FontWeight.normal,
@@ -228,8 +228,8 @@ class _ArticleCard extends StatelessWidget {
   const _ArticleCard({required this.article});
 
   static const typeColors = {
-    'MP': AppTheme.kPrimaryBurgundy,
-    'PSF': AppTheme.kSecondaryTan,
+    'MP': AppTheme.kDeepIndustrialBlue,
+    'PSF': AppTheme.kGrowthGreen,
     'PF': AppTheme.kSuccessGreen,
   };
 
@@ -296,7 +296,7 @@ class _ArticleCard extends StatelessWidget {
                               ),
                               if (article.enAlerte)
                                 const Icon(Icons.warning_amber,
-                                    color: AppTheme.kPrimaryBurgundyLight, size: 16),
+                                    color: AppTheme.kSafetyOrange, size: 16),
                             ],
                           ),
                           const SizedBox(height: 4),

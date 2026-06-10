@@ -12,7 +12,7 @@ class FournisseurDetailScreen extends StatelessWidget {
     final content = _buildContent();
     if (isEmbedded) return content;
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(title: Text(fournisseur.raisonSociale)),
       body: content,
     );
@@ -56,7 +56,7 @@ class FournisseurDetailScreen extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.kSurfaceWhite,
+            color: AppTheme.kWhite,
             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
             boxShadow: AppTheme.shadowSm,
           ),
@@ -106,7 +106,7 @@ class FournisseurDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.edit_outlined, size: 18),
               label: const Text('Modifier'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.kPrimaryRed,
+                backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

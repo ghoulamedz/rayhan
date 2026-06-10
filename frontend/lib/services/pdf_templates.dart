@@ -17,7 +17,7 @@ class PdfBrandedHeader {
               width: 50,
               height: 50,
               decoration: pw.BoxDecoration(
-                color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
+                color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
                 borderRadius: pw.BorderRadius.circular(8),
               ),
               child: pw.Center(
@@ -38,7 +38,7 @@ class PdfBrandedHeader {
                       style: pw.TextStyle(
                         fontSize: 18,
                         fontWeight: pw.FontWeight.bold,
-                        color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
+                        color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
                       )),
                   pw.Text('SUARL Rayhan — Plasturgie',
                       style: pw.TextStyle(fontSize: 9, color: PdfColors.grey)),
@@ -75,7 +75,7 @@ class PdfBrandedHeader {
             pw.Container(
               padding: pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: pw.BoxDecoration(
-                color: PdfColor.fromInt(AppTheme.kPrimaryRed.value),
+                color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
                 borderRadius: pw.BorderRadius.circular(4),
               ),
               child: pw.Text(reference,
@@ -109,7 +109,7 @@ class PdfLineItemTable {
         pw.TableRow(
           decoration: pw.BoxDecoration(
             color: PdfColor.fromInt(
-                AppTheme.kPrimaryRed.withValues(alpha: 0.08).value),
+                AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.08).value),
           ),
           children: columns
               .map((h) => pw.Padding(
@@ -181,7 +181,7 @@ class PdfTotalsBox {
               pw.SizedBox(height: 3),
               _row('Total TTC', totalTTC,
                   bold: true,
-                  color: PdfColor.fromInt(AppTheme.kPrimaryRed.value)),
+                  color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value)),
             ],
           ),
         ),

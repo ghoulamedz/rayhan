@@ -115,7 +115,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundOffWhite,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -223,7 +223,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.kPrimaryTeal,
+                  color: AppTheme.kDeepIndustrialBlue,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -246,7 +246,7 @@ class _PurchaseOrderFormScreenState extends State<PurchaseOrderFormScreen> {
               child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.kPrimaryTeal,
+                  backgroundColor: AppTheme.kDeepIndustrialBlue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -291,7 +291,7 @@ class _LigneWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.kBackgroundOffWhite,
+        color: AppTheme.kSurface,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),

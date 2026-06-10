@@ -31,24 +31,17 @@ flutter:
     - assets/images/
     - assets/images/products/
   fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter.ttf
-        - asset: assets/fonts/InterItalic.ttf
-          style: italic
     - family: Manrope
       fonts:
-        - asset: assets/fonts/Manrope-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/Manrope-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Manrope-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Manrope-Medium.ttf
-          weight: 500
         - asset: assets/fonts/Manrope-SemiBold.ttf
           weight: 600
         - asset: assets/fonts/Manrope-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Manrope-ExtraBold.ttf
-          weight: 800
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+    - family: IBM Plex Sans
+      fonts:
+        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
+          weight: 600

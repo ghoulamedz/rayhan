@@ -93,7 +93,7 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
     final content = _buildContent(context);
     if (widget.isEmbedded) return content;
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(_user.displayName),
         actions: [
@@ -180,7 +180,7 @@ class _UtilisateurDetailScreenState extends State<UtilisateurDetailScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.kSurfaceWhite,
+            color: AppTheme.kWhite,
             borderRadius:
                 const BorderRadius.vertical(bottom: Radius.circular(16)),
             boxShadow: AppTheme.shadowSm,

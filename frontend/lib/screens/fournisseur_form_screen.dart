@@ -85,7 +85,7 @@ class _FournisseurFormScreenState extends State<FournisseurFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
           title: Text(_isEditing ? 'Modifier fournisseur' : 'Nouveau fournisseur')),
       body: SingleChildScrollView(

@@ -228,7 +228,7 @@ class _OrderCard extends StatelessWidget {
                             ),
                             Text(fmt.format(order.totalTTC),
                                 style: AppTheme.titleSmall.copyWith(
-                                    color: AppTheme.kPrimaryBurgundy)),
+                                    color: AppTheme.kDeepIndustrialBlue)),
                           ],
                         ),
                         if (order.lignes.isNotEmpty) ...[

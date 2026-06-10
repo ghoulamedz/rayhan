@@ -19,7 +19,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
     final content = _buildContent(context, fmt, statusColor);
     if (isEmbedded) return content;
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(order.reference ?? '—'),
         actions: [
@@ -40,7 +40,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
                 label: const Text('Livrer'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.kSuccessGreen,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -108,7 +108,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
                 label: const Text('Livrer'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.kSuccessGreen,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -124,7 +124,7 @@ class SalesOrderDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
               label: const Text('Imprimer PDF'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.kPrimaryRed,
+                backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -193,7 +193,7 @@ class _LigneCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.kSurfaceWhite,
+          color: AppTheme.kWhite,
           borderRadius: BorderRadius.circular(10),
           boxShadow: AppTheme.shadowSm,
         ),

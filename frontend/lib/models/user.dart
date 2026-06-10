@@ -63,9 +63,9 @@ class User {
 
   Color get roleColor {
     if (roles.contains('ROLE_PDG')) return AppTheme.kErrorRed;
-    if (roles.contains('ROLE_RESPONSABLE_VENTE')) return AppTheme.kPrimaryTeal;
-    if (roles.contains('ROLE_RESPONSABLE_ACHAT')) return AppTheme.kPrimaryOrange;
-    if (roles.contains('ROLE_RESPONSABLE_PRODUCTION')) return AppTheme.kSecondaryGold;
+    if (roles.contains('ROLE_RESPONSABLE_VENTE')) return AppTheme.kOnPrimaryContainer;
+    if (roles.contains('ROLE_RESPONSABLE_ACHAT')) return AppTheme.kSafetyOrange;
+    if (roles.contains('ROLE_RESPONSABLE_PRODUCTION')) return AppTheme.kGrowthGreen;
     if (roles.contains('ROLE_MAGASINIER')) return AppTheme.kWarningAmber;
     return AppTheme.kTextSecondary;
   }

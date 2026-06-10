@@ -35,7 +35,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
     final content = _buildContent(context, stockProvider, historique, article, priceFmt);
     if (widget.isEmbedded) return content;
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(article.reference),
         actions: [
@@ -116,7 +116,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
         if (historique.isEmpty && !stockProvider.isLoading)
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(color: AppTheme.kSurfaceWhite, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: AppTheme.kWhite, borderRadius: BorderRadius.circular(12)),
             child: Center(
               child: Text('Aucun mouvement enregistré',
                   style: AppTheme.bodyMedium.copyWith(color: AppTheme.kTextSecondary)),
@@ -150,7 +150,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
               icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
               label: const Text('Imprimer PDF'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.kPrimaryRed,
+                backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -248,7 +248,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: type == 'IN' ? AppTheme.kSuccessGreen : AppTheme.kErrorRed,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
@@ -306,7 +306,7 @@ class _MovementCard extends StatelessWidget {
     final color = isIn ? AppTheme.kSuccessGreen : AppTheme.kErrorRed;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(color: AppTheme.kSurfaceWhite, borderRadius: BorderRadius.circular(10), boxShadow: AppTheme.shadowSm),
+      decoration: BoxDecoration(color: AppTheme.kWhite, borderRadius: BorderRadius.circular(10), boxShadow: AppTheme.shadowSm),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(

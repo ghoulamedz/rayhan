@@ -95,7 +95,7 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundOffWhite,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(_isEdit ? "Modifier l'article" : 'Nouvel article'),
       ),

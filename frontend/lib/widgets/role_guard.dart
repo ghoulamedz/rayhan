@@ -50,11 +50,11 @@ class UnauthorizedScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppTheme.kCtaOrangeLight,
+                  color: AppTheme.kWarningAmberLight,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.lock_outline_rounded,
-                    color: AppTheme.kCtaOrange, size: 48),
+                    color: AppTheme.kWarningAmber, size: 48),
               ),
               const SizedBox(height: 24),
               Text('Accès non autorisé',

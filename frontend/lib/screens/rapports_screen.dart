@@ -55,8 +55,8 @@ class _RapportsScreenState extends State<RapportsScreen>
             AppTheme.gradientBar(
               child: TabBar(
                 controller: _tabController,
-                indicatorColor: AppTheme.kPrimaryRed,
-                labelColor: AppTheme.kPrimaryRed,
+                indicatorColor: AppTheme.kDeepIndustrialBlue,
+                labelColor: AppTheme.kDeepIndustrialBlue,
                 unselectedLabelColor: AppTheme.kTextSecondary,
                 tabs: const [
                   Tab(
@@ -127,21 +127,21 @@ class _GeneralReport extends StatelessWidget {
                 'OF en cours',
                 '${dash.kpi?.production.ofEnCours ?? 0}',
                 Icons.precision_manufacturing,
-                AppTheme.kPrimaryOrange)),
+                AppTheme.kSafetyOrange)),
         const SizedBox(width: 8),
         Expanded(
             child: _kpiBox(
                 'Commandes en attente',
                 '${dash.kpi?.ventes.commandesEnCours ?? 0}',
                 Icons.receipt_long,
-                AppTheme.kPrimaryRed)),
+                AppTheme.kDeepIndustrialBlue)),
       ]),
       const SizedBox(height: 24),
       Text('Actions rapides',
           style: AppTheme.titleSmall.copyWith(fontSize: 16)),
       const SizedBox(height: 12),
       _actionCard(context, Icons.picture_as_pdf_outlined,
-          'Exporter le catalogue articles', AppTheme.kPrimaryRed, () async {
+          'Exporter le catalogue articles', AppTheme.kDeepIndustrialBlue, () async {
         final bytes = await PdfService.generateArticleCatalog(
           context.read<ArticleProvider>().articles,
           'TOUS',
@@ -164,7 +164,7 @@ class _VentesReport extends StatelessWidget {
       Row(children: [
         Expanded(
             child: _kpiBox('Commandes', '${provider.orders.length}',
-                Icons.receipt_long, AppTheme.kPrimaryRed)),
+                Icons.receipt_long, AppTheme.kDeepIndustrialBlue)),
         const SizedBox(width: 8),
         Expanded(
             child: _kpiBox('Total TTC', fmt.format(total),
@@ -190,7 +190,7 @@ class _VentesReport extends StatelessWidget {
           )),
       const SizedBox(height: 16),
       _actionCard(context, Icons.picture_as_pdf_outlined,
-          'Exporter les ventes en PDF', AppTheme.kPrimaryRed, () async {
+          'Exporter les ventes en PDF', AppTheme.kDeepIndustrialBlue, () async {
         for (final o in provider.orders.take(5)) {
           final bytes = await PdfService.generateSalesInvoice(o);
           PdfService.downloadPdf(bytes, 'FAC_${o.reference ?? "N/A"}.pdf');
@@ -212,11 +212,11 @@ class _AchatsReport extends StatelessWidget {
       Row(children: [
         Expanded(
             child: _kpiBox('Commandes', '${provider.orders.length}',
-                Icons.receipt_long, AppTheme.kPrimaryOrange)),
+                Icons.receipt_long, AppTheme.kSafetyOrange)),
         const SizedBox(width: 8),
         Expanded(
             child: _kpiBox('Total TTC', fmt.format(total),
-                Icons.account_balance, AppTheme.kPrimaryRed)),
+                Icons.account_balance, AppTheme.kDeepIndustrialBlue)),
       ]),
       const SizedBox(height: 16),
       ...provider.orders.map((o) => AppTheme.withGlass(
@@ -232,13 +232,13 @@ class _AchatsReport extends StatelessWidget {
               trailing: Text(fmt.format(o.totalTTC),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.kPrimaryRed,
+                      color: AppTheme.kDeepIndustrialBlue,
                       fontSize: 13)),
             ),
           )),
       const SizedBox(height: 16),
       _actionCard(context, Icons.picture_as_pdf_outlined,
-          'Exporter les achats en PDF', AppTheme.kPrimaryOrange, () async {
+          'Exporter les achats en PDF', AppTheme.kSafetyOrange, () async {
         for (final o in provider.orders.take(5)) {
           final bytes = await PdfService.generatePurchaseReceipt(o);
           PdfService.downloadPdf(bytes, 'BR_${o.reference ?? "N/A"}.pdf');
@@ -258,7 +258,7 @@ class _StockReport extends StatelessWidget {
       Row(children: [
         Expanded(
             child: _kpiBox('Articles', '${provider.articles.length}',
-                Icons.inventory_2, AppTheme.kPrimaryRed)),
+                Icons.inventory_2, AppTheme.kDeepIndustrialBlue)),
         const SizedBox(width: 8),
         Expanded(
             child: _kpiBox('Alertes', '${alertes.length}', Icons.warning_amber,
@@ -294,7 +294,7 @@ class _StockReport extends StatelessWidget {
       ],
       const SizedBox(height: 16),
       _actionCard(context, Icons.picture_as_pdf_outlined,
-          'Exporter le catalogue articles', AppTheme.kPrimaryRed, () async {
+          'Exporter le catalogue articles', AppTheme.kDeepIndustrialBlue, () async {
         final bytes =
             await PdfService.generateArticleCatalog(provider.articles, 'TOUS');
         PdfService.downloadPdf(bytes, 'CATALOGUE_ARTICLES.pdf');

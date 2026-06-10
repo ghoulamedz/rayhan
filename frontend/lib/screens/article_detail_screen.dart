@@ -16,7 +16,7 @@ class ArticleDetailScreen extends StatelessWidget {
     final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(article.reference),
         actions: [
@@ -118,7 +118,7 @@ class ArticleDetailScreen extends StatelessWidget {
               label: const Text('Supprimer'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.kErrorRed,
-                foregroundColor: AppTheme.kSurfaceWhite,
+                foregroundColor: AppTheme.kWhite,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),

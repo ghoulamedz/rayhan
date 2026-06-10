@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Fonctionnalité à venir'),
-                        backgroundColor: AppTheme.kPrimaryRed,
+                        backgroundColor: AppTheme.kDeepIndustrialBlue,
                       ),
                     );
                   },

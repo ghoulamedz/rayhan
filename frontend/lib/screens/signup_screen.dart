@@ -86,15 +86,7 @@ class _SignupScreenState extends State<SignupScreen>
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppTheme.kPrimaryRedDark,
-              AppTheme.kPrimaryRed,
-              AppTheme.kPrimaryOrange,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppTheme.kPrimaryGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -106,7 +98,7 @@ class _SignupScreenState extends State<SignupScreen>
                   constraints: const BoxConstraints(maxWidth: 480),
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: AppTheme.kSurfaceWhite,
+                    color: AppTheme.kWhite,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -124,11 +116,11 @@ class _SignupScreenState extends State<SignupScreen>
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: AppTheme.kPrimaryTealLight,
+                            color: AppTheme.kOnPrimaryContainer.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.person_add_rounded,
-                              color: AppTheme.kPrimaryTeal, size: 32),
+                              color: AppTheme.kDeepIndustrialBlue, size: 32),
                         ),
                         const SizedBox(height: 20),
                         Text('Créer un compte',
@@ -269,7 +261,7 @@ class _SignupScreenState extends State<SignupScreen>
                               onPressed: () => context.go('/login'),
                               child: Text('Se connecter',
                                   style: TextStyle(
-                                      color: AppTheme.kPrimaryTeal,
+                                      color: AppTheme.kOnPrimaryContainer,
                                       fontWeight: FontWeight.w600)),
                             ),
                           ],

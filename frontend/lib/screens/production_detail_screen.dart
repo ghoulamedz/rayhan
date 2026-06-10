@@ -13,7 +13,7 @@ class ProductionDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = Color(order.statutColor);
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         title: Text(order.reference ?? '—'),
         actions: [
@@ -73,7 +73,7 @@ class ProductionDetailScreen extends StatelessWidget {
               title: 'Lancer la production',
               description: 'Les matières premières seront consommées du stock selon la nomenclature BOM.',
               buttonLabel: "Lancer l'OF",
-              buttonColor: AppTheme.kSecondaryGold,
+              buttonColor: AppTheme.kGrowthGreen,
               icon: Icons.play_arrow_rounded,
               onConfirm: () async {
                 final err = await context.read<ProductionProvider>().launch(order.id!);
@@ -132,7 +132,7 @@ class _ActionCard extends StatelessWidget {
                 label: Text(buttonLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: buttonColor,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -200,7 +200,7 @@ class _CompleteCardState extends State<_CompleteCard> {
                     : const Text("Terminer l'OF", style: TextStyle(fontWeight: FontWeight.w600)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.kSuccessGreen,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),

@@ -128,7 +128,7 @@ class _SalesOrderFormScreenState extends State<SalesOrderFormScreen> {
         NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundOffWhite,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -316,7 +316,7 @@ class _LigneWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.kBackgroundOffWhite,
+        color: AppTheme.kSurface,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
       ),
@@ -458,7 +458,7 @@ class _TotalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = white ? AppTheme.kSurfaceWhite : AppTheme.kTextPrimary;
+    final color = white ? AppTheme.kWhite : AppTheme.kTextPrimary;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(

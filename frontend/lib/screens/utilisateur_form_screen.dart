@@ -130,7 +130,7 @@ class _UtilisateurFormScreenState extends State<UtilisateurFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundCream,
+      backgroundColor: AppTheme.kSurface,
       appBar: AppBar(
           title: Text(
               _isEditing ? 'Modifier utilisateur' : 'Nouvel utilisateur')),
@@ -176,7 +176,7 @@ class _UtilisateurFormScreenState extends State<UtilisateurFormScreen> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? _roleColor(role).withValues(alpha: 0.08)
-                          : AppTheme.kSurfaceWhite,
+                          : AppTheme.kWhite,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
@@ -241,11 +241,11 @@ class _UtilisateurFormScreenState extends State<UtilisateurFormScreen> {
       case 'ROLE_PDG':
         return AppTheme.kErrorRed;
       case 'ROLE_RESPONSABLE_VENTE':
-        return AppTheme.kPrimaryTeal;
+        return AppTheme.kOnPrimaryContainer;
       case 'ROLE_RESPONSABLE_ACHAT':
-        return AppTheme.kPrimaryOrange;
+        return AppTheme.kSafetyOrange;
       case 'ROLE_RESPONSABLE_PRODUCTION':
-        return AppTheme.kSecondaryGold;
+        return AppTheme.kGrowthGreen;
       case 'ROLE_MAGASINIER':
         return AppTheme.kWarningAmber;
       default:

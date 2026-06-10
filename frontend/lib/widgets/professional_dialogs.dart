@@ -10,7 +10,7 @@ class AppDialogs {
     String confirmLabel = 'Confirmer',
     String cancelLabel = 'Annuler',
     IconData icon = Icons.help_outline,
-    Color accentColor = AppTheme.kPrimaryTeal,
+    Color accentColor = AppTheme.kDeepIndustrialBlue,
   }) {
     return _showBlurDialog<bool?>(
       context: context,
@@ -43,7 +43,7 @@ class AppDialogs {
                 onPressed: () => Navigator.pop(ctx, true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -98,7 +98,7 @@ class AppDialogs {
                 onPressed: () => Navigator.pop(ctx, true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.kErrorRed,
-                  foregroundColor: AppTheme.kSurfaceWhite,
+                  foregroundColor: AppTheme.kWhite,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -133,8 +133,8 @@ class AppDialogs {
               bottom: MediaQuery.of(ctx).viewInsets.bottom),
           child: _DialogContent(
             icon: const Icon(Icons.edit_outlined,
-                color: AppTheme.kPrimaryTeal, size: 28),
-            iconBg: AppTheme.kPrimaryTealLight,
+                color: AppTheme.kDeepIndustrialBlue, size: 28),
+            iconBg: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
             title: title,
             actions: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -162,8 +162,8 @@ class AppDialogs {
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, controller.text),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.kPrimaryTeal,
-                    foregroundColor: AppTheme.kSurfaceWhite,
+                    backgroundColor: AppTheme.kDeepIndustrialBlue,
+                    foregroundColor: AppTheme.kWhite,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -199,8 +199,8 @@ class AppDialogs {
           child: ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.kPrimaryTeal,
-              foregroundColor: AppTheme.kSurfaceWhite,
+              backgroundColor: AppTheme.kDeepIndustrialBlue,
+              foregroundColor: AppTheme.kWhite,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -234,7 +234,7 @@ class AppDialogs {
             onPressed: () => Navigator.pop(ctx),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.kErrorRed,
-              foregroundColor: AppTheme.kSurfaceWhite,
+              foregroundColor: AppTheme.kWhite,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -258,8 +258,8 @@ class AppDialogs {
       context: context,
       builder: (ctx) => _DialogContent(
         icon: const Icon(Icons.more_horiz_rounded,
-            color: AppTheme.kPrimaryTeal, size: 28),
-        iconBg: AppTheme.kPrimaryTealLight,
+            color: AppTheme.kDeepIndustrialBlue, size: 28),
+        iconBg: AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.1),
         title: title,
         actions: Column(
           children: items.map((item) => Padding(
@@ -315,7 +315,7 @@ class AppDialogs {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 340),
             decoration: BoxDecoration(
-              color: AppTheme.kSurfaceWhite,
+              color: AppTheme.kWhite,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -404,6 +404,6 @@ class ActionSheetItem<T> {
     required this.value,
     required this.label,
     required this.icon,
-    this.color = AppTheme.kPrimaryTeal,
+    this.color = AppTheme.kDeepIndustrialBlue,
   });
 }

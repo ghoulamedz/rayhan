@@ -165,16 +165,16 @@ class _StockScreenState extends State<StockScreen> {
                   onSelected: (_) => setState(() => _filter = f.$1),
                   selectedColor: f.$1 == 'ALERTE'
                       ? AppTheme.kErrorRedLight
-                      : AppTheme.kPrimaryBurgundyLight,
+                      : AppTheme.kSafetyOrange,
                   checkmarkColor: f.$1 == 'ALERTE'
                       ? AppTheme.kErrorRed
-                      : AppTheme.kPrimaryBurgundy,
+                      : AppTheme.kDeepIndustrialBlue,
                   labelStyle: TextStyle(
                     fontSize: 12,
                     color: selected
                         ? (f.$1 == 'ALERTE'
                             ? AppTheme.kErrorRed
-                            : AppTheme.kPrimaryBurgundy)
+                            : AppTheme.kDeepIndustrialBlue)
                         : AppTheme.kTextSecondary,
                     fontWeight:
                         selected ? FontWeight.w600 : FontWeight.normal,
@@ -250,8 +250,8 @@ class _StockCard extends StatelessWidget {
   const _StockCard({required this.article, this.isSelected = false, required this.onTap});
 
   static const typeColors = {
-    'MP': AppTheme.kPrimaryBurgundy,
-    'PSF': AppTheme.kSecondaryTan,
+    'MP': AppTheme.kDeepIndustrialBlue,
+    'PSF': AppTheme.kGrowthGreen,
     'PF': AppTheme.kSuccessGreen,
   };
 

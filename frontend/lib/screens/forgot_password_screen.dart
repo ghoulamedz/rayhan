@@ -46,11 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppTheme.kPrimaryRedDark, AppTheme.kPrimaryRed, AppTheme.kPrimaryOrange],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppTheme.kPrimaryGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -62,7 +58,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   constraints: const BoxConstraints(maxWidth: 460),
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: AppTheme.kSurfaceWhite,
+                    color: AppTheme.kWhite,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -91,11 +87,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.kSecondaryAmberLight,
+              color: AppTheme.kWarningAmberLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.lock_reset_rounded,
-                color: AppTheme.kSecondaryAmber, size: 32),
+                color: AppTheme.kWarningAmber, size: 32),
           ),
           const SizedBox(height: 20),
           Text('Mot de passe oublié ?',
@@ -140,7 +136,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 onPressed: () => context.go('/login'),
                 child: Text('page de connexion',
                     style: TextStyle(
-                        color: AppTheme.kPrimaryTeal,
+                        color: AppTheme.kOnPrimaryContainer,
                         fontWeight: FontWeight.w600)),
               ),
             ],
