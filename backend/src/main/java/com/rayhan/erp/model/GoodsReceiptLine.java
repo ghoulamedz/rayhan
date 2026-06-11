@@ -1,5 +1,6 @@
 package com.rayhan.erp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class GoodsReceiptLine {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "goods_receipt_id")
+    @JsonBackReference("gr-lignes")
     private GoodsReceipt goodsReceipt;
 
     @ManyToOne(optional = false)

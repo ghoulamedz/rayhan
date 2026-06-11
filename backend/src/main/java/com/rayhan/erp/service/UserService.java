@@ -136,17 +136,17 @@ public class UserService {
         }
         Set<Role> roles = new HashSet<>();
         strRoles.forEach(role -> {
-            ERole eRole = switch (role.toLowerCase()) {
-                case "pdg" -> ERole.ROLE_PDG;
-                case "vente" -> ERole.ROLE_RESPONSABLE_VENTE;
-                case "achat" -> ERole.ROLE_RESPONSABLE_ACHAT;
-                case "production" -> ERole.ROLE_RESPONSABLE_PRODUCTION;
-                case "magasinier" -> ERole.ROLE_MAGASINIER;
-                default -> throw new RuntimeException("Rôle invalide : " + role);
-            };
-            Role found = roleRepository.findByName(eRole)
-                .orElseThrow(() -> new RuntimeException("Rôle introuvable : " + role));
-            roles.add(found);
+            try {
+                ERole eRole = ERole.valueOf(role.toUpperCase());
+                if (!STAFF_ROLES.contains(eRole)) {
+                    throw new RuntimeException("Rôle non autorisé : " + role);
+                }
+                Role found = roleRepository.findByName(eRole)
+                    .orElseThrow(() -> new RuntimeException("Rôle introuvable : " + role));
+                roles.add(found);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Rôle invalide : " + role);
+            }
         });
         return roles;
     }

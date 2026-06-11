@@ -9,6 +9,7 @@ import '../models/production_order.dart';
 import '../models/stock_movement.dart';
 import '../models/user.dart';
 import '../models/notification.dart';
+import '../models/trending_product.dart';
 import '../services/auth_service.dart';
 import '../services/article_service.dart';
 import '../services/dashboard_service.dart';
@@ -85,6 +86,7 @@ class MockAuthService implements AuthService {
 class MockArticleService implements ArticleService {
   List<Article> _articles = [];
   int _nextId = 100;
+  final Map<int, List<BomLine>> _boms = {};
 
   @override
   Future<List<Article>> fetchAll() async {
@@ -112,7 +114,7 @@ class MockArticleService implements ArticleService {
   }
 
   @override
-  Future<Article> create(Article article) async {
+  Future<Article> create(Article article, {List<Map<String, dynamic>>? bomLines}) async {
     await MockData.delay();
     final created = Article(
       id: _nextId++,
@@ -125,11 +127,24 @@ class MockArticleService implements ArticleService {
       stockMinimum: article.stockMinimum,
     );
     _articles.add(created);
+    if (bomLines != null && bomLines.isNotEmpty) {
+      _boms[created.id!] = bomLines.map((b) {
+        final compId = b['composantId'] as int;
+        return BomLine(
+          composant: _articles.cast<Article?>().firstWhere(
+            (a) => a?.id == compId,
+            orElse: () => null,
+          ),
+          quantiteParUnite: (b['quantiteParUnite'] as num).toDouble(),
+          uniteMesure: b['uniteMesure'] as String?,
+        );
+      }).toList();
+    }
     return created;
   }
 
   @override
-  Future<Article> update(int id, Article article) async {
+  Future<Article> update(int id, Article article, {List<Map<String, dynamic>>? bomLines}) async {
     await MockData.delay();
     final idx = _articles.indexWhere((a) => a.id == id);
     if (idx == -1) throw Exception('Article non trouvé');
@@ -144,6 +159,20 @@ class MockArticleService implements ArticleService {
       stockMinimum: article.stockMinimum,
     );
     _articles[idx] = updated;
+    _boms.remove(id);
+    if (bomLines != null && bomLines.isNotEmpty) {
+      _boms[id] = bomLines.map((b) {
+        final compId = b['composantId'] as int;
+        return BomLine(
+          composant: _articles.cast<Article?>().firstWhere(
+            (a) => a?.id == compId,
+            orElse: () => null,
+          ),
+          quantiteParUnite: (b['quantiteParUnite'] as num).toDouble(),
+          uniteMesure: b['uniteMesure'] as String?,
+        );
+      }).toList();
+    }
     return updated;
   }
 
@@ -151,6 +180,13 @@ class MockArticleService implements ArticleService {
   Future<void> delete(int id) async {
     await MockData.delay();
     _articles.removeWhere((a) => a.id == id);
+    _boms.remove(id);
+  }
+
+  @override
+  Future<List<BomLine>> fetchBom(int articleId) async {
+    await MockData.delay();
+    return _boms[articleId] ?? [];
   }
 }
 
@@ -159,6 +195,12 @@ class MockDashboardService implements DashboardService {
   Future<DashboardKpi> fetchKpis() async {
     await MockData.delay();
     return MockData.dashboardKpi;
+  }
+
+  @override
+  Future<List<TrendingProduct>> fetchTrendingProducts() async {
+    await MockData.delay();
+    return MockData.trendingProducts;
   }
 }
 
@@ -349,6 +391,8 @@ class MockSalesOrderService implements SalesOrderService {
         client: Client(id: 0, raisonSociale: clientName),
         dateCommande: '2024-05-${m['date']?.toString().substring(0, 2) ?? '15'}',
         statut: _statusFromLabel(m['statutLabel'] as String),
+        totalHT: m['totalHT'] as double,
+        totalTVA: m['totalTVA'] as double,
         totalTTC: m['totalTTC'] as double,
         lignes: List.generate(m['lignes'] as int, (i) => SalesOrderLine(
           id: i + 1,
@@ -414,6 +458,8 @@ class MockPurchaseOrderService implements PurchaseOrderService {
         fournisseur: Fournisseur(id: 0, raisonSociale: fournisseurName),
         dateCommande: '2024-05-${m['date']?.toString().substring(0, 2) ?? '10'}',
         statut: _statusFromLabel(m['statutLabel'] as String),
+        totalHT: m['totalHT'] as double,
+        totalTVA: m['totalTVA'] as double,
         totalTTC: m['totalTTC'] as double,
         lignes: List.generate(m['lignes'] as int, (i) => PurchaseOrderLine(
           id: i + 1,

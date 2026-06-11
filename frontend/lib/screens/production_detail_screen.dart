@@ -21,7 +21,13 @@ class ProductionDetailScreen extends StatelessWidget {
             icon: const Icon(Icons.picture_as_pdf_outlined),
             tooltip: 'Exporter en PDF',
             onPressed: () async {
-              final bytes = await PdfService.generateProductionReport(order);
+              final provider = context.read<ProductionProvider>();
+              final bytes = await PdfService.generateProductionReport(
+                order,
+                order.produitFini?.id != null
+                    ? await provider.productionService.getBom(order.produitFini!.id!)
+                    : [],
+              );
               PdfService.downloadPdf(bytes, 'OF_${order.reference ?? "N/A"}.pdf');
             },
           ),

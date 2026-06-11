@@ -7,6 +7,7 @@ import '../widgets/brand_app_bar.dart';
 import '../widgets/professional_dialogs.dart';
 import '../constants/app_theme.dart';
 import 'production_detail_screen.dart';
+import 'production_order_form_screen.dart';
 
 class ProductionScreen extends StatefulWidget {
   const ProductionScreen({super.key});
@@ -62,10 +63,10 @@ class _ProductionScreenState extends State<ProductionScreen> {
       ),
       drawer: const AppDrawer(currentRoute: '/production'),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const Placeholder())),
+        onPressed: () => Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const ProductionOrderFormScreen())),
         icon: const Icon(Icons.add),
-        label: const Text('Nouvel OF'),
+        label: const Text('Nouvel Ordre de Fabrication'),
       ),
       body: AppTheme.glassBackground(
         child: Column(

@@ -1,5 +1,6 @@
 package com.rayhan.erp.controller;
 
+import com.rayhan.erp.dto.request.ArticleRequest;
 import com.rayhan.erp.model.Article;
 import com.rayhan.erp.service.ArticleService;
 import jakarta.validation.Valid;
@@ -18,40 +19,40 @@ public class ArticleController {
     private ArticleService articleService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_PDG')")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER')")
     public List<Article> getAllArticles() {
         return articleService.getAllArticles();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_PDG')")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER')")
     public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
         Article article = articleService.getArticleById(id);
         return article != null ? ResponseEntity.ok(article) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/type/{type}")
-    @PreAuthorize("hasRole('ROLE_PDG')")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER')")
     public List<Article> getArticlesByType(@PathVariable Article.TypeArticle type) {
         return articleService.getArticlesByType(type);
     }
 
     @GetMapping("/alertes-stock")
-    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION')")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION', 'ROLE_RESPONSABLE_VENTE', 'ROLE_RESPONSABLE_ACHAT', 'ROLE_MAGASINIER')")
     public List<Article> getArticlesEnAlerte() {
         return articleService.getArticlesEnAlerte();
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_PDG')")
-    public Article createArticle(@Valid @RequestBody Article article) {
-        return articleService.createArticle(article);
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION')")
+    public Article createArticle(@Valid @RequestBody ArticleRequest request) {
+        return articleService.createArticle(request);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_PDG')")
-    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @Valid @RequestBody Article details) {
-        Article updated = articleService.updateArticle(id, details);
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION')")
+    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @Valid @RequestBody ArticleRequest request) {
+        Article updated = articleService.updateArticle(id, request);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 

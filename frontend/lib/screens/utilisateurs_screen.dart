@@ -66,11 +66,28 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
                     width: 380,
                     child: _buildBody(provider),
                   ),
-                  Container(width: 1, color: AppTheme.kBorderLight),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedUser = null),
+                    child: Container(width: 1, color: AppTheme.kBorderLight),
+                  ),
                   Expanded(
-                    child: UtilisateurDetailScreen(
-                      user: _selectedUser!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedUser = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: UtilisateurDetailScreen(
+                            user: _selectedUser!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -134,7 +151,7 @@ class _UtilisateursScreenState extends State<UtilisateursScreen> {
           user: provider.users[i],
           isSelected: _selectedUser?.id == provider.users[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedUser = provider.users[i])
+              ? () => setState(() => _selectedUser = _selectedUser?.id == provider.users[i].id ? null : provider.users[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => UtilisateurDetailScreen(user: provider.users[i]))),
         ),

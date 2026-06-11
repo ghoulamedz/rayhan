@@ -1,5 +1,6 @@
 package com.rayhan.erp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,6 +51,7 @@ public class PurchaseOrder {
     private String notes;
 
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("po-lignes")
     private List<PurchaseOrderLine> lignes = new ArrayList<>();
 
     @ManyToOne

@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'dart:html' as html;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../models/purchase_order.dart';
@@ -13,7 +15,12 @@ import '../constants/app_theme.dart';
 class PdfService {
   PdfService._();
 
-  static Future<void> init() async {}
+  static Uint8List? _logoBytes;
+
+  static Future<void> init() async {
+    final data = await rootBundle.load('assets/images/rayhan_icon.png');
+    _logoBytes = data.buffer.asUint8List();
+  }
 
   static Future<Uint8List> generatePurchaseReceipt(PurchaseOrder order) async {
     final doc = pw.Document();
@@ -21,11 +28,13 @@ class PdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Bon de Réception',
             reference: 'BR-${order.reference ?? "N/A"}',
             subtitle: 'Date: ${order.dateCommande}',
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           _infoBlock('Fournisseur', [
@@ -51,8 +60,6 @@ class PdfService {
             totalTVA: order.totalTVA,
             totalTTC: order.totalTTC,
           ),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -65,11 +72,13 @@ class PdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Facture',
             reference: 'FAC-${order.reference ?? "N/A"}',
             subtitle: 'Date: ${order.dateCommande}',
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           _infoBlock('Client', [
@@ -95,8 +104,6 @@ class PdfService {
             totalTVA: order.totalTVA,
             totalTTC: order.totalTTC,
           ),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -110,11 +117,13 @@ class PdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Fiche de Stock',
             reference: article.reference,
             subtitle: article.designation,
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           pw.Row(
@@ -140,8 +149,6 @@ class PdfService {
               m.motif ?? '—',
             ])).toList(),
           ),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -149,20 +156,35 @@ class PdfService {
   }
 
   static Future<Uint8List> generateProductionReport(
-      ProductionOrder order) async {
+      ProductionOrder order,
+      List<BomLine> bomLines) async {
     final pct = order.quantitePlanifiee > 0
         ? (order.quantiteRealisee / order.quantitePlanifiee * 100).toInt()
         : 0;
+    final dateFmt = DateFormat('dd/MM/yyyy');
+    final dateTimeFmt = DateFormat('dd/MM/yyyy HH:mm');
+
+    String? tryFormat(String? raw, DateFormat fmt) {
+      if (raw == null) return null;
+      try {
+        return fmt.format(DateTime.parse(raw));
+      } catch (_) {
+        return raw;
+      }
+    }
+
     final doc = pw.Document();
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Ordre de Fabrication',
             reference: order.reference ?? 'N/A',
-            subtitle: 'Statut: ${order.statut}',
+            subtitle: 'Statut: ${order.statutLabel}',
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           pw.Row(
@@ -175,14 +197,36 @@ class PdfService {
             ],
           ),
           pw.SizedBox(height: 16),
+          _infoBlock('Produit', [
+            'Désignation: ${order.produitFini?.designation ?? '—'}',
+            'Référence: ${order.produitFini?.reference ?? '—'}',
+          ]),
+          pw.SizedBox(height: 16),
+          if (bomLines.isNotEmpty) ...[
+            pw.Text('Composition (Nomenclature)',
+                style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 8),
+            PdfLineItemTable.build(
+              columns: ['Réf', 'Désignation', 'Qté/U', 'Qté totale', 'Unité'],
+              columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
+              items: bomLines.map((l) => PdfLineItem([
+                l.composant?.reference ?? '',
+                l.composant?.designation ?? '',
+                l.quantiteParUnite.toStringAsFixed(3),
+                (l.quantiteParUnite * order.quantitePlanifiee).toStringAsFixed(3),
+                l.composant?.uniteMesure ?? '',
+              ])).toList(),
+            ),
+            pw.SizedBox(height: 16),
+          ],
           _infoBlock('Informations', [
-            'Date planifiée: ${order.datePlanifiee}',
-            if (order.dateLancement != null) 'Date lancement: ${order.dateLancement}',
-            if (order.dateTerminaison != null) 'Date fin: ${order.dateTerminaison}',
+            'Date planifiée: ${tryFormat(order.datePlanifiee, dateFmt) ?? order.datePlanifiee}',
+            if (order.dateLancement != null)
+              'Date lancement: ${tryFormat(order.dateLancement, dateTimeFmt) ?? order.dateLancement}',
+            if (order.dateTerminaison != null)
+              'Date fin: ${tryFormat(order.dateTerminaison, dateTimeFmt) ?? order.dateTerminaison}',
             if (order.notes != null) 'Notes: ${order.notes}',
           ]),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -196,10 +240,12 @@ class PdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Catalogue Articles',
             reference: type == 'TOUS' ? 'TOUS' : type,
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           PdfLineItemTable.build(
@@ -213,8 +259,6 @@ class PdfService {
               'TND ${a.prixUnitaire.toStringAsFixed(3)}',
             ])).toList(),
           ),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -227,11 +271,13 @@ class PdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(24),
+        footer: (ctx) => PdfFooter.build(pageNumber: ctx.pageNumber),
         build: (ctx) => [
           PdfBrandedHeader.build(
             title: 'Devis',
             reference: 'DEV-001',
             subtitle: 'Date: ${order.dateCommande}',
+            logoBytes: _logoBytes,
           ),
           pw.SizedBox(height: 16),
           if (order.client != null)
@@ -258,8 +304,6 @@ class PdfService {
             totalTVA: order.totalTVA,
             totalTTC: order.totalTTC,
           ),
-          pw.SizedBox(height: 24),
-          PdfFooter.build(),
         ],
       ),
     );
@@ -269,7 +313,7 @@ class PdfService {
   static void downloadPdf(Uint8List bytes, String filename) {
     final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
+    html.AnchorElement(href: url)
       ..setAttribute('download', filename)
       ..click();
     html.Url.revokeObjectUrl(url);
@@ -315,9 +359,9 @@ class PdfService {
           children: [
             pw.Text(value,
                 style: pw.TextStyle(
-                    fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
             pw.Text(label,
-                style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
+                style: pw.TextStyle(fontSize: 8, color: PdfColors.white)),
           ],
         ),
       ),

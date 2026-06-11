@@ -84,6 +84,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.go('/'),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              color: AppTheme.kTextSecondary,
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(

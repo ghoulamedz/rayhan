@@ -39,11 +39,19 @@ class _ClientScaffoldState extends State<ClientScaffold> {
     final notif = Provider.of<NotificationProvider>(context);
     final role = auth.role;
 
+    final canPop = ModalRoute.of(context)?.canPop ?? false;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: AppTheme.kTextPrimary,
         elevation: 0,
+        leading: canPop
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.pop(),
+              )
+            : null,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -51,7 +59,7 @@ class _ClientScaffoldState extends State<ClientScaffold> {
               end: Alignment.bottomRight,
               colors: [
                 AppTheme.kWhite,
-                AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.04),
+                AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.15),
               ],
             ),
             boxShadow: [

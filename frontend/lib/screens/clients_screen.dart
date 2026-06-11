@@ -66,11 +66,28 @@ class _ClientsScreenState extends State<ClientsScreen> {
                     width: 380,
                     child: _buildBody(provider),
                   ),
-                  Container(width: 1, color: AppTheme.kBorderLight),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedClient = null),
+                    child: Container(width: 1, color: AppTheme.kBorderLight),
+                  ),
                   Expanded(
-                    child: ClientDetailScreen(
-                      client: _selectedClient!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedClient = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: ClientDetailScreen(
+                            client: _selectedClient!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -134,7 +151,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
           client: provider.clients[i],
           isSelected: _selectedClient?.id == provider.clients[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedClient = provider.clients[i])
+              ? () => setState(() => _selectedClient = _selectedClient?.id == provider.clients[i].id ? null : provider.clients[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => ClientDetailScreen(client: provider.clients[i]))),
         ),

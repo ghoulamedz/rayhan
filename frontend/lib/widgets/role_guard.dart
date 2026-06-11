@@ -4,7 +4,7 @@ import '../constants/app_theme.dart';
 class RoleGuard {
   static const Map<String, List<String>> routeRoles = {
     '/dashboard': ['ROLE_PDG'],
-    '/articles': ['ROLE_PDG'],
+    '/articles': ['ROLE_PDG', 'ROLE_RESPONSABLE_PRODUCTION'],
     '/ventes': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/clients': ['ROLE_PDG', 'ROLE_RESPONSABLE_VENTE'],
     '/achats': ['ROLE_PDG', 'ROLE_RESPONSABLE_ACHAT'],

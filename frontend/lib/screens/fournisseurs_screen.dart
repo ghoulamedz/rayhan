@@ -66,11 +66,28 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
                     width: 380,
                     child: _buildBody(provider),
                   ),
-                  Container(width: 1, color: AppTheme.kBorderLight),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedFournisseur = null),
+                    child: Container(width: 1, color: AppTheme.kBorderLight),
+                  ),
                   Expanded(
-                    child: FournisseurDetailScreen(
-                      fournisseur: _selectedFournisseur!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedFournisseur = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: FournisseurDetailScreen(
+                            fournisseur: _selectedFournisseur!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -134,7 +151,7 @@ class _FournisseursScreenState extends State<FournisseursScreen> {
           fournisseur: provider.fournisseurs[i],
           isSelected: _selectedFournisseur?.id == provider.fournisseurs[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedFournisseur = provider.fournisseurs[i])
+              ? () => setState(() => _selectedFournisseur = _selectedFournisseur?.id == provider.fournisseurs[i].id ? null : provider.fournisseurs[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => FournisseurDetailScreen(fournisseur: provider.fournisseurs[i]))),
         ),

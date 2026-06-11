@@ -92,11 +92,28 @@ class _StockScreenState extends State<StockScreen> {
                     width: 380,
                     child: _buildListPanel(provider, articles),
                   ),
-                  Container(width: 1, color: AppTheme.kBorderLight),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedArticle = null),
+                    child: Container(width: 1, color: AppTheme.kBorderLight),
+                  ),
                   Expanded(
-                    child: StockDetailScreen(
-                      article: _selectedArticle!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedArticle = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: StockDetailScreen(
+                            article: _selectedArticle!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -234,7 +251,7 @@ class _StockScreenState extends State<StockScreen> {
           article: articles[i],
           isSelected: _selectedArticle?.id == articles[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedArticle = articles[i])
+              ? () => setState(() => _selectedArticle = _selectedArticle?.id == articles[i].id ? null : articles[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => StockDetailScreen(article: articles[i]))),
         ),

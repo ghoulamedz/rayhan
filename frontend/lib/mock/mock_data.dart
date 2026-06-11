@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/dashboard_kpi.dart';
+import '../models/trending_product.dart';
 import 'mock_config.dart';
 
 class MockData {
@@ -185,6 +186,8 @@ class MockData {
           'statutLabel': 'En cours',
           'statutColor': 0xFFF59E0B,
           'date': '15/05/2024',
+          'totalHT': 38319.328,
+          'totalTVA': 7280.672,
           'totalTTC': 45600.0,
           'lignes': 4,
         },
@@ -194,6 +197,8 @@ class MockData {
           'statutLabel': 'Livrée',
           'statutColor': 0xFF10B981,
           'date': '12/05/2024',
+          'totalHT': 23781.513,
+          'totalTVA': 4518.487,
           'totalTTC': 28300.0,
           'lignes': 3,
         },
@@ -203,6 +208,8 @@ class MockData {
           'statutLabel': 'En attente',
           'statutColor': 0xFFF59E0B,
           'date': '10/05/2024',
+          'totalHT': 104621.849,
+          'totalTVA': 19878.151,
           'totalTTC': 124500.0,
           'lignes': 6,
         },
@@ -212,6 +219,8 @@ class MockData {
           'statutLabel': 'En cours',
           'statutColor': 0xFFF59E0B,
           'date': '08/05/2024',
+          'totalHT': 15882.353,
+          'totalTVA': 3017.647,
           'totalTTC': 18900.0,
           'lignes': 2,
         },
@@ -224,6 +233,8 @@ class MockData {
           'statutLabel': 'Reçue',
           'statutColor': 0xFF10B981,
           'date': '14/05/2024',
+          'totalHT': 74957.983,
+          'totalTVA': 14242.017,
           'totalTTC': 89200.0,
           'lignes': 5,
         },
@@ -233,6 +244,8 @@ class MockData {
           'statutLabel': 'En cours',
           'statutColor': 0xFFF59E0B,
           'date': '11/05/2024',
+          'totalHT': 28991.597,
+          'totalTVA': 5508.403,
           'totalTTC': 34500.0,
           'lignes': 3,
         },
@@ -242,6 +255,8 @@ class MockData {
           'statutLabel': 'En attente',
           'statutColor': 0xFFEF4444,
           'date': '09/05/2024',
+          'totalHT': 131092.437,
+          'totalTVA': 24907.563,
           'totalTTC': 156000.0,
           'lignes': 8,
         },
@@ -336,4 +351,42 @@ class MockData {
           'color': 0xFF452E5A,
         },
       ];
+
+  static List<TrendingProduct> get trendingProducts => [
+    TrendingProduct(
+      title: 'Sacs poubelles biodégradables en amidon de maïs',
+      description: 'Demande croissante pour les sacs compostables certifiés EN 13432. Les grandes surfaces multiplient les références.',
+      imageUrl: 'https://images.unsplash.com/photo-1605600659873-2ef7cf0b7e5b?w=200',
+      linkUrl: 'https://www.google.com/search?q=sacs+poubelles+biodégradables+amidon+maïs',
+      source: 'Google Trends',
+    ),
+    TrendingProduct(
+      title: 'Films agricoles photosélectifs',
+      description: 'Innovation dans les films de paillage agricole qui filtrent des longueurs d\'onde spécifiques pour améliorer les rendements.',
+      imageUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200',
+      linkUrl: 'https://www.google.com/search?q=films+agricoles+photosélectifs',
+      source: 'Industry Reports',
+    ),
+    TrendingProduct(
+      title: 'Sacs réutilisables en PP tissé',
+      description: 'Les interdictions des sacs plastique à usage unique boostent la demande de sacs réutilisables en polypropylène tissé.',
+      imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200',
+      linkUrl: 'https://www.google.com/search?q=sacs+réutilisables+PP+tissé',
+      source: 'Market Analysis',
+    ),
+    TrendingProduct(
+      title: 'Emballages souples mono-matériaux',
+      description: 'Tendance vers les films PE/PP mono-matériaux pour faciliter le recyclage, poussée par la réglementation PPWR européenne.',
+      imageUrl: 'https://images.unsplash.com/photo-1605600659873-2ef7cf0b7e5b?w=200',
+      linkUrl: 'https://www.google.com/search?q=emballages+souples+mono-matériaux+recyclage',
+      source: 'Plastics Today',
+    ),
+    TrendingProduct(
+      title: 'Sacs à déchets alimentaires en PLA',
+      description: 'Avec le tri à la source des biodéchets obligatoire depuis 2024, les sacs en PLA pour déchets alimentaires explosent.',
+      imageUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200',
+      linkUrl: 'https://www.google.com/search?q=sacs+déchets+alimentaires+PLA',
+      source: 'Packaging Europe',
+    ),
+  ];
 }

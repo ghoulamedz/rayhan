@@ -34,7 +34,8 @@ class VentesProvider extends ChangeNotifier {
       ]);
       _orders = results[0] as List<SalesOrder>;
       _clients = results[1] as List<Client>;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('VentesProvider.load: $e');
       _error = 'Impossible de charger les commandes.';
     } finally {
       _isLoading = false;

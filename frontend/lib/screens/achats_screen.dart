@@ -67,11 +67,28 @@ class _AchatsScreenState extends State<AchatsScreen> {
                     width: 380,
                     child: _buildBody(provider),
                   ),
-                  Container(width: 1, color: AppTheme.kBorderLight),
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedOrder = null),
+                    child: Container(width: 1, color: AppTheme.kBorderLight),
+                  ),
                   Expanded(
-                    child: PurchaseOrderDetailScreen(
-                      order: _selectedOrder!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedOrder = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: PurchaseOrderDetailScreen(
+                            order: _selectedOrder!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -127,7 +144,7 @@ class _AchatsScreenState extends State<AchatsScreen> {
           order: provider.orders[i],
           isSelected: _selectedOrder?.id == provider.orders[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedOrder = provider.orders[i])
+              ? () => setState(() => _selectedOrder = _selectedOrder?.id == provider.orders[i].id ? null : provider.orders[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => PurchaseOrderDetailScreen(order: provider.orders[i]))),
         ),

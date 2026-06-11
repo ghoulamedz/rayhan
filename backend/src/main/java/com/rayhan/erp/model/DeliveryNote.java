@@ -1,5 +1,6 @@
 package com.rayhan.erp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,7 @@ public class DeliveryNote {
     private StatutLivraison statut = StatutLivraison.LIVRE;
 
     @OneToMany(mappedBy = "deliveryNote", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("dn-lignes")
     private List<DeliveryNoteLine> lignes = new ArrayList<>();
 
     @ManyToOne

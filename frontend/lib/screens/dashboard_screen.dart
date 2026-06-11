@@ -1,3 +1,4 @@
+import 'dart:html' as html;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import '../providers/achats_provider.dart';
 import '../providers/production_provider.dart';
 import '../models/dashboard_kpi.dart';
 import '../models/suggestion.dart';
+import '../models/trending_product.dart';
 import '../constants/app_theme.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/brand_app_bar.dart';
@@ -144,6 +146,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildStockAlert(kpi),
             const SizedBox(height: 20),
             _buildSuggestions(provider),
+            const SizedBox(height: 20),
+            _buildTrendingProducts(provider),
             const SizedBox(height: 32),
           ],
         ),
@@ -1022,7 +1026,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: TextButton.icon(
                   onPressed: _generateSuggestions,
                   icon: const Icon(Icons.refresh, size: 16),
-                  label: const Text('Actualiser les suggestions'),
+                  label: const Text('Actualiser'),
                 ),
               ),
             ],
@@ -1062,7 +1066,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ElevatedButton.icon(
               onPressed: _generateSuggestions,
               icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-              label: const Text('Générer des suggestions'),
+              label: const Text('Suggestions intelligentes'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.kDeepIndustrialBlue,
                 foregroundColor: Colors.white,
@@ -1150,6 +1154,186 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrendingProducts(DashboardProvider provider) {
+    return AppTheme.withGlass(
+      radius: 16,
+      blur: 16,
+      opacity: 0.7,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 3,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: AppTheme.kSafetyOrange,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text('Tendances Produits', style: AppTheme.titleSmall),
+                const Spacer(),
+                if (provider.trendingLoading)
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (provider.trendingProducts.isEmpty && !provider.trendingLoading)
+              _buildTrendingPrompt()
+            else ...[
+              ...provider.trendingProducts.map((p) => _trendingCard(p)),
+              const SizedBox(height: 8),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => context.read<DashboardProvider>().loadTrendingProducts(),
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Actualiser'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrendingPrompt() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppTheme.kSafetyOrange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.trending_up_rounded,
+                  color: AppTheme.kSafetyOrange, size: 24),
+            ),
+            const SizedBox(height: 12),
+            Text('Découvrez les tendances du marché',
+                style: AppTheme.bodyMedium
+                    .copyWith(color: AppTheme.kTextSecondary)),
+            const SizedBox(height: 4),
+            Text(
+              'Produits plastiques les plus recherchés dans le monde',
+              style: AppTheme.bodySmall.copyWith(color: AppTheme.kTextHint),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => context.read<DashboardProvider>().loadTrendingProducts(),
+              icon: const Icon(Icons.travel_explore_rounded, size: 18),
+              label: const Text('Rechercher les tendances'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kSafetyOrange,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _trendingCard(TrendingProduct p) {
+    return AppTheme.withGlass(
+      radius: 12,
+      blur: 12,
+      opacity: 0.65,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                p.imageUrl,
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 64,
+                  height: 64,
+                  color: AppTheme.kBorderLight,
+                  child: const Icon(Icons.image_outlined,
+                      color: AppTheme.kTextHint),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(p.title,
+                      style: AppTheme.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600, fontSize: 13),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 2),
+                  Text(p.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.kTextSecondary, fontSize: 11)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(p.source,
+                          style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.kSafetyOrange,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600)),
+                      const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              html.AnchorElement(href: p.linkUrl)
+                                ..setAttribute('target', '_blank')
+                                ..click();
+                            },
+                        child: const Row(
+                          children: [
+                            Text('Voir',
+                                style: TextStyle(
+                                    color: AppTheme.kDeepIndustrialBlue,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600)),
+                            SizedBox(width: 2),
+                            Icon(Icons.open_in_new,
+                                size: 12,
+                                color: AppTheme.kDeepIndustrialBlue),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

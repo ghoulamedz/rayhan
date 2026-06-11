@@ -32,7 +32,7 @@ public class StockController {
     }
 
     @PostMapping("/adjust")
-    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_MAGASINIER')")
+    @PreAuthorize("hasAnyRole('ROLE_PDG', 'ROLE_MAGASINIER', 'ROLE_RESPONSABLE_PRODUCTION')")
     public ResponseEntity<StockMovement> adjustStock(@RequestBody Map<String, Object> request,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long articleId = Long.valueOf(request.get("articleId").toString());

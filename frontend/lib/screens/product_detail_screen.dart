@@ -65,16 +65,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => context.pop(),
-              ),
-              const SizedBox(width: 8),
-              Text('Détail produit', style: AppTheme.titleMedium),
-            ],
-          ),
+          Text('Détail produit', style: AppTheme.titleMedium),
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(16),

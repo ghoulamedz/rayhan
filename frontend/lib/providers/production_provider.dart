@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import '../models/production_order.dart';
 import '../services/production_service.dart';
 
@@ -48,9 +49,11 @@ class ProductionProvider extends ChangeNotifier {
       notifyListeners();
       return null;
     } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('Stock insuffisant')) return 'Stock matières premières insuffisant';
-      if (msg.contains('nomenclature')) return 'Aucune nomenclature BOM définie pour ce produit';
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map && data['message'] != null) return data['message'] as String?;
+        if (data is String) return data;
+      }
       return 'Erreur lors de la planification';
     }
   }
@@ -60,7 +63,12 @@ class ProductionProvider extends ChangeNotifier {
       final updated = await productionService.launch(id);
       _replaceOrder(updated);
       return null;
-    } catch (_) {
+    } catch (e) {
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map && data['message'] != null) return data['message'] as String?;
+        if (data is String) return data;
+      }
       return 'Erreur lors du lancement de l\'OF';
     }
   }
@@ -70,7 +78,12 @@ class ProductionProvider extends ChangeNotifier {
       final updated = await productionService.complete(id, quantiteRealisee);
       _replaceOrder(updated);
       return null;
-    } catch (_) {
+    } catch (e) {
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map && data['message'] != null) return data['message'] as String?;
+        if (data is String) return data;
+      }
       return 'Erreur lors de la clôture de l\'OF';
     }
   }

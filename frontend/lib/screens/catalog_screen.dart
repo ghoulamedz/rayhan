@@ -220,7 +220,7 @@ class _ProductCard extends StatelessWidget {
                           } else {
                             final redirect = Uri.encodeComponent(
                                 '/catalogue/commander?articleId=${article.id}');
-                            context.push('/login?redirect=$redirect');
+                            context.push('/signup?redirect=$redirect');
                           }
                         },
                       style: ElevatedButton.styleFrom(

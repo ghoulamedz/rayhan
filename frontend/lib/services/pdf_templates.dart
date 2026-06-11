@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../constants/app_theme.dart';
@@ -7,28 +8,40 @@ class PdfBrandedHeader {
     required String title,
     required String reference,
     String? subtitle,
+    Uint8List? logoBytes,
   }) {
     return pw.Column(
       children: [
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Container(
-              width: 50,
-              height: 50,
-              decoration: pw.BoxDecoration(
-                color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
-                borderRadius: pw.BorderRadius.circular(8),
-              ),
-              child: pw.Center(
-                child: pw.Text('R',
-                    style: pw.TextStyle(
-                      fontSize: 24,
-                      fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.white,
-                    )),
-              ),
-            ),
+            logoBytes != null
+                ? pw.Container(
+                    width: 50,
+                    height: 50,
+                    child: pw.Center(
+                      child: pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Image(pw.MemoryImage(logoBytes)),
+                      ),
+                    ),
+                  )
+                : pw.Container(
+                    width: 50,
+                    height: 50,
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
+                      borderRadius: pw.BorderRadius.circular(8),
+                    ),
+                    child: pw.Center(
+                      child: pw.Text('R',
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.white,
+                          )),
+                    ),
+                  ),
             pw.SizedBox(width: 12),
             pw.Expanded(
               child: pw.Column(
@@ -40,11 +53,11 @@ class PdfBrandedHeader {
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
                       )),
-                  pw.Text('SUARL Rayhan — Plasturgie',
+                  pw.Text('SUARL Rayhan - Plasturgie',
                       style: pw.TextStyle(fontSize: 9, color: PdfColors.grey)),
-                  pw.Text('ICE: 123456789 / MF: 0000000',
+                  pw.Text('MF: 195135Q/A/C/0000',
                       style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
-                  pw.Text('Adresse: Z.I. Charguia — Tunis',
+                  pw.Text('Adresse: Cite Abbes Tataouine 3200 Tunisie',
                       style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
                 ],
               ),
@@ -108,8 +121,7 @@ class PdfLineItemTable {
       children: [
         pw.TableRow(
           decoration: pw.BoxDecoration(
-            color: PdfColor.fromInt(
-                AppTheme.kDeepIndustrialBlue.withValues(alpha: 0.08).value),
+            color: PdfColor.fromInt(AppTheme.kDeepIndustrialBlue.value),
           ),
           children: columns
               .map((h) => pw.Padding(
@@ -118,8 +130,7 @@ class PdfLineItemTable {
                         style: pw.TextStyle(
                             fontSize: 9,
                             fontWeight: pw.FontWeight.bold,
-                            color: PdfColor.fromInt(
-                                AppTheme.kTextPrimary.value))),
+                            color: PdfColors.white)),
                   ))
               .toList(),
         ),
@@ -210,7 +221,7 @@ class PdfTotalsBox {
 }
 
 class PdfFooter {
-  static pw.Widget build() {
+  static pw.Widget build({required int pageNumber}) {
     return pw.Column(
       children: [
         pw.SizedBox(height: 8),
@@ -221,7 +232,7 @@ class PdfFooter {
           children: [
             pw.Text('Généré par Rayhan ERP',
                 style: pw.TextStyle(fontSize: 7, color: PdfColors.grey)),
-            pw.Text('Page {page_num} / {page_count}',
+            pw.Text('Page $pageNumber',
                 style: pw.TextStyle(fontSize: 7, color: PdfColors.grey)),
           ],
         ),

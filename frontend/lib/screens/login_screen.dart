@@ -89,6 +89,16 @@ class _LoginScreenState extends State<LoginScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => context.go('/'),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        color: AppTheme.kTextSecondary,
+                      ),
+                    ),
                     Text(AppText.heroLoginTitle,
                         style: AppTheme.headlineSmall.copyWith(fontSize: 20)),
                     const SizedBox(height: 6),

@@ -17,6 +17,7 @@ import 'package:rayhan_erp/services/user_service.dart';
 import 'package:rayhan_erp/services/catalog_service.dart';
 import 'package:rayhan_erp/services/client_order_service.dart';
 import 'package:rayhan_erp/services/notification_service.dart';
+import 'package:rayhan_erp/services/pdf_service.dart';
 import 'package:rayhan_erp/mock/mock_services.dart';
 import 'package:rayhan_erp/mock/mock_config.dart';
 import 'package:rayhan_erp/providers/auth_provider.dart';
@@ -58,6 +59,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('fr_FR');
   await initializeDateFormatting('fr_TN');
+  await PdfService.init();
 
   final useMock = MockConfig.useMock;
 
@@ -223,11 +225,11 @@ class _RayhanAppState extends State<RayhanApp> {
           GoRoute(
               path: '/catalogue', builder: (_, __) => const CatalogScreen()),
           GoRoute(
-              path: '/catalogue/:id',
-              builder: (_, __) => const ProductDetailScreen()),
-          GoRoute(
               path: '/catalogue/commander',
               builder: (_, __) => const ClientOrderFormScreen()),
+          GoRoute(
+              path: '/catalogue/:id',
+              builder: (_, __) => const ProductDetailScreen()),
           GoRoute(
               path: '/mes-commandes',
               builder: (_, __) => const ClientOrdersScreen()),

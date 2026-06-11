@@ -94,14 +94,31 @@ class _VentesScreenState extends State<VentesScreen>
                       ],
                     ),
                   ),
-                  Container(
-                    width: 1,
-                    color: AppTheme.kBorderLight,
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedOrder = null),
+                    child: Container(
+                      width: 1,
+                      color: AppTheme.kBorderLight,
+                    ),
                   ),
                   Expanded(
-                    child: SalesOrderDetailScreen(
-                      order: _selectedOrder!,
-                      isEmbedded: true,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 44,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(() => _selectedOrder = null),
+                          ),
+                        ),
+                        Expanded(
+                          child: SalesOrderDetailScreen(
+                            order: _selectedOrder!,
+                            isEmbedded: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -163,7 +180,7 @@ class _VentesScreenState extends State<VentesScreen>
           order: provider.orders[i],
           isSelected: _selectedOrder?.id == provider.orders[i].id,
           onTap: _isDesktop
-              ? () => setState(() => _selectedOrder = provider.orders[i])
+              ? () => setState(() => _selectedOrder = _selectedOrder?.id == provider.orders[i].id ? null : provider.orders[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => SalesOrderDetailScreen(order: provider.orders[i]))),
         ),
@@ -200,7 +217,7 @@ class _VentesScreenState extends State<VentesScreen>
         itemBuilder: (ctx, i) => _PendingOrderCard(
           order: pending[i],
           onTap: _isDesktop
-              ? null
+              ? () => setState(() => _selectedOrder = pending[i])
               : () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => SalesOrderDetailScreen(order: pending[i]))),
         ),
@@ -218,7 +235,9 @@ class _PendingOrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final fmt = NumberFormat.currency(locale: 'fr_TN', symbol: 'TND', decimalDigits: 3);
 
-    return Card(
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -301,6 +320,7 @@ class _PendingOrderCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

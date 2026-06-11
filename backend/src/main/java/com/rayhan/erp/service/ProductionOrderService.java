@@ -41,8 +41,10 @@ public class ProductionOrderService {
             if (composant.getStockActuel().compareTo(qteNecessaire) < 0) {
                 throw new IllegalStateException(
                     "Stock insuffisant de " + composant.getDesignation() +
-                    " : disponible " + composant.getStockActuel() +
-                    ", nécessaire " + qteNecessaire);
+                    " : disponible " + composant.getStockActuel().stripTrailingZeros().toPlainString() +
+                    " " + composant.getUniteMesure() +
+                    ", nécessaire " + qteNecessaire.stripTrailingZeros().toPlainString() +
+                    " " + composant.getUniteMesure());
             }
         }
 
