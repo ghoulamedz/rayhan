@@ -1,10 +1,11 @@
 abstract final class AppText {
   static const String heroTitle = "L'Excellence dans l'Emballage Plastique";
   static const String heroSubtitle =
-      "Rayhan Industrie — Votre partenaire de confiance pour des solutions d'emballage plastique de qualité supérieure. Sacs, films, sangles et bien plus.";
+      "Rayhan Industrie, Votre partenaire de confiance pour des solutions d'emballage plastique de qualité supérieure. Sacs, films, sangles et bien plus.";
   static const String heroCta = "Découvrir nos produits";
   static const String heroLoginTitle = "Connexion";
-  static const String heroLoginSubtitle = "Accédez à votre espace de gestion ERP";
+  static const String heroLoginSubtitle =
+      "Accédez à votre espace de gestion ERP";
   static const String signupLink = "Créer un compte";
   static const String forgotPasswordLink = "Mot de passe oublié ?";
 
@@ -41,6 +42,6 @@ abstract final class AppText {
 
   static const String footerTagline =
       "La performance industrielle à portée de main.";
-  static const String footerCopyright = "SUARL Rayhan — Tataouine, Tunisie";
+  static const String footerCopyright = "SUARL Rayhan - Tataouine, Tunisie";
   static const String footerRights = "Tous droits réservés.";
 }

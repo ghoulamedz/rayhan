@@ -46,13 +46,15 @@ class PdfService {
           PdfLineItemTable.build(
             columns: ['Réf', 'Désignation', 'Qté', 'PU HT', 'Total HT'],
             columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
-            items: order.lignes.map((l) => PdfLineItem([
-              l.article?.reference ?? '',
-              l.article?.designation ?? '',
-              l.quantiteCommandee.toString(),
-              'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
-              'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
-            ])).toList(),
+            items: order.lignes
+                .map((l) => PdfLineItem([
+                      l.article?.reference ?? '',
+                      l.article?.designation ?? '',
+                      l.quantiteCommandee.toString(),
+                      'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
+                      'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
+                    ]))
+                .toList(),
           ),
           pw.SizedBox(height: 8),
           PdfTotalsBox.build(
@@ -90,13 +92,15 @@ class PdfService {
           PdfLineItemTable.build(
             columns: ['Réf', 'Désignation', 'Qté', 'PU HT', 'Total HT'],
             columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
-            items: order.lignes.map((l) => PdfLineItem([
-              l.article?.reference ?? '',
-              l.article?.designation ?? '',
-              l.quantiteCommandee.toString(),
-              'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
-              'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
-            ])).toList(),
+            items: order.lignes
+                .map((l) => PdfLineItem([
+                      l.article?.reference ?? '',
+                      l.article?.designation ?? '',
+                      l.quantiteCommandee.toString(),
+                      'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
+                      'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
+                    ]))
+                .toList(),
           ),
           pw.SizedBox(height: 8),
           PdfTotalsBox.build(
@@ -128,26 +132,31 @@ class PdfService {
           pw.SizedBox(height: 16),
           pw.Row(
             children: [
-              _statBox('Stock actuel', '${article.stockActuel} ${article.uniteMesure ?? ''}'),
+              _statBox('Stock actuel',
+                  '${article.stockActuel} ${article.uniteMesure ?? ''}'),
               pw.SizedBox(width: 12),
-              _statBox('Stock min', '${article.stockMinimum} ${article.uniteMesure ?? ''}'),
+              _statBox('Stock min',
+                  '${article.stockMinimum} ${article.uniteMesure ?? ''}'),
               pw.SizedBox(width: 12),
               _statBox('Type', article.typeLabel),
             ],
           ),
           pw.SizedBox(height: 20),
           pw.Text('Historique des mouvements',
-              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+              style:
+                  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 8),
           PdfLineItemTable.build(
             columns: ['Date', 'Type', 'Qté', 'Motif'],
             columnWidths: [0.25, 0.15, 0.15, 0.45],
-            items: movements.map((m) => PdfLineItem([
-              m.dateFormatted,
-              m.isEntree ? 'Entrée' : 'Sortie',
-              '${m.quantite}',
-              m.motif ?? '—',
-            ])).toList(),
+            items: movements
+                .map((m) => PdfLineItem([
+                      m.dateFormatted,
+                      m.isEntree ? 'Entrée' : 'Sortie',
+                      '${m.quantite}',
+                      m.motif ?? '—',
+                    ]))
+                .toList(),
           ),
         ],
       ),
@@ -156,8 +165,7 @@ class PdfService {
   }
 
   static Future<Uint8List> generateProductionReport(
-      ProductionOrder order,
-      List<BomLine> bomLines) async {
+      ProductionOrder order, List<BomLine> bomLines) async {
     final pct = order.quantitePlanifiee > 0
         ? (order.quantiteRealisee / order.quantitePlanifiee * 100).toInt()
         : 0;
@@ -204,18 +212,22 @@ class PdfService {
           pw.SizedBox(height: 16),
           if (bomLines.isNotEmpty) ...[
             pw.Text('Composition (Nomenclature)',
-                style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                style:
+                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             PdfLineItemTable.build(
               columns: ['Réf', 'Désignation', 'Qté/U', 'Qté totale', 'Unité'],
               columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
-              items: bomLines.map((l) => PdfLineItem([
-                l.composant?.reference ?? '',
-                l.composant?.designation ?? '',
-                l.quantiteParUnite.toStringAsFixed(3),
-                (l.quantiteParUnite * order.quantitePlanifiee).toStringAsFixed(3),
-                l.composant?.uniteMesure ?? '',
-              ])).toList(),
+              items: bomLines
+                  .map((l) => PdfLineItem([
+                        l.composant?.reference ?? '',
+                        l.composant?.designation ?? '',
+                        l.quantiteParUnite.toStringAsFixed(3),
+                        (l.quantiteParUnite * order.quantitePlanifiee)
+                            .toStringAsFixed(3),
+                        l.composant?.uniteMesure ?? '',
+                      ]))
+                  .toList(),
             ),
             pw.SizedBox(height: 16),
           ],
@@ -251,13 +263,15 @@ class PdfService {
           PdfLineItemTable.build(
             columns: ['Réf', 'Désignation', 'Type', 'Stock', 'PU'],
             columnWidths: [0.18, 0.35, 0.12, 0.12, 0.23],
-            items: articles.map((a) => PdfLineItem([
-              a.reference,
-              a.designation,
-              a.type,
-              '${a.stockActuel} ${a.uniteMesure ?? ''}',
-              'TND ${a.prixUnitaire.toStringAsFixed(3)}',
-            ])).toList(),
+            items: articles
+                .map((a) => PdfLineItem([
+                      a.reference,
+                      a.designation,
+                      a.type,
+                      '${a.stockActuel} ${a.uniteMesure ?? ''}',
+                      'TND ${a.prixUnitaire.toStringAsFixed(3)}',
+                    ]))
+                .toList(),
           ),
         ],
       ),
@@ -290,13 +304,15 @@ class PdfService {
           PdfLineItemTable.build(
             columns: ['Réf', 'Désignation', 'Qté', 'PU HT', 'Total HT'],
             columnWidths: [0.15, 0.35, 0.15, 0.15, 0.2],
-            items: order.lignes.map((l) => PdfLineItem([
-              l.article?.reference ?? '',
-              l.article?.designation ?? '',
-              l.quantiteCommandee.toString(),
-              'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
-              'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
-            ])).toList(),
+            items: order.lignes
+                .map((l) => PdfLineItem([
+                      l.article?.reference ?? '',
+                      l.article?.designation ?? '',
+                      l.quantiteCommandee.toString(),
+                      'TND ${l.prixUnitaireHT.toStringAsFixed(3)}',
+                      'TND ${(l.quantiteCommandee * l.prixUnitaireHT).toStringAsFixed(3)}',
+                    ]))
+                .toList(),
           ),
           pw.SizedBox(height: 8),
           PdfTotalsBox.build(
@@ -359,7 +375,9 @@ class PdfService {
           children: [
             pw.Text(value,
                 style: pw.TextStyle(
-                    fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.white)),
             pw.Text(label,
                 style: pw.TextStyle(fontSize: 8, color: PdfColors.white)),
           ],

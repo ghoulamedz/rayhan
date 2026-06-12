@@ -31,6 +31,10 @@ flutter:
     - assets/images/
     - assets/images/products/
   fonts:
+    - family: Knewave
+      fonts:
+        - asset: assets/fonts/Knewave-Regular.ttf
+          weight: 400
     - family: Manrope
       fonts:
         - asset: assets/fonts/Manrope-SemiBold.ttf
@@ -41,7 +45,7 @@ flutter:
       fonts:
         - asset: assets/fonts/Inter-Regular.ttf
           weight: 400
-    - family: IBM Plex Sans
+    - family: LeckerliOne
       fonts:
-        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
-          weight: 600
+        - asset: assets/fonts/LeckerliOne-Regular.ttf
+          weight: 400

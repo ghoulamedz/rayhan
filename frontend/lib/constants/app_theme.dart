@@ -309,11 +309,11 @@ abstract final class AppTheme {
   // ── Typography (DESIGN.md) ─────────────────────────────────────
   // Display (Manrope 700, tight tracking)
   static TextStyle get displayLarge => const TextStyle(
-        fontFamily: 'Manrope',
+        fontFamily: 'Knewave',
         fontSize: 64,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w400,
         height: 1.1,
-        letterSpacing: -0.02,
+        letterSpacing: 0.0,
       );
 
   static TextStyle get displayMedium => const TextStyle(
@@ -375,11 +375,11 @@ abstract final class AppTheme {
         height: 1.4,
       );
 
-  // Body (Inter 400)
+  // Body (Manrope 600)
   static TextStyle get bodyLarge => const TextStyle(
-        fontFamily: 'Inter',
+        fontFamily: 'Manrope',
         fontSize: 18,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         height: 1.6,
       );
 
@@ -397,9 +397,9 @@ abstract final class AppTheme {
         height: 1.5,
       );
 
-  // Label (IBM Plex Sans 600, caps)
+  // Label (Inter 600, caps)
   static TextStyle get labelCaps => const TextStyle(
-        fontFamily: 'IBM Plex Sans',
+        fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: FontWeight.w600,
         height: 1.0,

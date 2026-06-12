@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rayhan_erp/constants/app_theme.dart';
 import 'package:rayhan_erp/constants/app_text.dart';
 import 'package:rayhan_erp/constants/colors.dart';
+import 'package:rayhan_erp/widgets/brand_logo.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -160,31 +161,10 @@ class _LandingScreenState extends State<LandingScreen>
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Image.asset(
-                      'assets/images/rayhan_icon.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'RayhanERP',
-                    style: TextStyle(
-                      fontFamily: 'Manrope',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+              BrandLogo(
+                iconSize: 24,
+                textSize: 20,
+                containerColor: Colors.white.withValues(alpha: 0.15),
               ),
               FilledButton.icon(
                 onPressed: () => context.push('/login'),
@@ -776,21 +756,12 @@ class _LandingScreenState extends State<LandingScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Icon(Icons.factory_rounded,
-                    color: Colors.white, size: 28),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'RayhanERP',
-                style: AppTheme.headlineMedium.copyWith(
-                  color: Colors.white,
-                ),
+              BrandLogo(
+                iconSize: 24,
+                textSize: 24,
+                containerPadding: const EdgeInsets.all(10),
+                containerColor: Colors.white.withValues(alpha: 0.1),
+                containerBorderRadius: 4,
               ),
             ],
           ),

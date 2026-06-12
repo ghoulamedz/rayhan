@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/brand_logo.dart';
 
 class BrandAppBar extends StatelessWidget {
   final String title;
@@ -77,28 +78,7 @@ class BrandAppBar extends StatelessWidget {
             iconSize: 20,
           )),
           const SizedBox(width: 4),
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: AppTheme.kWhite.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Image.asset(
-              'assets/images/rayhan_icon.png',
-              width: 22,
-              height: 22,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'RayhanERP',
-            style: TextStyle(
-              color: AppTheme.kWhite,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
+          const BrandLogo(),
           const Spacer(),
           Icon(Icons.person_outline_rounded,
               color: AppTheme.kWhite.withValues(alpha: 0.8), size: 18),

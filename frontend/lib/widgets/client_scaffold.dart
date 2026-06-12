@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/auth_provider.dart';
 import '../providers/notification_provider.dart';
+import '../widgets/brand_logo.dart';
 
 class ClientScaffold extends StatefulWidget {
   final Widget body;
@@ -71,22 +72,9 @@ class _ClientScaffoldState extends State<ClientScaffold> {
             ],
           ),
         ),
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/rayhan_icon.png',
-              width: 22,
-              height: 22,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'RayhanERP',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppTheme.kTextPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ],
+        title: const BrandLogo(
+          containerPadding: null,
+          textColor: AppTheme.kTextPrimary,
         ),
         actions: [
           if (role == 'ROLE_CLIENT') ...[
